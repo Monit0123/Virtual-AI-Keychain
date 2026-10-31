@@ -1,0 +1,9 @@
+# Only needed if you use the Wokwi VS Code extension or the Wokwi CLI.
+# In the browser at wokwi.com you can ignore this file.
+#
+# Compile with arduino-cli (or the Arduino IDE) first, then start the
+# simulation. Adjust the paths if your build output lives elsewhere.
+[wokwi]
+version = 1
+firmware = "build/keychain-eyes.ino.bin"
+elf = "build/keychain-eyes.ino.elf"

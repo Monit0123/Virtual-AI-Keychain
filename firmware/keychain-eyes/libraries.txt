@@ -1,0 +1,5 @@
+# Libraries used by the keychain eyes project.
+# Wokwi reads this file automatically and installs them from the Arduino
+# Library Manager.
+Adafruit GFX Library
+Adafruit ILI9341
