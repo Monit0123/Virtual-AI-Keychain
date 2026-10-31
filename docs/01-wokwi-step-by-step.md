@@ -99,9 +99,12 @@ and `libraries.txt`.
    takes a minute; after that it is instant.
 3. Click **Button A** (green) - the expression changes:
    `neutral → happy → sad → angry → surprised → neutral`.
-4. Click **Button B** (blue) - the eye gets poked: surprised, then delighted.
-5. Hold **Button A** for about a second - the keychain falls asleep.
-   Hold it again to wake it up.
+   You can also press the **A** key on your keyboard (click the simulator once
+   first so it has focus).
+4. Click **Button B** (blue), or press **B** - the eye gets poked: surprised,
+   then delighted.
+5. Hold **Button A** (or hold the **A** key) for about a second - the keychain
+   falls asleep. Do it again to wake it up.
 6. Open the **Serial Monitor** (bottom of the editor) to see the expressions and
    the frame rate:
 

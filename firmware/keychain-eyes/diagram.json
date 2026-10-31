@@ -22,14 +22,14 @@
       "id": "btnA",
       "top": -60,
       "left": 190,
-      "attrs": { "label": "NEXT / SLEEP", "color": "green" }
+      "attrs": { "label": "NEXT / SLEEP", "color": "green", "key": "A" }
     },
     {
       "type": "wokwi-pushbutton",
       "id": "btnB",
       "top": -10,
       "left": 190,
-      "attrs": { "label": "POKE", "color": "blue" }
+      "attrs": { "label": "POKE", "color": "blue", "key": "B" }
     }
   ],
   "connections": [
