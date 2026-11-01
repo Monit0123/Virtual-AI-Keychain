@@ -63,3 +63,7 @@ Imports decode sequentially, yield between small batches, and show processed/add
 Decoded originals are resized to at most **384 pixels on their longest edge** before retention, reducing memory use for this 128×128 visual prototype. The original files on your Mac are unchanged. JPEG/PNG/WebP and the existing **8 MiB per-file** validation remain; this is a file-size limit, not an image-count limit. Browser memory, OS resources and decoding performance impose practical limits, so arbitrarily large libraries are not guaranteed. No unlimited-storage claim is made for browser or ESP32-S3 hardware.
 
 Tests cover a 240-photo nested-folder batch, sequential decoding, cooperative yielding, counts greater than 12, skipped files, cancellation during decode, retaining completed imports, repeat imports and concurrent-import rejection. Collection tests add over 1,000 entries. All **67 tests** pass. Actual OS folder-picker behaviour and very large real-world photo collections are not browser-automated here.
+
+## Random memory reveals
+
+**Show random memory** and the personality's photo reaction choose a random photo from the loaded library, excluding the currently selected photo when there is more than one. Previous/Next navigation and explicit gallery selection remain deterministic. Busy/rejected reveal requests do not change the selected photo. A single photo is reusable, and the existing empty-library error behavior is retained.

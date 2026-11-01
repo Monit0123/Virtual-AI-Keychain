@@ -45,4 +45,20 @@ for(let i=0;i<warm.length;i+=4)if(warm[i]>80&&warm[i]>warm[i+1]*1.5)blushPixels+
 assert.ok(blushPixels>100,'integrated greeting draws red cheeks and hearts');
 assert.equal(vm.runInContext('companion.state',ctx),'IDLE');
 
+// New memory reveals share random selection, including the personality event.
+vm.runInContext("memories.add('one',testPhoto);memories.add('two',testPhoto);memories.add('three',testPhoto);memories.random=()=>0;dispatch('HOME_REQUESTED');",ctx);
+let last=vm.runInContext('memories.current',ctx);
+for(let i=0;i<12;i++){
+ vm.runInContext(`dispatch('${i%2?'PHOTO_SELECTED':'PHOTO'}')`,ctx);
+ const picked=vm.runInContext('memories.current',ctx);
+ assert.notEqual(picked,last,'a fresh reveal avoids the current photo');
+ assert.equal(vm.runInContext('companion.memory.name',ctx),['one','two','three'][picked]);
+ assert.equal(vm.runInContext('companion.state',ctx),'SHOWING_PHOTO');
+ vm.runInContext("dispatch('PHOTO')",ctx);
+ assert.equal(vm.runInContext('memories.current',ctx),picked,'busy requests do not reroll the visible image');
+ last=picked;vm.runInContext("dispatch('HOME_REQUESTED')",ctx);
+}
+vm.runInContext("dispatch('GALLERY_REQUESTED');memories.current=2;selectMemory();dispatch('PHOTO_SELECTED',{animate:false});",ctx);
+assert.equal(vm.runInContext('companion.memory.name',ctx),'three','explicit gallery selection stays deterministic');
+
 });
