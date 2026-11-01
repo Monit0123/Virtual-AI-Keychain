@@ -43,6 +43,38 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
         web.load(URLRequest(url: URL(string: "keychain://app/index.html")!))
         NSApp.activate(ignoringOtherApps: true)
     }
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        guard CommandLine.arguments.contains("--smoke-test") else { return }
+        let script = """
+        if (!window.KeychainDesktop) throw new Error('Native bridge not installed');
+        if (companion.state !== 'IDLE') throw new Error('Controller not idle');
+        await realAudio.unlock();
+        const loaded = await realAudio.preload();
+        if (loaded.length !== 4 || !loaded.every(x=>x.ok)) throw new Error('Bundled WAV decoding failed: '+JSON.stringify(loaded));
+        const bytes = await (await fetch('voice/voice_001.wav')).arrayBuffer();
+        await KeychainDesktop.saveAudio('voice_004',bytes);
+        await KeychainDesktop.restoreAudio(realAudio);
+        if (!realAudio.personalIds.has('voice_004') || Math.abs(realAudio.buffers.get('voice_004').duration-17.116)>0.02) throw new Error('Persistent recording restore failed');
+        const started = greetingAudio.start(performance.now());
+        if (!started.ok) throw new Error('Greeting failed: '+started.message);
+        await new Promise(resolve=>setTimeout(resolve,200));
+        if(greetingAudio.player.session?.status!=='playing') throw new Error('Web Audio output did not enter playing state');
+        greetingAudio.stop();
+        return 'PASS: native bridge, UI, four WAV decodes, persistent audio import/restore, Web Audio source start/cancel';
+        """
+        webView.callAsyncJavaScript(script, arguments: [:], in: nil, contentWorld: .page) { result in
+            switch result {
+            case .success(let value):
+                print(value)
+                try? FileManager.default.removeItem(at: self.audioURL("voice_004"))
+                exit(0)
+            case .failure(let error):
+                fputs("NATIVE SMOKE FAILED: \(error)\n", stderr)
+                exit(1)
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+45) { fputs("Native smoke test timed out\n", stderr); exit(1) }
+    }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
     func applicationWillTerminate(_ notification: Notification) { stopSpeech() }
     func send(_ object: [String: Any]) {

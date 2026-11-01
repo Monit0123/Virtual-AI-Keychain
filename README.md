@@ -200,3 +200,11 @@ See the [step-by-step recording catalogue guide](docs/recording-catalogue.md) fo
 Use **Start microphone** for actual permission-controlled speech input, and **Test speaker** for the recorded greeting through your browser output. Exact final wake phrases are “Moni”, “Hi, Moni”, and “Hi, Daddy”. On-device recognition is the default requirement; an online/browser recognition service is available only with explicit consent. Listening stops on wake or before speaker playback and must be manually re-armed. Typed testing and mock AI questions remain separate.
 
 See [microphone setup, privacy, limitations and hardware verification](docs/microphone-wake.md). Browser support varies. Automated state/adapter tests are not proof of physical microphone pickup, acoustic wake accuracy, speaker audibility, or ESP32-S3 audio operation.
+
+## Native macOS app
+
+The native macOS simulator wraps the existing UI with AppKit/WebKit and replaces browser speech recognition with **Apple Speech + AVAudioEngine**. It requires macOS 13 or newer. A universal Apple Silicon/Intel DMG is built by `.github/workflows/macos-app.yml`; locally on a Mac, run `bash macos/build.sh` (Xcode Command Line Tools required).
+
+See `macos/INSTALL.txt` for installation and permissions. This development build is ad-hoc signed, not Apple-notarized. Imported personal recordings persist privately in `~/Library/Application Support/VirtualKeychain/recordings/`; `voice_004` supplies the short wake greeting. The originals remain generated placeholders until you import your own audio. No personal audio is committed to Git.
+
+Native speech requires both macOS Microphone and Speech Recognition permissions. On-device English recognition is required by default; Apple-service recognition is explicitly opt-in. Name accuracy, actual microphone pickup and speaker audibility must be tested on a real Mac. Native smoke tests validate UI loading, bundled WAV decoding, recording persistence and audio source lifecycle—not acoustic operation. This is not embedded ESP32-S3 firmware.

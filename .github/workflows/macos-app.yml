@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - run: npm ci && npm test && npm run voices:check
       - run: bash macos/build.sh
+      - name: Native app smoke test (no microphone permission prompt)
+        run: '"artifacts/Keychain Simulator.app/Contents/MacOS/KeychainSimulator" --smoke-test'
       - name: Validate disk image
         run: hdiutil verify artifacts/Keychain-Simulator-macOS-universal.dmg
       - uses: actions/upload-artifact@v4
