@@ -36,3 +36,9 @@ The renderer now includes actual drooping sad silhouettes, filled sleepy lids, a
 - Ambient mood changes are now off by default: the creature breathes, blinks and looks around without randomly cycling moods. Users can explicitly enable mood changes. The aim is a calm, attentive presence—not a busy screensaver.
 
 Automated checks cover all 13 distinct designs, all eight key beats, loop/tour behavior, interruptions, reduced motion and actual page-button integration, in addition to retained product tests. Visual speech movement does not establish audio synchronization or physical audibility.
+
+## Anti-aliasing / Retina presentation (v1.2.1)
+
+`preview/face-surface.js` separates the 128×128 logical face coordinates from the preview's actual backing pixels. Paths render at 4×–8× resolution and are filtered **once directly to the screen-density backing buffer**, instead of shrinking to 128×128 and then enlarging again through CSS. At 288 CSS pixels on a 2× display the presentation is 576×576 and the source is 640×640. Buffer dimensions are bounded to avoid unlimited GPU/memory allocation.
+
+Resizing the window or moving between screen densities reconfigures the surface; the render transform remains in 128×128 logical coordinates. Button thumbnails also use screen-density backing buffers. Rounded path joins/caps, curved-vector coverage and restrained glow remain; the whole image is not blurred as a substitute for anti-aliasing. Actual 128×128 output remains covered by the raster tests. The enlarged desktop preview is deliberately smoother than an actual physical OLED grid and is not proof of hardware pixel quality.

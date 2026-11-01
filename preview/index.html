@@ -20,7 +20,7 @@
 </style>
 </head>
 <body><main>
-<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 27</span></div>
+<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 28</span></div>
 <header><div class="eyebrow">LITTLE ORBIT / BUNNY EDITION</div><h1>A little orbit of your own.</h1><p>Soft eyes. Familiar voices. Your favourite little moments.<br>A small companion, with a world of feeling.</p></header>
 <section class="studio" aria-label="Interactive face studio">
 <div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><p id="stage-presence" class="presence">A quiet little presence.</p><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
@@ -29,7 +29,7 @@
 <section class="workflow" aria-label="Companion state controls"><h2>Simulator controls</h2><p>These controls are outside the device. The keychain itself uses only the small display and A/B buttons.</p><span id="device-state" role="status">IDLE</span><div class="actions"><button data-action="HOME">Home / cancel</button><button data-action="GALLERY_REQUESTED">Photo gallery</button><button data-action="PHOTO">Show random memory</button><button id="photo-previous">Previous photo</button><button id="photo-next">Next photo</button><button id="photo-random">Random photo</button><button data-action="SETTINGS_REQUESTED">Settings</button><button data-action="VOICE">Play selected voice</button><button id="random-voice">Random voice</button><button id="cancel-voice">Cancel voice</button><button data-action="LISTEN">Ask AI (mock)</button><button data-action="RETRY">Dismiss error</button><button data-action="RETRY_REQUESTED">Retry once</button><button data-action="FAIL">Test error</button></div><div class="voice-settings"><label for="voice-category">Category</label><select id="voice-category"></select><label for="voice-id">Recording identifier</label><select id="voice-id"></select><label for="voice-health">Fault injection (optional test)</label><select id="voice-health"><option value="ready">Normal — actual file</option><option value="missing">Missing recording — test</option><option value="corrupt">Corrupted recording — test</option></select><label for="voice-duration">Duration comes from the actual recording</label><input id="voice-duration" type="hidden" value=""><div class="actions"><button id="enable-audio">Enable sound / load recordings</button></div><p id="audio-status" role="status">Real audio is available. Enable sound once for A/B interactions.</p><label for="voice-replacement">Replace selected message with your own local recording</label><input id="voice-replacement" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg"><p id="voice-file-info">Four generated placeholder recordings are bundled. They are not your actual voice.</p><p>In the macOS app, replacements are saved locally across restarts; in a browser they last for this page session. No upload by the app. AI questions remain simulated. The separate wake microphone requires explicit permission.</p></div><p><label><input type="checkbox" id="online" checked> Simulated internet available</label></p><label class="upload">Select multiple photos — no image-count cap<input id="memory-file" type="file" multiple accept="image/jpeg,image/png,image/webp"></label><label class="upload">Or select a whole folder (including subfolders)<input id="memory-folder" type="file" webkitdirectory directory multiple></label><p>Files stay in this browser session. Folder support depends on your browser; use multi-select if unavailable. There is no image-count cap, but available browser memory still applies. JPEG, PNG and WebP; up to 8 MiB per file.</p><progress id="import-progress" value="0" max="1" hidden></progress><div class="actions"><button id="cancel-import" disabled>Cancel import</button></div><p id="import-status" role="status">Ready to add photos.</p><p id="memory-name">Loading three bundled sample photos… Your own photos stay local and clear on reload.</p><div id="question-panel" hidden><label for="question">Simulated listening — type instead of speaking</label><input id="question" type="text" maxlength="200" placeholder="Ask a question…"><div class="actions"><button id="send-question">Finish listening</button></div></div><p id="detail" aria-live="polite"></p><progress id="voice-progress" max="5000" value="0" hidden></progress><p>Voice playback is real, using generated placeholder recordings or your local replacements. AI-question listening remains typed; the separate wake microphone is real and permission-controlled. AI replies are prewritten mocks, with no API or network requests.</p></section>
 <section class="workflow" id="affection-controls" aria-label="Affection behaviour preview"><h2>A quiet hello.</h2><p>After 90 minutes without interaction, the home face looks away sadly. A familiar greeting gently brings it back. Use real microphone recognition below, or the separate typed test. Browser recognition is not an ESP32-S3 wake-word engine.</p><div class="actions"><button id="preview-ignored">Preview left-alone mood</button><button id="reset-affection">Reset mood</button></div><h3>Real microphone wake phrases</h3><p>Start explicitly to grant microphone permission. Default: on-device recognition only, when supported and its English model is installed. This is full speech recognition with phrase matching, not an always-on low-power wake-word detector.</p><label><input id="allow-online-recognition" type="checkbox"> <span id="recognition-provider">Allow browser speech service (may send microphone audio to its provider; internet may be required)</span></label><div class="actions"><button id="check-mic">Check microphone access</button><button id="start-mic">Start microphone</button><button id="stop-mic">Stop microphone</button><button id="test-speaker">Test speaker — “Hi, Mommy”</button></div><p>If permission is allowed but recognition fails, <a id="open-mic-preview" target="_blank" rel="noopener noreferrer">open this preview directly in a new tab</a>. Embedded previews can restrict speech/microphone access independently of site permission.</p><p id="mic-check-status" role="status"></p><p id="mic-status" role="status">Microphone off. No listening starts automatically.</p><p id="mic-transcript" aria-live="polite"></p><p>Use headphones to reduce feedback. Enable listening once. It pauses during a response and automatically resumes afterward. Stop microphone turns it off. Keep this page open and visible. Recognition support varies by browser.</p><label for="wake-phrase">Try “Hi, Moni”, “Hi, Daddy”, or “Moni”</label><input id="wake-phrase" type="text" maxlength="80" placeholder="Hi, Moni"><div class="actions"><button id="submit-greeting">Say hello (typed simulation)</button></div><p><label><input type="checkbox" id="greeting-speech" checked> Play recorded “Hi, Mommy” greeting</label><br>Uses the selected generated placeholder voice, not browser text-to-speech. You can replace the greeting recording in the voice controls. Speaker output uses your browser’s actual audio device.</p><p id="affection-status" aria-live="polite">Waiting for a quiet moment. Use the preview button to skip the 90-minute wait.</p></section>
 <div class="notes"><span><i class="dot"></i>Soft, anti-aliased edges</span><span><i class="dot"></i>Fluid expression transitions</span><span><i class="dot"></i>Works offline</span></div>
-<footer>Graphics study, not an electronics simulation. The square face is rendered at 128 × 128 pixels with supersampled anti-aliasing and enlarged for viewing. Physical size depends on your screen.<br>Wokwi and Arduino firmware are separate; this preview does not validate OLED hardware.</footer>
+<footer>Graphics study, not an electronics simulation. The face uses a 128 × 128 design grid, supersampled and presented directly at your screen’s pixel density. This smooth preview is not a pixel-exact hardware display test. Physical size depends on your screen.<br>Wokwi and Arduino firmware are separate; this preview does not validate OLED hardware.</footer>
 </main>
 <script src="desktop-bridge.js?v=desktop-1"></script>
 <script src="wake-mic.js?v=continuous-25"></script>
@@ -44,6 +44,7 @@
 <script src="buttons.js?v=voice-index-22"></script>
 <script src="animation.js?v=voice-index-22"></script>
 <script src="companion.js?v=voice-index-22"></script>
+<script src="face-surface.js?v=aa-28"></script>
 <script src="bunny-face.js?v=orbit-27"></script>
 <script src="living-face.js?v=orbit-27"></script>
 <script src="state-face.js?v=voice-index-22"></script>
@@ -51,10 +52,10 @@
 <script>
 'use strict';
 const canvas=document.querySelector('#face'),ctx=canvas.getContext('2d');
-// Render paths at 4x, then filter down to the actual 128x128 OLED resolution.
-const high=document.createElement('canvas');high.width=high.height=512;
-const pen=high.getContext('2d');pen.scale(4,4);
-ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+// Keep logical face coordinates at 128x128; present directly at screen density.
+const faceSurface=new FaceSurface(canvas),high=faceSurface.high,pen=faceSurface.pen;
+globalThis.addEventListener?.('resize',()=>faceSurface.resize());
+let lastSurfaceCheck=0;
 // Each expression is the same continuous geometry, not a swapped bitmap.
 // h: eye height, slope: inward lid angle, arch: happy crescent strength,
 // curve: smile/frown, mw/mh: mouth dimensions, rgb: restrained OLED tint.
@@ -406,7 +407,7 @@ function chooseFace(id){
 REFERENCE_FACES.forEach(design=>{
  const b=document.createElement('button');b.className='expression';b.dataset.faceId=design.id;b.setAttribute('title',design.description);b.setAttribute('aria-pressed','false');
  b.innerHTML='<span class="icon" aria-hidden="true"></span><span>'+design.label+'</span>';
- if(b.querySelector){const thumb=document.createElement('canvas');thumb.width=thumb.height=36;const t=thumb.getContext('2d');t.scale(36/128,36/128);drawLivingFace(t,livingFaceFrame(design.id,design.duration*.45,false),{mouth:false});b.querySelector('.icon').append(thumb);}
+ if(b.querySelector){const thumb=document.createElement('canvas');thumb.width=thumb.height=Math.ceil(36*Math.min(3,globalThis.devicePixelRatio||1));const t=thumb.getContext('2d');t.scale(thumb.width/128,thumb.height/128);drawLivingFace(t,livingFaceFrame(design.id,design.duration*.45,false),{mouth:false});b.querySelector('.icon').append(thumb);}
  b.onclick=()=>chooseFace(design.id);document.querySelector('#expressions').append(b);
 });
 document.querySelector('#return-live').onclick=()=>{stopFaceStudy();dispatch('HOME_REQUESTED');status();};
@@ -436,6 +437,7 @@ function mouth(){
 }
 function frame(now){
  requestAnimationFrame(frame);
+ if(now-lastSurfaceCheck>1000){faceSurface.resize();lastSurfaceCheck=now;}
  const greetingResult=greetingAudio.update(now);
  if(greetingResult){
   spokenGreeting=false;
@@ -495,7 +497,7 @@ function frame(now){
   faceStudy.draw(pen,now,animator.motion,{mouth:document.querySelector('#tiny-mouth').checked});
   setStudioText('#stage-presence',design.label+' · '+design.beats[f.beat]);
   setStudioText('#face-description',design.description);
-  status();ctx.drawImage(high,0,0,128,128);return;
+  status();faceSurface.present();return;
  }
  setStudioText('#stage-presence',affection.mode==='ignored'?'Waiting for a familiar hello.':wakeMic.active?'I’m here. I’m listening.':'A quiet little presence.');
  if(social)drawAffectionHearts(pen,social);
@@ -505,7 +507,7 @@ function frame(now){
   if(liveFace.id!==id)liveFace.select(id,now);
   liveFace.draw(pen,now,animator.motion,{mouth:document.querySelector('#tiny-mouth').checked});
   if(companion.state===STATES.PLAYING_VOICE){const bar=document.querySelector('#voice-progress'),progress=realAudio.progress();bar.max=progress?.durationMs||1;bar.value=progress?.elapsedMs||0;}
-  renderScreen(pen,companion,memories.items,now);ctx.drawImage(high,0,0,128,128);return;
+  renderScreen(pen,companion,memories.items,now);faceSurface.present();return;
  }
  const color=`rgb(${current.r},${current.g},${current.b})`;
  pen.fillStyle=pen.strokeStyle=color;pen.lineWidth=2.5;pen.lineJoin=pen.lineCap='round';
@@ -555,7 +557,7 @@ function frame(now){
  if(companion.state===STATES.PLAYING_VOICE)
  {const bar=document.querySelector('#voice-progress'),progress=realAudio.progress();bar.max=progress?.durationMs||1;bar.value=progress?.elapsedMs||0;}
  renderScreen(pen,companion,memories.items,now);
- ctx.drawImage(high,0,0,128,128);
+ faceSurface.present();
 }
 document.addEventListener('visibilitychange',()=>{animator.last=performance.now();if(document.hidden)buttonControls.cancel();});
 requestAnimationFrame(frame);
