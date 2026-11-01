@@ -11,10 +11,15 @@ function eyeContour(pose,left){
  let remaining=1;const weights={};
  for(const [name,value] of [['love',pose.love],['spark',pose.spark],['happy',pose.arch],['sleepy',(14-pose.h)/6],['angry',pose.slope/10],['sad',-pose.slope/8]]){weights[name]=remaining*clamp(value);remaining-=weights[name];}weights.bunny=remaining;
  const points=[];
- for(let n=0;n<64;n++){
-  const t=n*Math.PI*2/64,c=Math.cos(t),sn=Math.sin(t),x=sn*w*.44;
+ for(let n=0;n<80;n++){
+  const t=n*Math.PI*2/80,c=Math.cos(t),sn=Math.sin(t),x=sn*w*.44;
   const top=-1+(left?1:-1)*x/w*8,sadTop=-3-(left?1:-1)*x/w*8;
-  const r=14*(.23+.77*Math.abs(Math.cos(t*2))**6);
+  // Intersect each contour ray with a true ten-edge, FIVE-point star.
+  // Alternating outer/inner vertices replace the old four-arm plus silhouette.
+  const step=Math.PI/5,sector=Math.floor((t+1e-9)/step),a=sector*step,b=a+step;
+  const ra=sector%2?6.3:14,rb=sector%2?14:6.3;
+  const ax=Math.sin(a)*ra,ay=-Math.cos(a)*ra,dx=Math.sin(b)*rb-ax,dy=-Math.cos(b)*rb-ay;
+  const r=(ax*dy-ay*dx)/(sn*dy+c*dx);
   const shapes={bunny:[x,-c*h*.52],love:[12.8*sn**3,-.8*(13*c-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))],spark:[sn*r,-c*r],happy:[sn*w*.42,2-h*.28*c*c-c*1.3],sleepy:[x,-3+(c>0?-c*.8:-c*8)],angry:[x,top+(c>0?-c*1.2:-c*11)],sad:[x,sadTop+(c>0?-c*1.2:-c*h*.45)]};
   points.push(Object.entries(weights).reduce((v,[name,k])=>[v[0]+shapes[name][0]*k,v[1]+shapes[name][1]*k],[0,0]));
  }

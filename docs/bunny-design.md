@@ -55,7 +55,7 @@ Regression tests verify exact first-frame raster continuity, interruption contin
 
 ## Persistent contour renderer (v1.3.0 — supersedes silhouette blending)
 
-The earlier renderer still crossfaded eye silhouettes and hid both eyes entirely during thinking, speech and warning beats. That was not a continuous shape morph. Each eye now has one 64-vertex, smoothed, closed contour. Matching vertices interpolate between bunny, smiling, sleepy, sad, angry, star and heart geometry, at constant outline opacity. Pupils retract geometrically inside the clipped contour. No opacity/compositing writes occur anywhere in the living-face renderer. Eye centres stay at (39,48) and (89,48); breathing and tiny leaning motions are anchored at the face centre, without translating the whole face. Even blinks retain a closed-eye slit.
+The earlier renderer still crossfaded eye silhouettes and hid both eyes entirely during thinking, speech and warning beats. That was not a continuous shape morph. Each eye now has one 80-vertex, smoothed, closed contour. Matching vertices interpolate between bunny, smiling, sleepy, sad, angry, star and heart geometry, at constant outline opacity. Pupils retract geometrically inside the clipped contour. No opacity/compositing writes occur anywhere in the living-face renderer. Eye centres stay at (39,48) and (89,48); breathing and tiny leaning motions are anchored at the face centre, without translating the whole face. Even blinks retain a closed-eye slit.
 
 All 13 expressions keep both eyes and the mouth. Thinking dots sit above the head, speaking uses the face’s animated mouth (no waveform), the picture below the chin and the warning above the head; none replaces the face. Supporting marks grow/shrink geometrically. The anger vein mark is red (#ff3b45), with inward-facing corners reflected correctly across both axes. The legacy social/memory renderer shares this contour and anger-mark implementation.
 
@@ -72,3 +72,8 @@ The shared drawPhotoFrame/photoFrameRect implementation is used for the photo de
 ## Mouth-only speaking (v1.3.2)
 
 Speaking keeps a complete, centred bunny face and articulates its existing mouth: smooth changes in width, openness and smile curvature, with short phrase pauses and independent blinks. Both waveform renderers have been removed, including the legacy social/greeting accent path. Actual voice playback, recorded greeting and the Speaking design use mouth motion; reduced motion holds a static gentle mouth. Mouth movement is illustrative, not phoneme- or recording-synchronised. Regression tests check changing mouth rasters, both eyes remaining visible and an empty region where the waveform used to be. The framed random-photo reveal is unchanged.
+
+
+## Five-point excited eyes (v1.3.3)
+
+Excited eyes now morph to a true five-point star with alternating 14-unit tips and 6.3-unit inner corners, rather than the earlier four-arm sparkle/plus shape. Eighty matching contour vertices keep all ten star corners aligned and preserve continuous, fully opaque eye morphs. The face remains centred; decorative sparkles are unchanged. Tests count five radial tips on both eyes and verify finite, stable intermediate contours.
