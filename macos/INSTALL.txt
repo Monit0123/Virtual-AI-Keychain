@@ -1,0 +1,27 @@
+KEYCHAIN SIMULATOR — macOS 13 or newer, Apple Silicon and Intel
+
+1. Open the DMG and drag Keychain Simulator to Applications.
+2. This free development build is ad-hoc signed, NOT Apple notarized.
+   macOS may block first launch. After attempting to open it, use
+   System Settings > Privacy & Security > Open Anyway, if you trust this build.
+   Do not globally disable Gatekeeper. Managed Macs may prohibit unsigned apps.
+3. Start microphone and allow BOTH Microphone and Speech Recognition permissions.
+   These can be reviewed in System Settings > Privacy & Security.
+4. On-device English recognition is required by default. If this Mac cannot
+   provide it, the app reports that limitation. The opt-in speech-service
+   checkbox permits Apple's recognition service, which may use internet/audio
+   processing by Apple. There is no silent online fallback.
+5. Test speaker, then say Moni / Hi Moni / Hi Daddy. Capture stops on wake or
+   speaker playback; Start microphone re-arms it. Apple may misrecognize names.
+6. To hear YOUR voice: choose a recording ID and use Replace selected message
+   with your own local recording. Choose a WAV (recommended), M4A or supported
+   audio file, maximum 40 MiB. voice_004 is the short Hi, Mommy wake greeting.
+   A valid replacement is decoded locally, then saved under:
+   ~/Library/Application Support/VirtualKeychain/recordings/
+   Click Enable sound after restarting; saved replacements are also loaded
+   before direct playback. No recording is uploaded by the app. Generated
+   placeholder clips remain until you import your own voice.
+
+No physical ESP32-S3 hardware is simulated electrically. The app is a software
+behavior simulator. Native microphone recognition and actual audibility must
+be tested on your Mac; an animation is not proof of either.

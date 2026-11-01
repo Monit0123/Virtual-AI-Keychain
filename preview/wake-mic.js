@@ -3,12 +3,14 @@
 'use strict';
 const isWakePhrase=text=>typeof text==='string'&&['hi moni','hi daddy','moni'].includes(text.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim());
 function microphoneContextIssue(env=root){
+ if(env.KeychainDesktop)return null;
  if(env.isSecureContext===false)return 'Microphone requires HTTPS or localhost. Open the secure preview URL directly.';
  const policy=env.document?.permissionsPolicy||env.document?.featurePolicy;
  if(policy?.allowsFeature&&policy.allowsFeature('microphone')===false)return 'This page is blocked by the embedding/Permissions Policy for microphone. Open the preview in a new tab; allowing site permission alone cannot override this policy.';
  return null;
 }
 async function checkMicrophoneAccess(env=root){
+ if(env.KeychainDesktop)return env.KeychainDesktop.request('micCheck');
  const issue=microphoneContextIssue(env);if(issue)return issue;
  if(!env.navigator?.mediaDevices?.getUserMedia)return 'Microphone capture API unavailable. Use a supported browser over HTTPS.';
  let stream;

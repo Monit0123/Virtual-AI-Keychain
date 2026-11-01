@@ -1,0 +1,32 @@
+name: Build macOS simulator
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/b9aa48c9-virtual-ai-keychain]
+    paths:
+      - 'macos/**'
+      - 'preview/**'
+      - '.github/workflows/macos-app.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci && npm test && npm run voices:check
+      - run: bash macos/build.sh
+      - name: Validate disk image
+        run: hdiutil verify artifacts/Keychain-Simulator-macOS-universal.dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Keychain-Simulator-macOS-universal
+          path: |
+            artifacts/Keychain-Simulator-macOS-universal.dmg
+            artifacts/SHA256SUMS.txt
+          retention-days: 14
+          if-no-files-found: error
