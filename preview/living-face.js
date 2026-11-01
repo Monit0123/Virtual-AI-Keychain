@@ -54,7 +54,22 @@ function livingFaceFrame(id,elapsed=0,motion=true){
 }
 function heart(p,x,y,s){p.beginPath();p.moveTo(x,y+s*.7);p.bezierCurveTo(x-s*1.3,y-s*.2,x-s*.65,y-s,x,y-s*.3);p.bezierCurveTo(x+s*.65,y-s,x+s*1.3,y-s*.2,x,y+s*.7);p.fill();}
 function star(p,x,y,s){p.beginPath();p.moveTo(x,y-s);p.quadraticCurveTo(x+s*.2,y-s*.2,x+s,y);p.quadraticCurveTo(x+s*.2,y+s*.2,x,y+s);p.quadraticCurveTo(x-s*.2,y+s*.2,x-s,y);p.quadraticCurveTo(x-s*.2,y-s*.2,x,y-s);p.fill();}
-function drawLivingFace(p,frame,{mouth=true}={}){
+// Shared by the design button and the real random-memory reveal.
+function photoFrameRect(expand=0,strength=1){
+ const e=clamp(expand),s=clamp(strength),w=22+(128-22)*e,h=16+(128-16)*e,cx=64,cy=109+(64-109)*e;
+ return {x:cx-w*s/2,y:cy-h*s/2,w:w*s,h:h*s,r:1.5*(1-e)*s,inset:1.3*(1-e)*s};
+}
+function drawPhotoFrame(p,image=null,expand=0,strength=1){
+ if(strength<=0)return;const g=photoFrameRect(expand,strength);p.save();
+ try{
+  p.shadowBlur=0;p.fillStyle='#fff4ff';p.beginPath();p.roundRect(g.x,g.y,g.w,g.h,g.r);p.fill();
+  const x=g.x+g.inset,y=g.y+g.inset,w=g.w-2*g.inset,h=g.h-2*g.inset;
+  p.beginPath();p.roundRect(x,y,w,h,Math.max(0,g.r-g.inset));p.clip();
+  if(image){if(!(image.width>0&&image.height>0))throw new Error('Invalid photo size');const scale=Math.max(w/image.width,h/image.height);p.drawImage(image,x+(w-image.width*scale)/2,y+(h-image.height*scale)/2,image.width*scale,image.height*scale);}
+  else{p.fillStyle='#22152b';p.fillRect(x,y,w,h);p.strokeStyle=p.fillStyle='#efd3ff';p.lineWidth=Math.max(.1,strength);p.beginPath();p.moveTo(x+w*.1,y+h*.8);p.lineTo(x+w*.35,y+h*.4);p.lineTo(x+w*.55,y+h*.7);p.lineTo(x+w*.8,y+h*.25);p.lineTo(x+w*.95,y+h*.8);p.stroke();p.beginPath();p.arc(x+w*.2,y+h*.2,Math.max(.01,strength),0,Math.PI*2);p.fill();}
+ }finally{p.restore();}
+}
+function drawLivingFace(p,frame,{mouth=true,photoFrame=true}={}){
  const f=frame,pose=f.pose,t=f.now,feature=id=>f.features?.[id]??(f.id===id?1:0);
  p.save();p.translate(64,63);p.rotate(f.tilt);p.scale(f.scale,f.scale);p.translate(-64,-63);
  p.lineCap='round';p.lineJoin='round';p.lineWidth=1.7;p.fillStyle=p.strokeStyle='#efd3ff';p.shadowColor='#d892f5';p.shadowBlur=2;
@@ -66,7 +81,7 @@ function drawLivingFace(p,frame,{mouth=true}={}){
  if(f.thinking>0){for(let n=0;n<3;n++){const pulse=f.motion?.8+.2*Math.sin(t/480-n*1.1):1;p.beginPath();p.arc(50+n*14,17,2.5*f.thinking*pulse,0,Math.PI*2);p.fill();}}
  if(f.wave>0){p.save();p.lineWidth=2.2*f.wave;for(let n=-5;n<=5;n++){const h=f.wave*(f.motion?1.3+(1-Math.abs(n)/7)*(3+8*Math.abs(Math.sin(t/230+n*.73))*Math.abs(Math.sin(t/1100))):3+6*(1-Math.abs(n)/5));p.beginPath();p.moveTo(64+n*4,105-h);p.lineTo(64+n*4,105+h);p.stroke();}p.restore();}
  if(f.warning>0){p.save();p.translate(64,15);p.scale(f.warning*.5,f.warning*.5);p.translate(-64,-49);p.strokeStyle='#ff8cbc';p.lineWidth=1.8;p.beginPath();p.moveTo(64,34);p.lineTo(78,59);p.quadraticCurveTo(79,62,76,62);p.lineTo(52,62);p.quadraticCurveTo(49,62,50,59);p.closePath();p.stroke();p.beginPath();p.moveTo(64,44);p.lineTo(64,52);p.stroke();p.fillStyle='#ff8cbc';p.beginPath();p.arc(64,57,1,0,Math.PI*2);p.fill();p.restore();}
- if(f.photo>0){p.save();p.translate(64,109);p.scale(f.photo,f.photo);p.translate(-64,-90);p.lineWidth=1.4;p.beginPath();p.roundRect(53,82,22,16,2);p.stroke();p.beginPath();p.moveTo(56,94);p.lineTo(61,89);p.lineTo(65,93);p.lineTo(69,87);p.lineTo(72,94);p.stroke();p.beginPath();p.arc(58,86,1,0,Math.PI*2);p.fill();p.restore();}
+ if(photoFrame&&f.photo>0)drawPhotoFrame(p,null,0,f.photo);
  if(mouth){p.save();p.lineWidth=1.4;
   const w=pose.mw/2,h=pose.mh*2/3,cy=86;
   p.beginPath();p.moveTo(64-w,cy);p.bezierCurveTo(64-w,cy+h+pose.curve,64+w,cy+h+pose.curve,64+w,cy);p.bezierCurveTo(64+w,cy-h+pose.curve,64-w,cy-h+pose.curve,64-w,cy);p.closePath();p.stroke();p.restore();
@@ -114,5 +129,5 @@ class FaceStudy {
  draw(p,now,motion=true,options={}){const f=this.update(now,motion);if(f)drawLivingFace(p,f,options);}
 }
 
-const api={REFERENCE_FACES,livingFaceFrame,drawLivingFace,FaceStudy};if(typeof module!=='undefined'&&module.exports)module.exports=api;else Object.assign(root,api);
+const api={REFERENCE_FACES,livingFaceFrame,drawLivingFace,FaceStudy,photoFrameRect,drawPhotoFrame};if(typeof module!=='undefined'&&module.exports)module.exports=api;else Object.assign(root,api);
 })(globalThis);

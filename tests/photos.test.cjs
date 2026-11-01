@@ -42,9 +42,9 @@ test('gallery displays only the selected image rather than a thumbnail grid',()=
  app.dispatch('NEXT_PHOTO',3);assert.equal(app.galleryIndex,0);app.dispatch('PREVIOUS_PHOTO',4);assert.equal(app.galleryIndex,1);
 });
 test('failed photo reveal restores nested clips before the app draws its error screen',()=>{
- const {drawMemoryCloud,memoryScene}=require('../preview/memory-scene.js');let depth=0;
+ const {drawMemoryPhoto,memoryScene}=require('../preview/memory-scene.js');let depth=0;
  const ctx=new Proxy({save(){depth++;},restore(){depth--;},drawImage(){throw new Error('decode no longer available');}},{get:(o,k)=>k in o?o[k]:()=>{}});
- assert.throws(()=>drawMemoryCloud(ctx,{width:10,height:10},memoryScene(8000)));assert.equal(depth,0);
+ assert.throws(()=>drawMemoryPhoto(ctx,{width:10,height:10},memoryScene(8000)));assert.equal(depth,0);
 });
 test('three bundled real sample photos load locally, navigate, and tolerate one missing sample',async()=>{
  const {loadSamplePhotos,SAMPLE_PHOTOS}=require('../preview/photos.js');

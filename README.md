@@ -216,3 +216,8 @@ The simulator now follows the supplied bunny-face reference: glowing lavender ra
 ### Complete 13-design living-face studio
 
 Version 1.2 adds a clickable, eight-beat animation study for **every reference design**, including Listening, Thinking, Speaking, Showing Photo and Error—not only the eight emotions. The same renderer backs the real idle/listening/thinking/speaking states. Play all 13, return live, optional tiny mouth, quiet-by-default ambient behavior, reduced motion and safe interruption are supported. Visual studies never masquerade as actual recognition, playback or gallery operations; continuous-listening intent is retained while capture pauses. See [the interaction contract](docs/bunny-design.md).
+
+
+### Current photo reveal — v1.3.1 (supersedes the earlier cloud studies)
+
+**Showing Photo** and **Show random memory** now use one real random-photo action and one renderer. A random local image appears inside the Showing Photo frame beneath the face, holds briefly, and slowly grows to full-screen by eight seconds. The thought-cloud animation has been removed. The face stays centred behind the expanding photo; there is no fade. Home cancels, while gallery next/previous and reduced motion show the full image immediately. The design tour remains visual-only.

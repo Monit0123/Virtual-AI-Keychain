@@ -10,7 +10,7 @@ The user-supplied expression sheet is the visual reference. The implementation u
 - Listening side arcs, thinking dots, and a speaking equalizer accent. These are state indicators, not proof of microphone pickup or audio synchronization. Existing response/error text screens remain readable.
 - Existing slow transition/blink clocks, independent eye/mouth follow-through and snuggle transforms are retained. Silhouette weights interpolate during expression morphs; reduced motion freezes accent motion.
 
-The studio uses an ink/lilac palette and a champagne frame. The actual display stays 128×128, with supersampling for anti-aliasing; the case is a visual study, not a manufactured enclosure design. Gallery photos still reveal through the existing cloud and ultimately cover the full screen, without a bunny overlay obscuring them.
+The studio uses an ink/lilac palette and a champagne frame. The actual display stays 128×128, with supersampling for anti-aliasing; the case is a visual study, not a manufactured enclosure design. Random memories now use the Showing Photo frame and expand to the full screen; the old cloud renderer has been removed.
 
 ## Behavior retained
 
@@ -31,7 +31,7 @@ The renderer now includes actual drooping sad silhouettes, filled sleepy lids, a
 - Clicking any design opens an explicitly labeled **visual study**, with no microphone or speaker side effect. It cancels an old real action through Home first, then loops the selected design.
 - **Play all 13** tours the designs; **Return to live companion** exits immediately. Rapid changes morph over 850 ms without adding primary FSM states.
 - Listening intent is preserved but microphone capture pauses while studying designs; returning live permits automatic re-arming. Actual Start microphone, playback, Home and other product actions leave the visual study.
-- Real idle, emotion, listening, thinking and speaking states use the same complete face renderer. Native greeting playback also selects the speaking design. Existing snuggle and memory-cloud choreography retain their dedicated renderer; full-screen photos remain unobscured. Real error/reply text remains readable rather than being replaced with decorative icons.
+- Real idle, emotion, listening, thinking and speaking states use the same complete face renderer. Native greeting playback also selects the speaking design. Snuggle retains its dedicated renderer; memory uses the same photo face and frame; full-screen photos remain unobscured. Real error/reply text remains readable rather than being replaced with decorative icons.
 - **Tiny mouth** is optional; reduced motion freezes animation but keeps every design recognizable. State/beat captions and buttons remain outside the 128×128 device.
 - Ambient mood changes are now off by default: the creature breathes, blinks and looks around without randomly cycling moods. Users can explicitly enable mood changes. The aim is a calm, attentive presence—not a busy screensaver.
 
@@ -60,3 +60,10 @@ The earlier renderer still crossfaded eye silhouettes and hid both eyes entirely
 All 13 expressions keep both eyes and the mouth. Thinking dots sit above the head, the voice ribbon below the mouth, the picture below the chin and the warning above the head; none replaces the face. Supporting marks grow/shrink geometrically. The anger vein mark is red (#ff3b45), with inward-facing corners reflected correctly across both axes. The legacy social/memory renderer shares this contour and anger-mark implementation.
 
 Expression controls: changed asset version keys to prevent loading stale renderer APIs. Native assets now use no-store and the main page bypasses cache on launch. Very quick DOM A taps/Enter activations are no longer dropped between sampled frames; the hardware model retains 30 ms debounce, hold and chord rules. Regression checks cover every design/intermediate eye region, zero opacity-compositing writes, anchored rendering, red symmetric anger corners, and quick expression activation.
+
+
+## One photo reveal (v1.3.1)
+
+Showing Photo now starts the same real random-memory action as Show random memory. It is no longer a separate decorative animation button. The selected local photo appears inside the existing 22×16 frame beneath the centred smiling face, with its little hearts. The frame grows in over 900 ms, holds the actual photo until 4.2 seconds, then smoothly expands over 3.8 seconds to cover the full 128×128 display. Its white border and corner rounding shrink continuously to zero. Aspect-fill cropping follows the changing frame bounds; there is no crossfade, thought cloud, thought dots, or bottom-left face relocation. Fullscreen remains until Home; explicit gallery navigation and reduced motion still show the full photo immediately.
+
+The shared drawPhotoFrame/photoFrameRect implementation is used for the photo design thumbnail/study tour and the real memory image. Tours stay visual-only; direct Showing Photo clicks show actual random photos. Random no-immediate-repeat, busy guarding, gallery navigation, error recovery and uncapped imports are unchanged. Pixel tests check both eyes and the selected image inside its initial frame, plus every full-screen output pixel.

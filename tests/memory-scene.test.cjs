@@ -1,57 +1,23 @@
 const test=require('node:test'),assert=require('node:assert/strict');
-const {memoryScene,drawMemoryCloud,memorySpring,faceFollowThrough,memoryThoughtDots}=require('../preview/memory-scene.js');
-test('ordered memory choreography: settle, single blink, glance, dots, cloud, photo, fullscreen',()=>{
- const start=memoryScene(0);assert.equal(start.settle,0);assert.equal(start.openness,1);
- assert.equal(memoryScene(540).openness,0);assert.equal(memoryScene(740).openness,1);
- assert.equal(memoryScene(740).look,0);assert.equal(memoryScene(1500).look,1);
- assert.ok(memoryScene(1700).dots>0);assert.equal(memoryScene(1700).cloud,0);
- assert.equal(memoryScene(2850).photo,0);assert.equal(memoryScene(3000).cloud,1);
- assert.equal(memoryScene(4750).photo,1);assert.equal(memoryScene(4750).expand,0);
- assert.ok(memoryScene(6500).expand>0&&memoryScene(6500).expand<1);
- assert.equal(memoryScene(8000).expand,1);
- let closedIntervals=0,closed=false;
- for(let t=0;t<=10000;t+=10){const c=memoryScene(t).openness<.99;if(c&&!closed)closedIntervals++;closed=c;}
- assert.equal(closedIntervals,1);
+const {memoryScene,drawMemoryPhoto,memorySpring,faceFollowThrough}=require('../preview/memory-scene.js');
+const {photoFrameRect}=require('../preview/living-face.js');
+test('one photo frame grows in, holds the actual image, then expands slowly to full display',()=>{
+ assert.deepEqual(memoryScene(0),{frame:0,expand:0});assert.deepEqual(memoryScene(900),{frame:1,expand:0});assert.deepEqual(memoryScene(4200),{frame:1,expand:0});
+ assert.ok(memoryScene(6100).expand>0&&memoryScene(6100).expand<1);assert.deepEqual(memoryScene(8000),{frame:1,expand:1});
+ assert.deepEqual(photoFrameRect(0),{x:53,y:101,w:22,h:16,r:1.5,inset:1.3});assert.deepEqual(photoFrameRect(1),{x:0,y:0,w:128,h:128,r:0,inset:0});
+ let last=0;for(let t=0;t<9000;t+=17){const s=memoryScene(t);assert.ok(s.expand>=last);last=s.expand;for(const v of Object.values(s))assert.ok(v>=0&&v<=1);}
 });
-test('reentry restarts; reduced motion and late frames display a complete memory',()=>{
- const end={settle:1,look:1,openness:1,dots:1,cloud:1,photo:1,expand:1};
- assert.deepEqual(memoryScene(999999),end);assert.deepEqual(memoryScene(0,false),end);
- assert.equal(memoryScene(0).photo,0);
- for(let t=-100;t<10000;t+=17)for(const v of Object.values(memoryScene(t)))assert.ok(v>=0&&v<=1);
+test('reentry resets and reduced motion or late frames show a completed memory',()=>{
+ assert.deepEqual(memoryScene(999999),{frame:1,expand:1});assert.deepEqual(memoryScene(0,false),{frame:1,expand:1});assert.equal(memoryScene(0).frame,0);
 });
-test('all reveal phases balance context saves; missing image is safe',()=>{
- let depth=0,drawn=0;
- const ctx=new Proxy({save(){depth++;},restore(){depth--;assert.ok(depth>=0);},drawImage(){drawn++;}},{get:(o,k)=>k in o?o[k]:()=>{}});
- for(const t of [0,1500,2500,4000,6500,8000]){
- drawMemoryCloud(ctx,null,memoryScene(t));assert.equal(depth,0);
- drawMemoryCloud(ctx,{width:300,height:400},memoryScene(t));assert.equal(depth,0);
- }
- assert.equal(drawn,3);
+test('frame rendering balances context ownership, including missing images',()=>{
+ let depth=0,drawn=0;const ctx=new Proxy({save(){depth++;},restore(){depth--;assert.ok(depth>=0);},drawImage(){drawn++;}},{get:(o,k)=>k in o?o[k]:()=>{}});
+ for(const t of [0,900,2500,4000,6500,8000]){drawMemoryPhoto(ctx,null,memoryScene(t));assert.equal(depth,0);drawMemoryPhoto(ctx,{width:300,height:400},memoryScene(t));assert.equal(depth,0);}assert.equal(drawn,5);
 });
-
 test('spring has a controlled overshoot and settles exactly',()=>{
- assert.equal(memorySpring(0),0);assert.equal(memorySpring(1),1);
- assert.ok(memorySpring(.7)>1);
- for(let t=0;t<1;t+=.01)assert.ok(memorySpring(t)>=0&&memorySpring(t)<1.09);
+ assert.equal(memorySpring(0),0);assert.equal(memorySpring(1),1);assert.ok(memorySpring(.7)>1);for(let t=0;t<1;t+=.01)assert.ok(memorySpring(t)>=0&&memorySpring(t)<1.09);
 });
-
-test('eyes and mouth have distinct bounded follow-through on one clock',()=>{
- const rest={eyeY:0,eyeScaleY:1,mouthY:0,mouthScaleY:1};
- assert.deepEqual(faceFollowThrough(0),rest);
- assert.deepEqual(faceFollowThrough(1500),rest);
- assert.deepEqual(faceFollowThrough(300,false),rest);
- const moving=faceFollowThrough(250);
- assert.notEqual(moving.eyeScaleY,moving.mouthScaleY);
+test('eyes and mouth retain distinct bounded follow-through on one clock',()=>{
+ const rest={eyeY:0,eyeScaleY:1,mouthY:0,mouthScaleY:1};assert.deepEqual(faceFollowThrough(0),rest);assert.deepEqual(faceFollowThrough(1500),rest);assert.deepEqual(faceFollowThrough(300,false),rest);const f=faceFollowThrough(250);assert.notEqual(f.eyeScaleY,f.mouthScaleY);
  for(let t=0;t<1500;t+=10){const p=faceFollowThrough(t);assert.ok(Math.abs(p.eyeY)<=1.8);assert.ok(Math.abs(p.mouthY)<=2.2);}
-});
-
-test('thought dots stay outside both eyes with a visible gap beside the face',()=>{
- const dots=memoryThoughtDots();
- // Right eye outer edge in the settled, up-right-looking face.
- const rightEdge=3.92+.72*(89+6+26/2);
- for(const [,x,,radius] of dots)assert.ok(x-radius>rightEdge+5);
- for(let i=1;i<dots.length;i++){
-  assert.ok(dots[i][1]>dots[i-1][1]);
-  assert.ok(dots[i][2]<dots[i-1][2]);
- }
 });

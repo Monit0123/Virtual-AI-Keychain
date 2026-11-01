@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict');
-test('actual canvas: both eyes remain visible beneath cloud and photo covers every final pixel',()=>{
+test('actual canvas: both eyes remain visible above the photo frame and photo covers every final pixel',()=>{
 const {createCanvas}=require('@napi-rs/canvas');
 const vm=require('vm'),fs=require('fs');
 const root=require('node:path').join(__dirname,'../preview/');
@@ -19,8 +19,9 @@ vm.runInContext("memoryImage=testPhoto;companion.dispatch('LOAD_MEMORY',0,{name:
 let mid,full;
 for(clock=0;clock<=9000;clock+=16){frame(clock);if(clock===4000)mid=canvas.getContext('2d').getImageData(0,0,128,128).data;if(clock===8000)full=canvas.getContext('2d').getImageData(0,0,128,128).data;}
 function lit(x1,y1,x2,y2){let count=0;for(let y=y1;y<y2;y++)for(let x=x1;x<x2;x++){const i=(y*128+x)*4;if(mid[i]>100&&mid[i+1]>160&&mid[i+2]>140)count++;}return count;}
-assert.ok(lit(26,72,46,96)>130,'left eye must be visible below cloud');
-assert.ok(lit(62,72,82,96)>130,'right eye must be visible below cloud');
+assert.ok(lit(24,33,54,60)>25,'left eye stays above the photo frame');
+assert.ok(lit(74,33,104,60)>25,'right eye stays above the photo frame');
+assert.deepEqual(Array.from(mid.slice((109*128+64)*4,(109*128+64)*4+4)),[255,51,85,255],'the actual selected photo is already inside the small frame before expansion');
 for(let i=0;i<full.length;i+=4){assert.ok(Math.abs(full[i]-255)<=1);assert.ok(Math.abs(full[i+1]-51)<=1);assert.ok(Math.abs(full[i+2]-85)<=1);assert.equal(full[i+3],255);}
 assert.equal(vm.runInContext('companion.state',ctx),'SHOWING_PHOTO');
 clock=9100;
@@ -64,7 +65,7 @@ assert.equal(vm.runInContext('companion.memory.name',ctx),'three','explicit gall
 vm.runInContext("dispatch('HOME_REQUESTED');listeningSession.enabled=true",ctx);
 for(const id of ['idle','happy','excited','surprised','sleepy','sad','angry','love','listening','thinking','speaking','photo','error']){
  const before=vm.runInContext('faceStudy.active?JSON.stringify(faceStudy.sample(performance.now())):null',ctx);
- vm.runInContext(`chooseFace('${id}')`,ctx);
+ vm.runInContext(`chooseFace('${id}',{studyOnly:true})`,ctx);
  if(before){const source=JSON.parse(before),captured=JSON.parse(vm.runInContext('JSON.stringify(faceStudy.previous.frame)',ctx));assert.deepEqual(captured.pose,source.pose,'Home cleanup must not erase the visible source pose');assert.deepEqual(captured.features,source.features);}
  clock+=750;frame(clock);
  assert.equal(vm.runInContext('faceStudy.id',ctx),id);
@@ -80,6 +81,9 @@ const beforeCursor=vm.runInContext('expressionCursor',ctx);
 vm.runInContext("const key={key:'Enter',repeat:false,preventDefault(){}};document.querySelector('#button-a').onkeydown(key);document.querySelector('#button-a').onkeyup(key);",ctx);
 assert.equal(vm.runInContext('expressionCursor',ctx),(beforeCursor+1)%8);
 assert.equal(vm.runInContext('companion.state',ctx),'EXPRESSING');
+vm.runInContext("chooseFace('photo')",ctx);
+assert.equal(vm.runInContext('companion.state',ctx),'SHOWING_PHOTO');
+assert.equal(vm.runInContext('faceStudy.active',ctx),false,'Showing Photo is the real random-memory action, not a second visual-only scene');
 
 
 

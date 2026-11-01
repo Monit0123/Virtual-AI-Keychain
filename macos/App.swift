@@ -49,7 +49,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
         if (!window.KeychainDesktop) throw new Error('Native bridge not installed');
         if (companion.state !== 'IDLE') throw new Error('Controller not idle');
         if(document.querySelectorAll('[data-face-id]').length!==13) throw new Error('Missing face designs');
-        for(const d of REFERENCE_FACES){chooseFace(d.id);if(faceStudy.id!==d.id||companion.state!=='IDLE')throw new Error('Design preview failed: '+d.id);}
+        for(const d of REFERENCE_FACES){chooseFace(d.id,{studyOnly:true});if(faceStudy.id!==d.id||companion.state!=='IDLE')throw new Error('Design preview failed: '+d.id);}
         document.querySelector('#return-live').click();
         if(faceStudy.active)throw new Error('Could not return to live companion');
         await realAudio.unlock();
