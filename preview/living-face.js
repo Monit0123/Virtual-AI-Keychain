@@ -47,47 +47,76 @@ function livingFaceFrame(id,elapsed=0,motion=true){
   case 'error':pose.h=27;pose.curve=-2;f.warning=motion?ease((phase-.22)/.12)*(1-ease((phase-.65)/.15)):1;f.x=motion?track([0,-1,1,0,0,0,0,0],phase):0;break;
  }
  if(!motion){f.x=0;f.y=0;f.tilt=0;f.scale=1;}
+ f.gazeX=motion?track([0,0,1.2,1.2,0,-1,-1,0],phase):0;f.gazeY=motion?Math.sin(t/2000)*.35:0;
+ f.thinking=design.id==='thinking'?1:0;f.features=Object.fromEntries(REFERENCE_FACES.map(d=>[d.id,d.id===design.id?1:0]));
  return f;
 }
 function heart(p,x,y,s){p.beginPath();p.moveTo(x,y+s*.7);p.bezierCurveTo(x-s*1.3,y-s*.2,x-s*.65,y-s,x,y-s*.3);p.bezierCurveTo(x+s*.65,y-s,x+s*1.3,y-s*.2,x,y+s*.7);p.fill();}
 function star(p,x,y,s){p.beginPath();p.moveTo(x,y-s);p.quadraticCurveTo(x+s*.2,y-s*.2,x+s,y);p.quadraticCurveTo(x+s*.2,y+s*.2,x,y+s);p.quadraticCurveTo(x-s*.2,y+s*.2,x-s,y);p.quadraticCurveTo(x-s*.2,y-s*.2,x,y-s);p.fill();}
 function drawLivingFace(p,frame,{mouth=true}={}){
- const f=frame,pose=f.pose,t=f.now;
+ const f=frame,pose=f.pose,t=f.now,feature=id=>f.features?.[id]??(f.id===id?1:0);
  p.save();p.translate(64+f.x,63+f.y);p.rotate(f.tilt);p.scale(f.scale,f.scale);p.translate(-64,-63);
  p.lineCap='round';p.lineJoin='round';p.lineWidth=1.7;p.fillStyle=p.strokeStyle='#efd3ff';p.shadowColor='#d892f5';p.shadowBlur=2;
- const hideEyes=f.id==='thinking'?1:Math.max(f.wave,f.warning);
+ const hideEyes=Math.max(f.thinking||0,f.wave,f.warning);
  if(hideEyes<1){p.save();p.globalAlpha*=1-hideEyes;
-  for(const [x,left] of [[39,true],[89,false]]){p.save();p.translate(x,48);p.scale(f.eyeScale,f.eyeScale);faceAPI.drawBunnyEye(p,0,0,left,f.open,{...pose,gazeX:f.motion?track([0,0,1.2,1.2,0,-1,-1,0],f.phase):0,gazeY:f.motion?Math.sin(t/2000)*.35:0});p.restore();}p.restore();}
+  for(const [x,left] of [[39,true],[89,false]]){p.save();p.translate(x,48);p.scale(f.eyeScale,f.eyeScale);faceAPI.drawBunnyEye(p,0,0,left,f.open,{...pose,gazeX:f.gazeX||0,gazeY:f.gazeY||0});p.restore();}p.restore();}
  // Blush follows the face, not the eyes, so gaze and cheek motion have different weight.
  p.save();p.strokeStyle='#ff9fdb';p.globalAlpha*=Math.min(1,f.blush*.8);p.lineWidth=1.7;
  for(const cx of [31,97])for(let n=-1;n<=1;n++){p.beginPath();p.moveTo(cx+n*3.6-1,74);p.lineTo(cx+n*3.6+1,70);p.stroke();}p.restore();
- if(f.id==='thinking'){
+ if(f.thinking>0){p.save();p.globalAlpha*=f.thinking;
   for(let n=0;n<3;n++){p.save();p.globalAlpha*=f.motion?.45+.55*(.5+.5*Math.sin(t/480-n*1.1)):1;p.beginPath();p.arc(50+n*14,49,2.5,0,Math.PI*2);p.fill();p.restore();}
+  p.restore();
  }
  if(f.wave>0){p.save();p.globalAlpha*=f.wave;p.lineWidth=2.2;for(let n=-5;n<=5;n++){const h=f.motion?1.3+(1-Math.abs(n)/7)*(3+8*Math.abs(Math.sin(t/230+n*.73))*Math.abs(Math.sin(t/1100))):3+6*(1-Math.abs(n)/5);p.beginPath();p.moveTo(64+n*4,49-h);p.lineTo(64+n*4,49+h);p.stroke();}p.restore();}
  if(f.warning>0){p.save();p.globalAlpha*=f.warning;p.strokeStyle='#ff8cbc';p.lineWidth=1.8;p.beginPath();p.moveTo(64,34);p.lineTo(78,59);p.quadraticCurveTo(79,62,76,62);p.lineTo(52,62);p.quadraticCurveTo(49,62,50,59);p.closePath();p.stroke();p.beginPath();p.moveTo(64,44);p.lineTo(64,52);p.stroke();p.fillStyle='#ff8cbc';p.beginPath();p.arc(64,57,1,0,Math.PI*2);p.fill();p.restore();}
  if(f.photo>0){p.save();p.globalAlpha*=f.photo;p.lineWidth=1.4;p.beginPath();p.roundRect(53,82,22,16,2);p.stroke();p.beginPath();p.moveTo(56,94);p.lineTo(61,89);p.lineTo(65,93);p.lineTo(69,87);p.lineTo(72,94);p.stroke();p.beginPath();p.arc(58,86,1,0,Math.PI*2);p.fill();p.restore();}
- if(mouth&&f.id!=='photo'&&f.id!=='thinking'&&f.wave<.1&&f.warning<.1){p.lineWidth=1.4;p.beginPath();if(pose.mh>0){p.ellipse(64,87,pose.mw/2,pose.mh/2,0,0,Math.PI*2);}else{p.moveTo(64-pose.mw/2,85);p.quadraticCurveTo(64,85+pose.curve,64+pose.mw/2,85);}p.stroke();}
- p.fillStyle=p.strokeStyle='#ffaddf';p.lineWidth=1.3;
- if(f.id==='love'||f.id==='photo'||f.id==='error'){
-  const particles=f.id==='love'?[[16,30,3,.13],[107,25,3.8,.67],[99,16,2.2,.39]]:[[25,27,2,.18],[103,24,2.5,.7]];
-  for(const [x,y,s,offset] of particles){const life=f.motion?(f.phase+offset)%1:.5;p.save();p.globalAlpha*=f.motion?Math.sin(life*Math.PI)*.8:.6;heart(p,x+(f.motion?Math.sin(life*5+offset)*2:0),y+(f.motion?(1-life)*12:0),s);p.restore();}
+ const mouthAlpha=(1-f.photo)*(1-(f.thinking||0))*(1-f.wave)*(1-f.warning);
+ if(mouth&&mouthAlpha>0){p.save();p.globalAlpha*=mouthAlpha;p.lineWidth=1.4;
+  const w=pose.mw/2,h=pose.mh*2/3,cy=86;
+  p.beginPath();p.moveTo(64-w,cy);p.bezierCurveTo(64-w,cy+h+pose.curve,64+w,cy+h+pose.curve,64+w,cy);p.bezierCurveTo(64+w,cy-h+pose.curve,64-w,cy-h+pose.curve,64-w,cy);p.closePath();p.stroke();p.restore();
  }
- if(f.id==='excited'){for(const [x,y,s,k] of [[18,31,3,0],[110,28,4,1],[108,68,2,2]]){p.save();p.globalAlpha*=f.motion?.55+.4*Math.sin(t/500+k)**2:1;star(p,x,y,s);p.restore();}}
- if(f.id==='sleepy'){for(const [x,y,s,k] of [[100,27,4,0],[109,20,3,1]]){p.save();p.globalAlpha*=f.motion?.4+.45*Math.sin(t/1200+k)**2:.8;const rise=f.motion?Math.sin(t/1400+k)*1.5:0;p.beginPath();p.moveTo(x,y+rise);p.lineTo(x+s,y+rise);p.lineTo(x,y+s+rise);p.lineTo(x+s,y+s+rise);p.stroke();p.restore();}}
- if(f.id==='angry'){for(const [x,y,s] of [[104,24,-1],[111,24,1],[104,31,-1],[111,31,1]]){p.beginPath();p.moveTo(x,y-2*s);p.lineTo(x,y);p.lineTo(x+2*s,y);p.stroke();}}
- if(f.id==='happy'&&(!f.motion||(f.phase>.25&&f.phase<.6))){for(const [x,y] of [[103,25],[108,27]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+2,y-3);p.stroke();}}
- if(f.id==='surprised'){for(const [x,y] of [[104,23],[110,27]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+2,y-4);p.stroke();}}
- if(f.id==='listening'){p.strokeStyle='#e7c7ff';p.lineWidth=1;for(const side of [-1,1])for(let n=0;n<3;n++){p.save();p.globalAlpha*=f.motion?.18+.5*(.5+.5*Math.sin(t/480-n*.9)):.5;p.beginPath();p.arc(side<0?19:109,48,5+n*3,side<0?2.2:-.9,side<0?4.1:.9);p.stroke();p.restore();}}
+ p.fillStyle=p.strokeStyle='#ffaddf';p.lineWidth=1.3;
+ const affection=Math.max(feature('love'),feature('photo'),feature('error'));
+ if(affection>0){
+  const particles=[[16,30,3,.13],[107,25,3.8,.67],[99,16,2.2,.39]];
+  particles.forEach(([x,y,s,offset],i)=>{const weight=i===2?feature('love'):affection;if(weight<=0)return;const life=f.motion?(f.phase+offset)%1:.5;p.save();p.globalAlpha*=weight*(f.motion?Math.sin(life*Math.PI)*.8:.6);heart(p,x+(f.motion?Math.sin(life*5+offset)*2:0),y+(f.motion?(1-life)*12:0),s);p.restore();});
+ }
+ if(feature('excited')>0){p.save();p.globalAlpha*=feature('excited');for(const [x,y,s,k] of [[18,31,3,0],[110,28,4,1],[108,68,2,2]]){p.save();p.globalAlpha*=f.motion?.55+.4*Math.sin(t/500+k)**2:1;star(p,x,y,s);p.restore();}p.restore();}
+ if(feature('sleepy')>0){p.save();p.globalAlpha*=feature('sleepy');for(const [x,y,s,k] of [[100,27,4,0],[109,20,3,1]]){p.save();p.globalAlpha*=f.motion?.4+.45*Math.sin(t/1200+k)**2:.8;const rise=f.motion?Math.sin(t/1400+k)*1.5:0;p.beginPath();p.moveTo(x,y+rise);p.lineTo(x+s,y+rise);p.lineTo(x,y+s+rise);p.lineTo(x+s,y+s+rise);p.stroke();p.restore();}p.restore();}
+ if(feature('angry')>0){p.save();p.globalAlpha*=feature('angry');for(const [x,y,s] of [[104,24,-1],[111,24,1],[104,31,-1],[111,31,1]]){p.beginPath();p.moveTo(x,y-2*s);p.lineTo(x,y);p.lineTo(x+2*s,y);p.stroke();}p.restore();}
+ if(feature('happy')>0&&(!f.motion||(f.phase>.25&&f.phase<.6))){p.save();p.globalAlpha*=feature('happy');for(const [x,y] of [[103,25],[108,27]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+2,y-3);p.stroke();}p.restore();}
+ if(feature('surprised')>0){p.save();p.globalAlpha*=feature('surprised');for(const [x,y] of [[104,23],[110,27]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+2,y-4);p.stroke();}p.restore();}
+ if(feature('listening')>0){p.save();p.globalAlpha*=feature('listening');p.strokeStyle='#e7c7ff';p.lineWidth=1;for(const side of [-1,1])for(let n=0;n<3;n++){p.save();p.globalAlpha*=f.motion?.18+.5*(.5+.5*Math.sin(t/480-n*.9)):.5;p.beginPath();p.arc(side<0?19:109,48,5+n*3,side<0?2.2:-.9,side<0?4.1:.9);p.stroke();p.restore();}p.restore();}
  p.restore();
 }
+const transitionEase=x=>{x=clamp(x);return x*x*x*(x*(x*6-15)+10);};
+const copyFrame=f=>({...f,pose:{...f.pose},features:{...f.features}});
 class FaceStudy {
- constructor(){this.id=null;this.since=0;this.previous=null;this.tour=false;}
- select(id,now){if(!REFERENCE_FACES.some(d=>d.id===id))return false;this.previous=this.id?{id:this.id,elapsed:Math.max(0,now-this.since)}:null;this.id=id;this.since=now;return true;}
+ constructor(){this.id=null;this.since=0;this.previous=null;this.tour=false;this.transitionMs=850;}
+ select(id,now,source=null){
+  if(!REFERENCE_FACES.some(d=>d.id===id))return false;
+  const visible=source||this.sample(now,true),oldId=this.id,elapsed=Math.max(0,now-this.since);
+  this.previous=visible?{id:oldId||visible.id,elapsed,frame:copyFrame(visible)}:null;
+  this.id=id;this.since=now;return true;
+ }
  stop(){this.id=null;this.previous=null;this.tour=false;}
  get active(){return this.id!==null;}
- update(now,motion=true){if(!this.active)return null;const design=REFERENCE_FACES.find(d=>d.id===this.id);if(this.tour&&now-this.since>=design.duration){const next=REFERENCE_FACES[(REFERENCE_FACES.indexOf(design)+1)%REFERENCE_FACES.length];this.select(next.id,now);}return livingFaceFrame(this.id,now-this.since,motion);}
- draw(p,now,motion=true,options={}){const f=this.update(now,motion);if(!f)return;const blend=motion?ease((now-this.since)/440):1;if(this.previous&&blend<1){p.save();p.globalAlpha*=1-blend;drawLivingFace(p,livingFaceFrame(this.previous.id,this.previous.elapsed,motion),options);p.restore();}p.save();p.globalAlpha*=this.previous?blend:1;drawLivingFace(p,f,options);p.restore();}
+ sample(now,motion=true){
+  if(!this.active)return null;
+  const target=livingFaceFrame(this.id,now-this.since,motion);
+  if(!motion){this.previous=null;return target;}
+  if(!this.previous||now-this.since>=this.transitionMs)return target;
+  const from=this.previous.frame,age=Math.max(0,now-this.since),t=transitionEase(age/this.transitionMs),mouthT=transitionEase((age-65)/(this.transitionMs-65));
+  const frame=copyFrame(target);
+  for(const key of Object.keys(target))if(typeof target[key]==='number')frame[key]=(from[key]??target[key])+(target[key]-(from[key]??target[key]))*t;
+  for(const key of Object.keys(target.pose)){const u=['mw','mh','curve'].includes(key)?mouthT:t;frame.pose[key]=from.pose[key]+(target.pose[key]-from.pose[key])*u;}
+  for(const key of Object.keys(target.features))frame.features[key]=(from.features[key]||0)+(target.features[key]-(from.features[key]||0))*t;
+  // Labels follow the selected design; geometry and effect ownership follow the visible frame.
+  frame.beat=target.beat;frame.phase=from.phase+(target.phase-from.phase)*t;return frame;
+ }
+ update(now,motion=true){if(!this.active)return null;const design=REFERENCE_FACES.find(d=>d.id===this.id);if(this.tour&&now-this.since>=design.duration){const next=REFERENCE_FACES[(REFERENCE_FACES.indexOf(design)+1)%REFERENCE_FACES.length];this.select(next.id,now);}return this.sample(now,motion);}
+ draw(p,now,motion=true,options={}){const f=this.update(now,motion);if(f)drawLivingFace(p,f,options);}
 }
+
 const api={REFERENCE_FACES,livingFaceFrame,drawLivingFace,FaceStudy};if(typeof module!=='undefined'&&module.exports)module.exports=api;else Object.assign(root,api);
 })(globalThis);

@@ -8,7 +8,7 @@ The user-supplied expression sheet is the visual reference. The implementation u
 - Permanent pink triple-stroke cheek accents, a small optional-style mouth, restrained glow on a near-black background.
 - Eight selectable expressions: neutral/blink, happy arches, sad tilted eyes, surprised tall eyes, sleepy lids, playful angry wedges, excited stars and love hearts.
 - Listening side arcs, thinking dots, and a speaking equalizer accent. These are state indicators, not proof of microphone pickup or audio synchronization. Existing response/error text screens remain readable.
-- Existing slow transition/blink clocks, independent eye/mouth follow-through and snuggle transforms are retained. Silhouettes crossfade during expression morphs; reduced motion freezes accent motion.
+- Existing slow transition/blink clocks, independent eye/mouth follow-through and snuggle transforms are retained. Silhouette weights interpolate during expression morphs; reduced motion freezes accent motion.
 
 The studio uses an ink/lilac palette and a champagne frame. The actual display stays 128×128, with supersampling for anti-aliasing; the case is a visual study, not a manufactured enclosure design. Gallery photos still reveal through the existing cloud and ultimately cover the full screen, without a bunny overlay obscuring them.
 
@@ -29,7 +29,7 @@ The renderer now includes actual drooping sad silhouettes, filled sleepy lids, a
 ### Interaction contract
 
 - Clicking any design opens an explicitly labeled **visual study**, with no microphone or speaker side effect. It cancels an old real action through Home first, then loops the selected design.
-- **Play all 13** tours the designs; **Return to live companion** exits immediately. Rapid changes crossfade over 440 ms without adding primary FSM states.
+- **Play all 13** tours the designs; **Return to live companion** exits immediately. Rapid changes morph over 850 ms without adding primary FSM states.
 - Listening intent is preserved but microphone capture pauses while studying designs; returning live permits automatic re-arming. Actual Start microphone, playback, Home and other product actions leave the visual study.
 - Real idle, emotion, listening, thinking and speaking states use the same complete face renderer. Native greeting playback also selects the speaking design. Existing snuggle and memory-cloud choreography retain their dedicated renderer; full-screen photos remain unobscured. Real error/reply text remains readable rather than being replaced with decorative icons.
 - **Tiny mouth** is optional; reduced motion freezes animation but keeps every design recognizable. State/beat captions and buttons remain outside the 128×128 device.
@@ -42,3 +42,12 @@ Automated checks cover all 13 distinct designs, all eight key beats, loop/tour b
 `preview/face-surface.js` separates the 128×128 logical face coordinates from the preview's actual backing pixels. Paths render at 4×–8× resolution and are filtered **once directly to the screen-density backing buffer**, instead of shrinking to 128×128 and then enlarging again through CSS. At 288 CSS pixels on a 2× display the presentation is 576×576 and the source is 640×640. Buffer dimensions are bounded to avoid unlimited GPU/memory allocation.
 
 Resizing the window or moving between screen densities reconfigures the surface; the render transform remains in 128×128 logical coordinates. Button thumbnails also use screen-density backing buffers. Rounded path joins/caps, curved-vector coverage and restrained glow remain; the whole image is not blurred as a substitute for anti-aliasing. Actual 128×128 output remains covered by the raster tests. The enlarged desktop preview is deliberately smoother than an actual physical OLED grid and is not proof of hardware pixel quality.
+
+
+## Continuous expression transitions (v1.2.2)
+
+The previous button handler cleared the study through Home before selecting its replacement, discarding the outgoing pose. The handler now captures the visible frame before cleanup and hands it to the next selection. Returning to live mode transfers the same snapshot to the live renderer.
+
+Transitions interpolate eye dimensions, lid angles, pupil gaze, openness, smile/open-mouth geometry, body lean/scale and individual effect weights over 850 ms with a smooth zero-slope easing curve. The mouth follows the eyes by 65 ms. The whole face is never faded out or replaced by a transparent card; cheeks remain present while the eye shapes change. Thinking dots, voice ribbon, photo and warning motifs acquire/release ownership gradually. Rapid clicks capture the already-interpolated visible pose, not the previous expression's starting keyframe. Tours and actual live state changes use the same transition controller. Reduced motion settles directly and clears stale transition snapshots.
+
+Regression tests verify exact first-frame raster continuity, interruption continuity, geometry/effect interpolation, live/study handoffs, preserved cheek coverage and the actual page handler's source snapshot across all 13 buttons.

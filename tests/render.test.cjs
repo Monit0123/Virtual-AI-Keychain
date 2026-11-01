@@ -63,7 +63,10 @@ assert.equal(vm.runInContext('companion.memory.name',ctx),'three','explicit gall
 // Every reference design is clickable without starting its corresponding real operation.
 vm.runInContext("dispatch('HOME_REQUESTED');listeningSession.enabled=true",ctx);
 for(const id of ['idle','happy','excited','surprised','sleepy','sad','angry','love','listening','thinking','speaking','photo','error']){
- vm.runInContext(`chooseFace('${id}')`,ctx);clock+=750;frame(clock);
+ const before=vm.runInContext('faceStudy.active?JSON.stringify(faceStudy.sample(performance.now())):null',ctx);
+ vm.runInContext(`chooseFace('${id}')`,ctx);
+ if(before){const source=JSON.parse(before),captured=JSON.parse(vm.runInContext('JSON.stringify(faceStudy.previous.frame)',ctx));assert.deepEqual(captured.pose,source.pose,'Home cleanup must not erase the visible source pose');assert.deepEqual(captured.features,source.features);}
+ clock+=750;frame(clock);
  assert.equal(vm.runInContext('faceStudy.id',ctx),id);
  assert.equal(vm.runInContext('companion.state',ctx),'IDLE');
  assert.equal(vm.runInContext('realAudio.session',ctx),null);

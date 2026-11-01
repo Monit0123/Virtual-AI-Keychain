@@ -20,7 +20,7 @@
 </style>
 </head>
 <body><main>
-<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 28</span></div>
+<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 29</span></div>
 <header><div class="eyebrow">LITTLE ORBIT / BUNNY EDITION</div><h1>A little orbit of your own.</h1><p>Soft eyes. Familiar voices. Your favourite little moments.<br>A small companion, with a world of feeling.</p></header>
 <section class="studio" aria-label="Interactive face studio">
 <div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><p id="stage-presence" class="presence">A quiet little presence.</p><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
@@ -155,7 +155,9 @@ for(const event of ['pointerdown','keydown'])document.addEventListener(event,e=>
 },{passive:true});
 let memoryImage=null,seenRevision=-1,savedFace=null;
 function stopFaceStudy(){
+ const now=performance.now(),source=faceStudy.sample(now,animator.motion);
  const wasActive=faceStudy.active;faceStudy.stop();
+ if(source)liveFace.select('idle',now,source);
  if(wasActive&&companion.state===STATES.IDLE)companion.entered=performance.now();
  if(wasActive)status();
  document.querySelector('#preview-mode').textContent='LIVE COMPANION';
@@ -396,8 +398,10 @@ function status(){
  setStudioText('#status',faceStudy.active?'Visual preview only · no real device operation':label+' · live companion');
 }
 function chooseFace(id){
+ if(!REFERENCE_FACES.some(d=>d.id===id))return false;
+ const now=performance.now(),visible=faceStudy.sample(now,animator.motion)||liveFace.sample(now,animator.motion)||livingFaceFrame('idle',0,animator.motion);
  dispatch('HOME_REQUESTED');
- faceStudy.select(id,performance.now());listeningSession.pause();
+ faceStudy.select(id,now,visible);listeningSession.pause();
  const design=REFERENCE_FACES.find(d=>d.id===id);
  setStudioText('#face-description',design.description);
  document.querySelector('#preview-mode').textContent='EXPRESSION STUDY · VISUAL ONLY';
