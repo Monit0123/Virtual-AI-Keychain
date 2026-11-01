@@ -19,7 +19,17 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci && npm test && npm run voices:check
-      - run: bash macos/build.sh
+      - name: Build app and report compiler diagnostics
+        shell: bash
+        run: |
+          set +e
+          bash macos/build.sh > mac-build.log 2>&1
+          code=$?
+          cat mac-build.log
+          if [ "$code" -ne 0 ]; then
+            python3 -c 'from pathlib import Path; text=Path("mac-build.log").read_text(); print("::error::"+text[-12000:].replace("%","%25").replace("\n","%0A").replace("\r","%0D"))'
+          fi
+          exit "$code"
       - name: Native app smoke test (no microphone permission prompt)
         run: '"artifacts/Keychain Simulator.app/Contents/MacOS/KeychainSimulator" --smoke-test'
       - name: Validate disk image
