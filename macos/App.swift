@@ -62,13 +62,13 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
         greetingAudio.stop();
         return 'PASS: native bridge, UI, four WAV decodes, persistent audio import/restore, Web Audio source start/cancel';
         """
-        webView.callAsyncJavaScript(script, arguments: [:], in: nil, contentWorld: .page) { result in
-            switch result {
-            case .success(let value):
-                print(value)
+        Task { @MainActor in
+            do {
+                let value = try await webView.callAsyncJavaScript(script, arguments: [:], in: nil, contentWorld: .page)
+                print(value as Any)
                 try? FileManager.default.removeItem(at: self.audioURL("voice_004"))
                 exit(0)
-            case .failure(let error):
+            } catch {
                 fputs("NATIVE SMOKE FAILED: \(error)\n", stderr)
                 exit(1)
             }

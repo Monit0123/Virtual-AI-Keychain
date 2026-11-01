@@ -31,7 +31,16 @@ jobs:
           fi
           exit "$code"
       - name: Native app smoke test (no microphone permission prompt)
-        run: '"artifacts/Keychain Simulator.app/Contents/MacOS/KeychainSimulator" --smoke-test'
+        shell: bash
+        run: |
+          set +e
+          "artifacts/Keychain Simulator.app/Contents/MacOS/KeychainSimulator" --smoke-test > native-smoke.log 2>&1
+          code=$?
+          cat native-smoke.log
+          if [ "$code" -ne 0 ]; then
+            python3 -c 'from pathlib import Path; text=Path("native-smoke.log").read_text(); print("::error::"+text[-12000:].replace("%","%25").replace("\n","%0A").replace("\r","%0D"))'
+          fi
+          exit "$code"
       - name: Validate disk image
         run: hdiutil verify artifacts/Keychain-Simulator-macOS-universal.dmg
       - uses: actions/upload-artifact@v4
