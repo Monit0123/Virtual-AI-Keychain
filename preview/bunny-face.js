@@ -14,10 +14,14 @@ function eyeContour(pose,left){
  for(let n=0;n<80;n++){
   const t=n*Math.PI*2/80,c=Math.cos(t),sn=Math.sin(t),x=sn*w*.44;
   const top=-1+(left?1:-1)*x/w*8,sadTop=-3-(left?1:-1)*x/w*8;
-  // Smooth four-point star: broad concave sides, rounded tips AND valleys.
-  // A continuous radial curve avoids both polygon cusps and narrow plus arms.
-  const r=10.5+3.5*Math.cos(4*t);
-  const shapes={bunny:[x,-c*h*.52],love:[12.8*sn**3,-.8*(13*c-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))],spark:[sn*r,-c*r],happy:[sn*w*.42,2-h*.28*c*c-c*1.3],sleepy:[x,-3+(c>0?-c*.8:-c*8)],angry:[x,top+(c>0?-c*1.2:-c*11)],sad:[x,sadTop+(c>0?-c*1.2:-c*h*.45)]};
+  // Two cubic curves per quadrant: rounded tips and concave, rounded valleys.
+  // Unlike a sinusoidal radius, these taper into a star rather than plus arms.
+  const q=Math.floor(n/20),u=(n%20)/10,v=u<=1?u:u-1;
+  const controls=u<=1?[[0,-14],[1.8,-14],[2,-7],[4.5,-4.5]]:[[4.5,-4.5],[7,-2],[14,-1.8],[14,0]];
+  const weightsB=[(1-v)**3,3*(1-v)**2*v,3*(1-v)*v*v,v**3];
+  const sx=controls.reduce((sum,p,i)=>sum+p[0]*weightsB[i],0),sy=controls.reduce((sum,p,i)=>sum+p[1]*weightsB[i],0),angle=q*Math.PI/2;
+  const starPoint=[sx*Math.cos(angle)-sy*Math.sin(angle),sx*Math.sin(angle)+sy*Math.cos(angle)];
+  const shapes={bunny:[x,-c*h*.52],love:[12.8*sn**3,-.8*(13*c-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))],spark:starPoint,happy:[sn*w*.42,2-h*.28*c*c-c*1.3],sleepy:[x,-3+(c>0?-c*.8:-c*8)],angry:[x,top+(c>0?-c*1.2:-c*11)],sad:[x,sadTop+(c>0?-c*1.2:-c*h*.45)]};
   points.push(Object.entries(weights).reduce((v,[name,k])=>[v[0]+shapes[name][0]*k,v[1]+shapes[name][1]*k],[0,0]));
  }
  return {points,bunny:remaining};

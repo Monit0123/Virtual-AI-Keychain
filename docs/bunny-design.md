@@ -81,4 +81,4 @@ Excited eyes now morph to a true five-point star with alternating 14-unit tips a
 
 ## Rounded four-point excited eyes (v1.3.4 — supersedes five-point design)
 
-Per the revised shape direction, excited eyes have four points with rounded tips, smoothly concave sides and rounded inward corners. A smooth radial contour (radius 10.5 + 3.5 cos(4θ)) replaces the polygonal five-point star. Its broad 7-unit inner radius avoids the earlier narrow plus-sign arms; the 14-unit tips have finite curvature rather than cusps. The same 80-vertex contour still morphs continuously at constant outline opacity, with the face centred. Decorative sparkles remain unchanged.
+Per the revised shape direction, excited eyes have four points with rounded tips, smoothly concave sides and rounded inward corners. Two tangent-continuous cubic Bézier curves per quadrant replace the polygonal five-point star. The inward corners sit at (±4.5, ±4.5), with tapered, curved sides and rounded 14-unit tips rather than flat plus-sign arms or sharp cusps. The same 80-vertex contour still morphs continuously at constant outline opacity, with the face centred. Decorative sparkles remain unchanged.
