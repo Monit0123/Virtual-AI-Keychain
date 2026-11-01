@@ -112,7 +112,7 @@ class FaceStudy {
  select(id,now,source=null){
   if(!REFERENCE_FACES.some(d=>d.id===id))return false;
   const visible=source||this.sample(now,true),oldId=this.id,elapsed=Math.max(0,now-this.since);
-  this.previous=visible?{id:oldId||visible.id,elapsed,frame:copyFrame(visible)}:null;
+  this.previous=visible?{id:oldId||visible.id,elapsed,blink:visible.id!==id,frame:copyFrame(visible)}:null;
   this.id=id;this.since=now;return true;
  }
  stop(){this.id=null;this.previous=null;this.tour=false;}
@@ -122,11 +122,20 @@ class FaceStudy {
   const target=livingFaceFrame(this.id,now-this.since,motion);
   if(!motion){this.previous=null;return target;}
   if(!this.previous||now-this.since>=this.transitionMs)return target;
-  const from=this.previous.frame,age=Math.max(0,now-this.since),t=transitionEase(age/this.transitionMs),mouthT=transitionEase((age-65)/(this.transitionMs-65));
+  const from=this.previous.frame,age=Math.max(0,now-this.since),blink=this.previous.blink,lead=blink?120:0;
+  const t=transitionEase((age-lead)/(this.transitionMs-lead)),mouthT=transitionEase((age-lead-65)/(this.transitionMs-lead-65));
   const frame=copyFrame(target);
   for(const key of Object.keys(target))if(typeof target[key]==='number')frame[key]=(from[key]??target[key])+(target[key]-(from[key]??target[key]))*t;
   for(const key of Object.keys(target.pose)){const u=['mw','mh','curve'].includes(key)?mouthT:t;frame.pose[key]=from.pose[key]+(target.pose[key]-from.pose[key])*u;}
   for(const key of Object.keys(target.features))frame.features[key]=(from.features[key]||0)+(target.features[key]-(from.features[key]||0))*t;
+  // One close/hold/reopen, before the destination's ambient blink clock resumes.
+  // Retargets start from the visible lid position, never jump back to open eyes.
+  if(blink){
+   if(age<120)frame.open=from.open*(1-transitionEase(age/120));
+   else if(age<180)frame.open=0;
+   else if(age<360)frame.open=transitionEase((age-180)/180);
+   else frame.open=1;
+  }
   // Labels follow the selected design; geometry and effect ownership follow the visible frame.
   frame.beat=target.beat;frame.phase=from.phase+(target.phase-from.phase)*t;return frame;
  }

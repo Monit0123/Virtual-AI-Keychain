@@ -93,3 +93,23 @@ test('excited eyes are rounded four-point stars with broad inward corners, not p
  }
  for(let i=0;i<=20;i++){const f=livingFaceFrame('idle',0);f.pose.spark=i/20;for(const [x,y] of bunnyEyeContour(f.pose,true).points)assert.ok(Number.isFinite(x)&&Number.isFinite(y));}
 });
+test('each expression change blinks exactly once, closing before the morph begins',()=>{
+ const s=new FaceStudy();s.select('love',0);s.select('angry',1000);
+ assert.equal(s.sample(1100).pose.love,1,'old eye shape is held until eyes close');
+ assert.equal(s.sample(1120).open,0);assert.equal(s.sample(1175).open,0);
+ assert.ok(s.sample(1200).pose.love<1,'shape morph starts behind closed lids');
+ assert.equal(s.sample(1360).open,1);
+ let intervals=0,closed=false;
+ for(let age=0;age<=900;age+=5){const next=s.sample(1000+age).open<.95;if(next&&!closed)intervals++;closed=next;}
+ assert.equal(intervals,1);assert.deepEqual(comparable(s.sample(1850)),comparable(livingFaceFrame('angry',850)));
+});
+test('interrupted blinks preserve lid position; same-design replays do not add a blink',()=>{
+ const s=new FaceStudy();s.select('idle',0);s.select('happy',1000);const mid=s.sample(1060);
+ assert.ok(mid.open>0&&mid.open<1);s.select('excited',1060);assert.equal(s.sample(1060).open,mid.open);
+ const visible=s.sample(1090);s.select('excited',1090);assert.equal(s.previous.blink,false);assert.deepEqual(comparable(s.sample(1090)),comparable(visible));
+ s.sample(1100,false);assert.equal(s.previous,null);assert.equal(s.sample(1110).open,1);
+});
+test('closed eyes remain solid eyelid strokes instead of becoming transparent',()=>{
+ const c=createCanvas(128,128),p=c.getContext('2d'),s=new FaceStudy();s.select('happy',0);s.select('love',1000);s.draw(p,1150);
+ for(const x of [24,74])assert.ok(p.getImageData(x,43,30,10).data.filter((v,i)=>i%4===3&&v>200).length>20);
+});

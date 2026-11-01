@@ -31,12 +31,12 @@ function contourPath(p,points){
  points.forEach((v,i)=>{const next=points[(i+1)%points.length];p.quadraticCurveTo(v[0],v[1],(v[0]+next[0])/2,(v[1]+next[1])/2);});p.closePath();
 }
 function eye(p,cx,cy,left,open,pose){
- const {points,bunny}=eyeContour(pose,left),w=Math.max(10,pose.w),h=Math.max(3,pose.h*1.2);
- p.save();p.translate(cx,cy);p.scale(1,Math.max(.075,Math.min(1,open)));p.lineWidth=2.2;p.lineJoin='round';p.strokeStyle=LAVENDER;p.shadowColor='#d992ff';p.shadowBlur=3;
+ const contour=eyeContour(pose,left),bunny=contour.bunny,lid=Math.max(.025,Math.min(1,open)),points=contour.points.map(([x,y])=>[x,y*lid]),w=Math.max(10,pose.w),h=Math.max(3,pose.h*1.2);
+ p.save();p.translate(cx,cy);p.lineWidth=2.2;p.lineJoin='round';p.strokeStyle=LAVENDER;p.shadowColor='#d992ff';p.shadowBlur=3;
  // Solid materials, not opacity blending. The outline remains fully present.
  const base=[48,32,57],lit=[239,211,255];p.fillStyle=`rgb(${base.map((v,i)=>Math.round(v+(lit[i]-v)*(1-bunny))).join(',')})`;
  contourPath(p,points);p.fill();p.stroke();
- if(bunny>0){p.save();contourPath(p,points);p.clip();p.translate(pose.gazeX||0,pose.gazeY||0);p.scale(bunny,bunny);p.fillStyle=LAVENDER;
+ if(bunny>0){p.save();contourPath(p,points);p.clip();p.translate(pose.gazeX||0,(pose.gazeY||0)*lid);p.scale(bunny,bunny*lid);p.fillStyle=LAVENDER;
   p.beginPath();p.ellipse(0,h*.2,w*.24,h*.25,0,0,Math.PI*2);p.fill();
   for(const side of [-1,1]){p.beginPath();p.ellipse(side*w*.12,-h*.05,w*.085,h*.21,side*.2,0,Math.PI*2);p.fill();}
   p.shadowBlur=0;p.fillStyle='#fff7ff';p.beginPath();p.ellipse(-w*.16,-h*.29,1.4,2.2,.3,0,Math.PI*2);p.fill();p.restore();

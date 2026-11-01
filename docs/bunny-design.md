@@ -82,3 +82,9 @@ Excited eyes now morph to a true five-point star with alternating 14-unit tips a
 ## Rounded four-point excited eyes (v1.3.4 — supersedes five-point design)
 
 Per the revised shape direction, excited eyes have four points with rounded tips, smoothly concave sides and rounded inward corners. Two tangent-continuous cubic Bézier curves per quadrant replace the polygonal five-point star. The inward corners sit at (±4.5, ±4.5), with tapered, curved sides and rounded 14-unit tips rather than flat plus-sign arms or sharp cusps. The same 80-vertex contour still morphs continuously at constant outline opacity, with the face centred. Decorative sparkles remain unchanged.
+
+## One blink before changing expression (v1.3.5)
+
+Every change to a different face starts with one deliberate blink: close over 120 ms, hold shut for 60 ms, then reopen over 180 ms. The outgoing silhouette stays unchanged until the lids have closed; the smooth destination morph then begins and finishes on the existing 850 ms transition clock. Mouth follow-through remains 65 ms behind the eye-shape morph. Ambient blinks are suppressed during the transition, avoiding a second accidental blink. Rapid retargeting captures the visible lid position; replaying the same design does not add a new blink. Live state changes, studio controls, tour changes and live/studio handoffs share this behaviour. Reduced motion still settles directly.
+
+Lids now compress contour geometry rather than scaling stroke width, so a fully closed eye remains a solid rounded line rather than fading away. No opacity/compositing animation or face translation was introduced. Tests check ordered close-before-morph, exactly one closure interval, interruption continuity, reduced motion and opaque eyelid coverage.
