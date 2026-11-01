@@ -189,7 +189,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
             urlSchemeTask.didFailWithError(NSError(domain: NSURLErrorDomain, code: NSURLErrorFileDoesNotExist)); return
         }
         let types = ["html": "text/html", "js": "application/javascript", "css": "text/css", "wav": "audio/wav", "jpg": "image/jpeg", "png": "image/png", "json": "application/json"]
-        urlSchemeTask.didReceive(URLResponse(url: url, mimeType: types[file.pathExtension] ?? "application/octet-stream", expectedContentLength: data.count, textEncodingName: nil))
+        urlSchemeTask.didReceive(HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": types[file.pathExtension] ?? "application/octet-stream", "Content-Length": String(data.count)])!)
         urlSchemeTask.didReceive(data); urlSchemeTask.didFinish()
     }
     func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
