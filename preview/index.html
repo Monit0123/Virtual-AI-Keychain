@@ -45,8 +45,8 @@
 <script src="animation.js?v=voice-index-22"></script>
 <script src="companion.js?v=voice-index-22"></script>
 <script src="face-surface.js?v=aa-28"></script>
-<script src="bunny-face.js?v=orbit-27"></script>
-<script src="living-face.js?v=orbit-27"></script>
+<script src="bunny-face.js?v=contour-30"></script>
+<script src="living-face.js?v=contour-30"></script>
 <script src="state-face.js?v=voice-index-22"></script>
 <script src="memory-scene.js?v=voice-index-22"></script>
 <script>
@@ -225,16 +225,25 @@ function handleGesture(gesture){
 }
 const buttonControls=new ButtonControls(handleGesture);
 for(const [id,selector] of [['A','#button-a'],['B','#button-b']]){
- const button=document.querySelector(selector);
- button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);buttonControls.setPressed(id,true);};
- button.onpointerup=e=>{e.preventDefault();buttonControls.setPressed(id,false);};
- button.onpointercancel=()=>buttonControls.cancel();
+ const button=document.querySelector(selector);let domPress=false;
+ const release=()=>{
+  if(!domPress)return;domPress=false;
+  const b=buttonControls.buttons[id],other=buttonControls.buttons[id==='A'?'B':'A'];
+  buttonControls.setPressed(id,false);
+  // A DOM click can finish between animation samples. Don't lose it; the
+  // hardware model still debounces sampled inputs and owns holds/chords.
+  if(!b.stable&&!b.sent&&!b.suppressed&&!buttonControls.chord&&!other.raw&&!other.stable)handleGesture(id+'_SHORT');
+ };
+ button.onpointerdown=e=>{e.preventDefault();domPress=true;button.setPointerCapture(e.pointerId);buttonControls.setPressed(id,true);};
+ button.onpointerup=e=>{e.preventDefault();release();};
+ button.onpointercancel=()=>{domPress=false;buttonControls.cancel();};
  button.oncontextmenu=e=>e.preventDefault();
- button.onlostpointercapture=()=>buttonControls.setPressed(id,false);
+ button.onlostpointercapture=()=>{domPress=false;buttonControls.setPressed(id,false);};
+ globalThis.addEventListener?.('blur',()=>{domPress=false;});
  // Assistive technologies may activate a button without pointer/key events.
  button.onclick=e=>{if(e.detail===0)handleGesture(id+'_SHORT');};
- button.onkeydown=e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();buttonControls.setPressed(id,true);}};
- button.onkeyup=e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();buttonControls.setPressed(id,false);}};
+ button.onkeydown=e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();if(!e.repeat){domPress=true;buttonControls.setPressed(id,true);}}};
+ button.onkeyup=e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();release();}};
 }
 document.addEventListener('keydown',e=>{
  if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;

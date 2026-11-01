@@ -40,7 +40,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
             edit.submenu?.addItem(withTitle: title, action: Selector(selector), keyEquivalent: key)
         }
         NSApp.mainMenu = menu
-        web.load(URLRequest(url: URL(string: "keychain://app/index.html")!))
+        web.load(URLRequest(url: URL(string: "keychain://app/index.html")!, cachePolicy: .reloadIgnoringLocalCacheData))
         NSApp.activate(ignoringOtherApps: true)
     }
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -193,7 +193,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
             urlSchemeTask.didFailWithError(NSError(domain: NSURLErrorDomain, code: NSURLErrorFileDoesNotExist)); return
         }
         let types = ["html": "text/html", "js": "application/javascript", "css": "text/css", "wav": "audio/wav", "jpg": "image/jpeg", "png": "image/png", "json": "application/json"]
-        urlSchemeTask.didReceive(HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": types[file.pathExtension] ?? "application/octet-stream", "Content-Length": String(data.count)])!)
+        urlSchemeTask.didReceive(HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": types[file.pathExtension] ?? "application/octet-stream", "Content-Length": String(data.count), "Cache-Control": "no-store"])!)
         urlSchemeTask.didReceive(data); urlSchemeTask.didFinish()
     }
     func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}

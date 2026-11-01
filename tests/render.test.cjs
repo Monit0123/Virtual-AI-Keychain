@@ -75,6 +75,12 @@ for(const id of ['idle','happy','excited','surprised','sleepy','sad','angry','lo
 vm.runInContext("document.querySelector('#return-live').onclick()",ctx);
 assert.equal(vm.runInContext('faceStudy.active',ctx),false);
 assert.equal(vm.runInContext('listeningSession.enabled',ctx),true,'preview pauses, rather than revokes, user listening intent');
+// DOM taps shorter than a sampled hardware debounce must not be dropped.
+const beforeCursor=vm.runInContext('expressionCursor',ctx);
+vm.runInContext("const key={key:'Enter',repeat:false,preventDefault(){}};document.querySelector('#button-a').onkeydown(key);document.querySelector('#button-a').onkeyup(key);",ctx);
+assert.equal(vm.runInContext('expressionCursor',ctx),(beforeCursor+1)%8);
+assert.equal(vm.runInContext('companion.state',ctx),'EXPRESSING');
+
 
 
 });

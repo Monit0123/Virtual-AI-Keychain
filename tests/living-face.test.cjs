@@ -55,3 +55,21 @@ test('live/study handoffs accept an explicit visible snapshot and reduced motion
  study.select('angry',2000,visible);assert.deepEqual(comparable(study.sample(2000)),comparable(visible));
  study.sample(2100,false);assert.equal(study.previous,null);assert.equal(study.sample(2150,true).pose.slope,10);
 });
+test('all expressions and intermediate morphs retain BOTH eyes without any opacity compositing',()=>{
+ const c=createCanvas(128,128),ctx=c.getContext('2d');const writes=[];
+ const p=new Proxy(ctx,{get(target,key){const v=Reflect.get(target,key,target);return typeof v==='function'?v.bind(target):v;},set(target,key,value){if(key==='globalAlpha'||key==='globalCompositeOperation')writes.push([key,value]);return Reflect.set(target,key,value,target);}});
+ const s=new FaceStudy();let now=0;s.select('idle',now);
+ for(const d of REFERENCE_FACES){now+=1100;s.select(d.id,now);for(const age of [0,170,425,850,2200]){
+  ctx.clearRect(0,0,128,128);s.draw(p,now+age);for(const x of [24,74]){const data=ctx.getImageData(x,26,30,40).data;assert.ok(data.filter((v,i)=>i%4===3&&v>150).length>20,`${d.id} at ${age} keeps eye ${x} visible`);}
+ }}
+ assert.deepEqual(writes,[],'face renderer never sets opacity or uses compositing fades');
+});
+test('body stays anchored in the centre even when legacy poses request translation',()=>{
+ const f=livingFaceFrame('love',1700),a=createCanvas(128,128),b=createCanvas(128,128);
+ drawLivingFace(a.getContext('2d'),f);drawLivingFace(b.getContext('2d'),{...f,x:40,y:-30});assert.deepEqual(a.toBuffer('image/png'),b.toBuffer('image/png'));
+});
+test('anger symbol is red and reflected correctly across both axes',()=>{
+ const {drawAngerMark}=require('../preview/bunny-face.js'),c=createCanvas(128,128),p=c.getContext('2d');drawAngerMark(p,64,64);const data=p.getImageData(0,0,128,128).data;let red=0,error=0;
+ for(let y=55;y<73;y++)for(let x=55;x<73;x++){const i=(y*128+x)*4,j=(y*128+127-x)*4,k=((127-y)*128+x)*4;if(data[i]>200&&data[i+1]<100&&data[i+2]<100&&data[i+3]>100)red++;error+=Math.abs(data[i+3]-data[j+3])+Math.abs(data[i+3]-data[k+3]);}
+ assert.ok(red>25);assert.ok(error<300,'four corners have horizontal and vertical symmetry');
+});
