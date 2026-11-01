@@ -8,7 +8,7 @@ const DEFINITIONS=[
  ['happy','Happy','A soft lift of the cheeks, smiling eyes, then a contented little bounce.',5600,'Notice|Warm|Smile|Lift|Glow|Sway|Smile|Settle'],
  ['excited','Excited','Star eyes brighten with a little anticipation, two light hops, then sparkle.',4800,'Anticipate|Brighten|Hop|Sparkle|Hop|Shimmer|Glow|Settle'],
  ['surprised','Surprised','A tiny recoil, wide bunny eyes, a curious tilt, then a slow recovery.',5200,'Notice|Recoil|Wide eyes|Hold|Tilt|Curious|Relax|Settle'],
- ['sleepy','Sleepy','Heavy lids, a slow nod and drifting sleep marks. Drowsy, not switched off.',7600,'Drowsy|Heavy lids|Nod|Doze|Dream|Doze|Stir|Rest'],
+ ['sleepy','Sleepy','A big opening yawn settles into soft head bobs, with rising, fading Zs before the loop repeats.',7600,'Yawn|Open wide|Exhale|Settle|Nod|Dream|Doze|Stir'],
  ['sad','Sad','Drooping eyes glance down, breathe, and quietly ask for a little comfort.',7200,'Withdraw|Lower gaze|Sigh|Hold|Look up|Soft blink|Breathe|Rest'],
  ['angry','Angry','A playful little huff: narrowed eyes and a brief frustration mark, never threatening.',5000,'Notice|Narrow|Huff|Tense|Huff|Soften|Blink|Settle'],
  ['love','Love','Heart eyes lean closer while small, independently drifting hearts rise away.',6800,'Notice|Warm|Lean|Heart eyes|Nuzzle|Float|Glow|Settle'],
@@ -27,7 +27,7 @@ function livingFaceFrame(id,elapsed=0,motion=true){
  const phase=motion?((Math.max(0,elapsed)%design.duration)/design.duration):.5;
  const t=motion?Math.max(0,elapsed):0;
  const pose={w:27,h:29,slope:0,arch:0,curve:2,mw:10,mh:0,spark:0,love:0};
- const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,now:t,motion};
+ const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,headBob:0,sleep:0,yawn:0,now:t,motion};
  if(motion){f.y=Math.sin(t/1700)*.32;f.x=track([0,0,1.2,1.2,0,-1,-1,0],phase);}
  switch(design.id){
   case 'idle':
@@ -36,7 +36,15 @@ function livingFaceFrame(id,elapsed=0,motion=true){
   case 'happy':pose.arch=1;pose.curve=6;f.y+=motion?track([0,1,-1.4,0,-.8,0,0,0],phase):0;f.blush=1.2;break;
   case 'excited':pose.spark=1;pose.curve=7;f.scale=motion?track([1,.97,1.04,1,1.025,1,1,1],phase):1;f.y+=motion?track([0,1,-2,0,-1.4,0,0,0],phase):0;break;
   case 'surprised':pose.h=35;pose.mh=9;pose.mw=7;pose.curve=0;f.y+=motion?track([0,1,-2,-2,-1,0,0,0],phase):0;f.tilt=motion?track([0,0,-.035,-.035,.045,.045,0,0],phase):0;break;
-  case 'sleepy':pose.h=8;pose.curve=1;f.open=motion?track([.9,.85,.7,.55,.45,.55,.8,.9],phase):.7;f.y+=motion?track([0,.4,1.2,2,2,1.7,.5,0],phase):1;break;
+  case 'sleepy':{
+   const loop=phase*design.duration,yawn=motion?ease((loop-350)/650)*(1-ease((loop-2000)/900)):0;
+   const doze=motion?ease((loop-2400)/700)*(1-ease((loop-6900)/700)):1;
+   f.yawn=yawn;f.sleep=doze;pose.h=24-6*yawn-16*doze;pose.mw=9+7*yawn;pose.mh=24*yawn;pose.curve=1-yawn;
+   f.open=1-.35*yawn-.85*doze;
+   f.headBob=motion?1.7*doze*(.5-.5*Math.cos((loop-3100)*Math.PI*2/2400)):0;
+   f.tilt=motion?.025*doze*Math.sin((loop-3100)*Math.PI*2/3200):0;
+   break;
+  }
   case 'sad':pose.slope=-8;pose.h=25;pose.curve=-4;f.x=motion?track([0,1,1,1,0,-.5,-.5,0],phase):0;f.y+=1.5;f.blush=.6;break;
   case 'angry':pose.slope=10;pose.h=24;pose.curve=-3;f.scale=motion?track([1,.98,1.015,1,1.01,1,1,1],phase):1;break;
   case 'love':pose.love=1;pose.curve=5;f.scale=motion?track([1,1,1.025,1.025,1.035,1.025,1,1],phase):1;f.tilt=motion?Math.sin(phase*Math.PI*2)*.035:0;f.blush=1.3;break;
@@ -74,9 +82,19 @@ function drawPhotoFrame(p,image=null,expand=0,strength=1){
   else{p.fillStyle='#22152b';p.fillRect(x,y,w,h);p.strokeStyle=p.fillStyle='#efd3ff';p.lineWidth=Math.max(.1,strength);p.beginPath();p.moveTo(x+w*.1,y+h*.8);p.lineTo(x+w*.35,y+h*.4);p.lineTo(x+w*.55,y+h*.7);p.lineTo(x+w*.8,y+h*.25);p.lineTo(x+w*.95,y+h*.8);p.stroke();p.beginPath();p.arc(x+w*.2,y+h*.2,Math.max(.01,strength),0,Math.PI*2);p.fill();}
  }finally{p.restore();}
 }
-function drawLivingFace(p,frame,{mouth=true,photoFrame=true}={}){
+// Staggered particles have bounded lifetimes; none teleports at the loop seam.
+function sleepParticles(elapsed,motion=true){
+ if(!motion)return [{x:100,y:24,size:3,alpha:.7},{x:109,y:13,size:4,alpha:.4}];
+ const loop=((Math.max(0,elapsed)%7600)+7600)%7600,particles=[];
+ for(const [i,start] of [3000,4200,5400].entries()){
+  const life=(loop-start)/2100;if(life<0||life>=1)continue;
+  particles.push({x:99+12*life+Math.sin(life*Math.PI)*1.3,y:28-25*life,size:2.7+2.3*life+i*.2,alpha:ease(life/.12)*(1-ease((life-.25)/.75))});
+ }
+ return particles;
+}
+function drawLivingFace(p,frame,{mouth=true,photoFrame=true,sleepMarks=true}={}){
  const f=frame,pose=f.pose,t=f.now,feature=id=>f.features?.[id]??(f.id===id?1:0);
- p.save();p.translate(64,63);p.rotate(f.tilt);p.scale(f.scale,f.scale);p.translate(-64,-63);
+ p.save();p.translate(64,63+(f.headBob||0));p.rotate(f.tilt);p.scale(f.scale,f.scale);p.translate(-64,-63);
  p.lineCap='round';p.lineJoin='round';p.lineWidth=1.7;p.fillStyle=p.strokeStyle='#efd3ff';p.shadowColor='#d892f5';p.shadowBlur=2;
  // Eyes stay on the face in EVERY state; activity motifs live outside them.
  for(const [x,left] of [[39,true],[89,false]]){p.save();p.translate(x,48);p.scale(f.eyeScale,f.eyeScale);faceAPI.drawBunnyEye(p,0,0,left,f.open,{...pose,gazeX:f.gazeX||0,gazeY:f.gazeY||0});p.restore();}
@@ -98,7 +116,12 @@ function drawLivingFace(p,frame,{mouth=true,photoFrame=true}={}){
   particles.forEach(([x,y,s,offset],i)=>{const weight=i===2?feature('love'):affection;if(weight<=0)return;const life=f.motion?(f.phase+offset)%1:.5;p.save();heart(p,x+(f.motion?Math.sin(life*5+offset)*2:0),y+(f.motion?(1-life)*12:0),s*weight*(f.motion?Math.sin(life*Math.PI):1));p.restore();});
  }
  if(feature('excited')>0){p.save();p.translate(107,25);p.scale(feature('excited'),feature('excited'));p.translate(-107,-25);for(const [x,y,s,k] of [[18,31,3,0],[110,28,4,1],[108,68,2,2]]){p.save();star(p,x,y,s);p.restore();}p.restore();}
- if(feature('sleepy')>0){p.save();p.translate(107,25);p.scale(feature('sleepy'),feature('sleepy'));p.translate(-107,-25);for(const [x,y,s,k] of [[100,27,4,0],[109,20,3,1]]){p.save();const rise=f.motion?Math.sin(t/1400+k)*1.5:0;p.beginPath();p.moveTo(x,y+rise);p.lineTo(x+s,y+rise);p.lineTo(x,y+s+rise);p.lineTo(x+s,y+s+rise);p.stroke();p.restore();}p.restore();}
+ if(sleepMarks&&feature('sleepy')>0){
+  for(const z of sleepParticles(t,f.motion)){
+   p.save();p.globalAlpha*=feature('sleepy')*(f.sleep??1)*z.alpha;p.lineWidth=1.3;
+   p.beginPath();p.moveTo(z.x,z.y);p.lineTo(z.x+z.size,z.y);p.lineTo(z.x,z.y+z.size);p.lineTo(z.x+z.size,z.y+z.size);p.stroke();p.restore();
+  }
+ }
  if(feature('angry')>0)faceAPI.drawAngerMark(p,108,23,feature('angry'));
  if(feature('happy')>0&&(!f.motion||(f.phase>.25&&f.phase<.6))){p.save();p.translate(107,25);p.scale(feature('happy'),feature('happy'));p.translate(-107,-25);for(const [x,y] of [[103,25],[108,27]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+2,y-3);p.stroke();}p.restore();}
  if(feature('surprised')>0){p.save();p.translate(107,25);p.scale(feature('surprised'),feature('surprised'));p.translate(-107,-25);for(const [x,y] of [[104,23],[110,27]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+2,y-4);p.stroke();}p.restore();}
@@ -143,5 +166,5 @@ class FaceStudy {
  draw(p,now,motion=true,options={}){const f=this.update(now,motion);if(f)drawLivingFace(p,f,options);}
 }
 
-const api={REFERENCE_FACES,livingFaceFrame,drawLivingFace,FaceStudy,photoFrameRect,drawPhotoFrame};if(typeof module!=='undefined'&&module.exports)module.exports=api;else Object.assign(root,api);
+const api={REFERENCE_FACES,livingFaceFrame,drawLivingFace,FaceStudy,photoFrameRect,drawPhotoFrame,sleepParticles};if(typeof module!=='undefined'&&module.exports)module.exports=api;else Object.assign(root,api);
 })(globalThis);

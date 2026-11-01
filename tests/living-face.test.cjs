@@ -13,7 +13,7 @@ test('each design has eight safe key frames and a changing animation, not just a
   const t=d.duration*n/8,f=livingFaceFrame(d.id,t);assert.equal(f.beat,n);assert.ok(f.open>=0&&f.open<=1);for(const v of [f.x,f.y,f.scale,f.tilt,f.warning,f.photo])assert.ok(Number.isFinite(v));variants.add(image(d.id,t).toString('base64'));
  }assert.ok(variants.size>=3,d.id+' should visibly animate');}
 });
-test('reduced motion freezes every design, including voice ribbon and particles',()=>{
+test('reduced motion freezes every design, including mouth and sleeping Z particles',()=>{
  for(const d of REFERENCE_FACES)assert.deepEqual(image(d.id,0,false),image(d.id,9999,false));
 });
 test('idle really closes its eyelids and speaking uses a complete face with an articulating mouth',()=>{
@@ -55,12 +55,12 @@ test('live/study handoffs accept an explicit visible snapshot and reduced motion
  study.select('angry',2000,visible);assert.deepEqual(comparable(study.sample(2000)),comparable(visible));
  study.sample(2100,false);assert.equal(study.previous,null);assert.equal(study.sample(2150,true).pose.slope,10);
 });
-test('all expressions and intermediate morphs retain BOTH eyes without any opacity compositing',()=>{
+test('all face contours and intermediate morphs retain BOTH eyes without opacity compositing',()=>{
  const c=createCanvas(128,128),ctx=c.getContext('2d');const writes=[];
  const p=new Proxy(ctx,{get(target,key){const v=Reflect.get(target,key,target);return typeof v==='function'?v.bind(target):v;},set(target,key,value){if(key==='globalAlpha'||key==='globalCompositeOperation')writes.push([key,value]);return Reflect.set(target,key,value,target);}});
  const s=new FaceStudy();let now=0;s.select('idle',now);
  for(const d of REFERENCE_FACES){now+=1100;s.select(d.id,now);for(const age of [0,170,425,850,2200]){
-  ctx.clearRect(0,0,128,128);s.draw(p,now+age);for(const x of [24,74]){const data=ctx.getImageData(x,26,30,40).data;assert.ok(data.filter((v,i)=>i%4===3&&v>150).length>20,`${d.id} at ${age} keeps eye ${x} visible`);}
+  ctx.clearRect(0,0,128,128);s.draw(p,now+age,true,{sleepMarks:false});for(const x of [24,74]){const data=ctx.getImageData(x,26,30,40).data;assert.ok(data.filter((v,i)=>i%4===3&&v>150).length>20,`${d.id} at ${age} keeps eye ${x} visible`);}
  }}
  assert.deepEqual(writes,[],'face renderer never sets opacity or uses compositing fades');
 });
@@ -112,4 +112,18 @@ test('interrupted blinks preserve lid position; same-design replays do not add a
 test('closed eyes remain solid eyelid strokes instead of becoming transparent',()=>{
  const c=createCanvas(128,128),p=c.getContext('2d'),s=new FaceStudy();s.select('happy',0);s.select('love',1000);s.draw(p,1150);
  for(const x of [24,74])assert.ok(p.getImageData(x,43,30,10).data.filter((v,i)=>i%4===3&&v>200).length>20);
+});
+test('sleep loop yawns widely first, closes the mouth, then gently bobs while dozing',()=>{
+ const start=livingFaceFrame('sleepy',0),yawn=livingFaceFrame('sleepy',1500),asleep=livingFaceFrame('sleepy',4200);
+ assert.equal(start.pose.mh,0);assert.equal(yawn.pose.mh,24);assert.equal(yawn.pose.mw,16);assert.equal(yawn.sleep,0);
+ assert.equal(asleep.pose.mh,0);assert.equal(asleep.sleep,1);assert.ok(asleep.open<.2);
+ const bobs=new Set();for(const t of [3300,3700,4100,4500,4900,5300]){const f=livingFaceFrame('sleepy',t);bobs.add(f.headBob);assert.ok(f.headBob>=0&&f.headBob<=1.7);assert.ok(Math.abs(f.tilt)<=.025);}assert.ok(bobs.size>=4);
+ assert.deepEqual(livingFaceFrame('sleepy',7600).pose,start.pose);assert.equal(livingFaceFrame('sleepy',7600).headBob,0);
+});
+test('sleeping Zs emerge above the head, travel upward, grow and fade with bounded lifetimes',()=>{
+ const {sleepParticles}=require('../preview/living-face.js');assert.deepEqual(sleepParticles(2000),[]);
+ const a=sleepParticles(3600)[0],b=sleepParticles(4200)[0],c=sleepParticles(5000)[0];
+ assert.ok(a.y>b.y&&b.y>c.y);assert.ok(a.x<b.x&&b.x<c.x);assert.ok(a.alpha>b.alpha&&b.alpha>c.alpha);assert.ok(a.size<b.size&&b.size<c.size);
+ for(let t=0;t<7600;t+=20)for(const z of sleepParticles(t)){assert.ok(z.alpha>=0&&z.alpha<=1);assert.ok(z.x>=99&&z.x+z.size<128);assert.ok(z.y>=0&&z.y+z.size<35);}
+ assert.deepEqual(sleepParticles(7600),[]);assert.deepEqual(sleepParticles(11400),sleepParticles(3800));assert.deepEqual(sleepParticles(0,false),sleepParticles(99999,false));
 });
