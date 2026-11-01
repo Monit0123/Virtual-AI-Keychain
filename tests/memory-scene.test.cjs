@@ -21,3 +21,7 @@ test('eyes and mouth retain distinct bounded follow-through on one clock',()=>{
  const rest={eyeY:0,eyeScaleY:1,mouthY:0,mouthScaleY:1};assert.deepEqual(faceFollowThrough(0),rest);assert.deepEqual(faceFollowThrough(1500),rest);assert.deepEqual(faceFollowThrough(300,false),rest);const f=faceFollowThrough(250);assert.notEqual(f.eyeScaleY,f.mouthScaleY);
  for(let t=0;t<1500;t+=10){const p=faceFollowThrough(t);assert.ok(Math.abs(p.eyeY)<=1.8);assert.ok(Math.abs(p.mouthY)<=2.2);}
 });
+test('photo expansion grows continuously within the display without overshoot or corner jumps',()=>{
+ let previous=photoFrameRect(0);
+ for(let i=1;i<=1000;i++){const g=photoFrameRect(i/1000);assert.ok(g.x<=previous.x&&g.y<=previous.y&&g.w>=previous.w&&g.h>=previous.h&&g.r<=previous.r);assert.ok(g.x>=0&&g.y>=0&&g.x+g.w<=128.000001&&g.y+g.h<=128.000001);previous=g;}
+});

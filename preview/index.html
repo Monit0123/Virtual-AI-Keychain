@@ -401,10 +401,11 @@ function syncState(){
 const motionInput=document.querySelector('#motion');motionInput.checked=motion;
 function setStudioText(selector,text){const element=document.querySelector(selector);if(element.textContent!==text)element.textContent=text;}
 function status(){
- const label=faceStudy.active?REFERENCE_FACES.find(d=>d.id===faceStudy.id).label:animator.moods[animator.selected].name;
+ const memoryActive=companion.state===STATES.SHOWING_PHOTO&&companion.view==='viewer';
+ const label=memoryActive?'Showing Photo':faceStudy.active?REFERENCE_FACES.find(d=>d.id===faceStudy.id).label:animator.moods[animator.selected].name;
  document.querySelectorAll('.expression').forEach(button=>button.setAttribute('aria-pressed',String((faceStudy.active&&button.dataset.faceId===faceStudy.id)||(companion.state===STATES.SHOWING_PHOTO&&companion.view==='viewer'&&button.dataset.faceId==='photo'))));
  canvas.setAttribute('aria-label',faceStudy.active?label+' visual animation preview':'Live '+label.toLowerCase()+' companion');
- setStudioText('#status',faceStudy.active?'Visual preview only · no real device operation':label+' · live companion');
+ setStudioText('#status',memoryActive?'Random local memory · framed photo to full display':faceStudy.active?'Visual preview only · no real device operation':label+' · live companion');
 }
 function chooseFace(id,{studyOnly=false}={}){
  if(!REFERENCE_FACES.some(d=>d.id===id))return false;
@@ -524,6 +525,7 @@ function frame(now){
   document.querySelector('#preview-mode').textContent='LIVE MEMORY · LOCAL PHOTO';
   status();renderScreen(pen,companion,memories.items,now);faceSurface.present();return;
  }
+ if(document.querySelector('#preview-mode').textContent==='LIVE MEMORY · LOCAL PHOTO'){setStudioText('#preview-mode','LIVE COMPANION');setStudioText('#face-description','The companion is responding to your real actions. Choose a feeling or show another memory.');}
  setStudioText('#stage-presence',affection.mode==='ignored'?'Waiting for a familiar hello.':wakeMic.active?'I’m here. I’m listening.':'A quiet little presence.');
  if(social)drawAffectionHearts(pen,social);
  // Real states and the study buttons use the same complete face designs.
