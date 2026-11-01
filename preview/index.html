@@ -14,14 +14,17 @@
 /* Little Orbit — ink, lilac and warm champagne. The display remains 128×128. */
 :root{color:#f4eaf9;background:#0e0b14}body{background:radial-gradient(ellipse at 23% 28%,#40223d55,transparent 48%),radial-gradient(ellipse at 80% 0%,#37255144,transparent 45%),#0e0b14}main{max-width:1180px;padding-top:32px}.brand{font-size:16px;letter-spacing:-.5px}.mark{background:transparent;border:1.6px solid #ead1ff;border-radius:50%;width:22px;height:22px;box-shadow:0 0 15px #db9eff55;transform:rotate(-25deg);position:relative}.mark:after{content:'';position:absolute;inset:6px -6px;border:1px solid #e9c7ff;border-radius:50%}.tag{color:#ddc6ec;border-color:#705783;background:#22172c}header{margin:52px 0 20px}.eyebrow{color:#c7a0d3;letter-spacing:3px}h1{font-weight:500;letter-spacing:-2px}header p,.panel>p{color:#b4a5bd}.studio{max-width:930px;grid-template-columns:1fr 340px;gap:60px}.device{padding:9px;border-radius:43px;background:linear-gradient(135deg,#ffe1c1,#916e60 25%,#e8bd98 46%,#674c45 76%,#d9aa89);border:1px solid #ecc9a4;box-shadow:0 28px 75px #0009,0 0 52px #c987ca12,inset 0 0 0 3px #eac5a233}.device:before{background:#5c404f;border-color:#d5ad91;width:32px;height:13px;left:calc(50% - 22px);top:-17px}.device:after{content:'';position:absolute;inset:7px;border-radius:35px;box-shadow:inset 0 0 0 1px #fff4;pointer-events:none}canvas{width:288px;height:288px;border-radius:34px;background:#08060d}.spec{color:#a78baf;font-size:9px}.panel h2{font-size:24px;font-weight:500}.expression{color:#c3accd;border-color:#49344f;background:#201625;border-radius:13px;min-height:52px}.expression:hover{border-color:#b486bd;background:#302036}.expression[aria-pressed=true]{color:#ffeaff;background:linear-gradient(120deg,#613a66,#35203f);border-color:#ce9ad9;box-shadow:0 0 20px #b35abd15}.icon{color:#edbfff;width:32px;flex:0 0 32px}.expression canvas{width:32px;height:32px;background:transparent;border-radius:0}.expression{min-height:60px}.controls{border-color:#49334d;color:#c4accd}.switch{background:#d9b3ec;color:#281831}.switch[aria-pressed=false]{background:#332438;color:#b6a0c0}.status,.button-hint{color:#ac93b6}.hardware-button{background:linear-gradient(#3c2b42,#231a29);border-color:#68516e;color:#f0d9f9;box-shadow:0 4px 0 #100b16}.hardware-button[data-pressed=true]{background:#694270;box-shadow:0 1px 0 #201127}.hardware-button:after{background:#e8b9f3}.workflow{border-color:#49314f;background:linear-gradient(140deg,#23172bb8,#15101db8);border-radius:22px}.workflow p{color:#b4a2bf}.actions button,.upload{background:#2c1f35;color:#e5cbed;border-color:#5c4267}.actions button:hover{background:#442c4f}.workflow input[type=text],.voice-settings select,.voice-settings input{background:#17101e;color:#f3e3fa;border-color:#684b73}.voice-settings label{color:#c6add1}#device-state{background:#36233e;color:#ebc7ff}.notes{color:#b69dc1;border-color:#45314d}.dot{background:#e5b1f3}footer{color:#95829e}progress{accent-color:#dcacef}a{color:#e4b9ff}input[type=checkbox]{accent-color:#c690df}button:focus-visible{outline-color:#edbaff}.switch:focus-visible{outline-offset:4px}
 @media(max-width:700px){.studio{grid-template-columns:1fr;gap:14px;max-width:350px}canvas{width:256px;height:256px}header{margin-top:38px}.panel{padding-bottom:12px}main{padding:26px 20px}}
+
+/* Expression atelier: every reference row is a first-class, accessible control. */
+.studio{max-width:1040px;grid-template-columns:1fr 410px;gap:66px;align-items:start}.stage{position:sticky;top:25px;padding-top:65px}.panel{padding-top:24px}.panel h2{font-size:25px}.expressions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.expression{flex-direction:column;justify-content:center;gap:4px;padding:10px 5px;min-height:86px;text-align:center;font-size:11px;line-height:1.35;position:relative;transition:background .25s,border-color .25s,box-shadow .25s}.expression .icon{width:36px;flex:0 0 36px}.expression canvas{width:36px;height:36px}.expression[aria-pressed=true]:after{content:'';position:absolute;right:7px;top:7px;width:4px;height:4px;border-radius:50%;background:#ffcff7;box-shadow:0 0 7px #f5a7ec}.study-actions{display:flex;gap:8px;margin-top:14px}.study-actions button{padding:10px 12px;background:#2a1d32;border:1px solid #65446f;border-radius:10px;color:#e9c9f5;font-size:11px}.study-actions button:first-child{flex:1;background:#ddbbea;color:#2a1732}.study-options{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#bba3c5;font-size:10px}#preview-mode{font-size:8px;letter-spacing:1px;color:#dab4e8}#face-description{min-height:58px;margin:13px 0 10px;font-size:12px;line-height:1.65;color:#c8afd2}.presence{font-size:12px;color:#dfbce9;margin:23px 0 0;font-weight:400;letter-spacing:.2px}.spec{margin-top:10px}.button-hint{font-size:10px}.device{margin-top:8px}.workflow{max-width:1040px}.notes{max-width:1040px}.panel .controls{margin-top:14px;padding-top:14px}@media(max-width:760px){.studio{grid-template-columns:1fr;max-width:430px;gap:10px}.stage{position:relative;top:0;padding-top:30px}.panel{padding-top:0}.expressions{grid-template-columns:repeat(3,minmax(0,1fr))}.expression{min-height:80px}.button-hint{display:none}.hardware-controls{margin-top:17px}header{margin-bottom:0}}
 </style>
 </head>
 <body><main>
-<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Bunny studio · 26</span></div>
+<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 27</span></div>
 <header><div class="eyebrow">LITTLE ORBIT / BUNNY EDITION</div><h1>A little orbit of your own.</h1><p>Soft eyes. Familiar voices. Your favourite little moments.<br>A small companion, with a world of feeling.</p></header>
 <section class="studio" aria-label="Interactive face studio">
-<div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
-<div class="panel"><h2>Meet your little orbit.</h2><p>Bunny eyes, rosy cheeks, and a feeling for every moment.<br>Choose an expression to say hello.</p><div class="expressions" id="expressions"></div><div class="controls"><span>Cycle expressions</span><button id="auto" class="switch" aria-pressed="true">On</button></div><div class="controls"><label for="motion">Gentle motion</label><input id="motion" type="checkbox" checked></div><div class="status" id="status" aria-live="polite"></div></div>
+<div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><p id="stage-presence" class="presence">A quiet little presence.</p><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
+<div class="panel"><h2>A feeling for every moment.</h2><p>All 13 designs. Each with its own little heartbeat.<br>Choose a feeling and watch it come to life.</p><div class="expressions" id="expressions" aria-label="All thirteen face designs"></div><div class="study-actions"><button id="return-live">Return to live companion</button><button id="tour-faces" aria-pressed="false">Play all 13</button></div><p id="face-description" aria-live="polite">A living face, not a screensaver. Choose any design to explore its movement.</p><div class="study-options"><label><input id="tiny-mouth" type="checkbox" checked> Tiny mouth</label><span id="preview-mode">LIVE COMPANION</span></div><div class="controls"><span>Ambient mood changes</span><button id="auto" class="switch" aria-pressed="false">Off</button></div><div class="controls"><label for="motion">Gentle motion</label><input id="motion" type="checkbox" checked></div><div class="status" id="status" aria-live="polite"></div></div>
 </section>
 <section class="workflow" aria-label="Companion state controls"><h2>Simulator controls</h2><p>These controls are outside the device. The keychain itself uses only the small display and A/B buttons.</p><span id="device-state" role="status">IDLE</span><div class="actions"><button data-action="HOME">Home / cancel</button><button data-action="GALLERY_REQUESTED">Photo gallery</button><button data-action="PHOTO">Show random memory</button><button id="photo-previous">Previous photo</button><button id="photo-next">Next photo</button><button id="photo-random">Random photo</button><button data-action="SETTINGS_REQUESTED">Settings</button><button data-action="VOICE">Play selected voice</button><button id="random-voice">Random voice</button><button id="cancel-voice">Cancel voice</button><button data-action="LISTEN">Ask AI (mock)</button><button data-action="RETRY">Dismiss error</button><button data-action="RETRY_REQUESTED">Retry once</button><button data-action="FAIL">Test error</button></div><div class="voice-settings"><label for="voice-category">Category</label><select id="voice-category"></select><label for="voice-id">Recording identifier</label><select id="voice-id"></select><label for="voice-health">Fault injection (optional test)</label><select id="voice-health"><option value="ready">Normal — actual file</option><option value="missing">Missing recording — test</option><option value="corrupt">Corrupted recording — test</option></select><label for="voice-duration">Duration comes from the actual recording</label><input id="voice-duration" type="hidden" value=""><div class="actions"><button id="enable-audio">Enable sound / load recordings</button></div><p id="audio-status" role="status">Real audio is available. Enable sound once for A/B interactions.</p><label for="voice-replacement">Replace selected message with your own local recording</label><input id="voice-replacement" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg"><p id="voice-file-info">Four generated placeholder recordings are bundled. They are not your actual voice.</p><p>In the macOS app, replacements are saved locally across restarts; in a browser they last for this page session. No upload by the app. AI questions remain simulated. The separate wake microphone requires explicit permission.</p></div><p><label><input type="checkbox" id="online" checked> Simulated internet available</label></p><label class="upload">Select multiple photos — no image-count cap<input id="memory-file" type="file" multiple accept="image/jpeg,image/png,image/webp"></label><label class="upload">Or select a whole folder (including subfolders)<input id="memory-folder" type="file" webkitdirectory directory multiple></label><p>Files stay in this browser session. Folder support depends on your browser; use multi-select if unavailable. There is no image-count cap, but available browser memory still applies. JPEG, PNG and WebP; up to 8 MiB per file.</p><progress id="import-progress" value="0" max="1" hidden></progress><div class="actions"><button id="cancel-import" disabled>Cancel import</button></div><p id="import-status" role="status">Ready to add photos.</p><p id="memory-name">Loading three bundled sample photos… Your own photos stay local and clear on reload.</p><div id="question-panel" hidden><label for="question">Simulated listening — type instead of speaking</label><input id="question" type="text" maxlength="200" placeholder="Ask a question…"><div class="actions"><button id="send-question">Finish listening</button></div></div><p id="detail" aria-live="polite"></p><progress id="voice-progress" max="5000" value="0" hidden></progress><p>Voice playback is real, using generated placeholder recordings or your local replacements. AI-question listening remains typed; the separate wake microphone is real and permission-controlled. AI replies are prewritten mocks, with no API or network requests.</p></section>
 <section class="workflow" id="affection-controls" aria-label="Affection behaviour preview"><h2>A quiet hello.</h2><p>After 90 minutes without interaction, the home face looks away sadly. A familiar greeting gently brings it back. Use real microphone recognition below, or the separate typed test. Browser recognition is not an ESP32-S3 wake-word engine.</p><div class="actions"><button id="preview-ignored">Preview left-alone mood</button><button id="reset-affection">Reset mood</button></div><h3>Real microphone wake phrases</h3><p>Start explicitly to grant microphone permission. Default: on-device recognition only, when supported and its English model is installed. This is full speech recognition with phrase matching, not an always-on low-power wake-word detector.</p><label><input id="allow-online-recognition" type="checkbox"> <span id="recognition-provider">Allow browser speech service (may send microphone audio to its provider; internet may be required)</span></label><div class="actions"><button id="check-mic">Check microphone access</button><button id="start-mic">Start microphone</button><button id="stop-mic">Stop microphone</button><button id="test-speaker">Test speaker — “Hi, Mommy”</button></div><p>If permission is allowed but recognition fails, <a id="open-mic-preview" target="_blank" rel="noopener noreferrer">open this preview directly in a new tab</a>. Embedded previews can restrict speech/microphone access independently of site permission.</p><p id="mic-check-status" role="status"></p><p id="mic-status" role="status">Microphone off. No listening starts automatically.</p><p id="mic-transcript" aria-live="polite"></p><p>Use headphones to reduce feedback. Enable listening once. It pauses during a response and automatically resumes afterward. Stop microphone turns it off. Keep this page open and visible. Recognition support varies by browser.</p><label for="wake-phrase">Try “Hi, Moni”, “Hi, Daddy”, or “Moni”</label><input id="wake-phrase" type="text" maxlength="80" placeholder="Hi, Moni"><div class="actions"><button id="submit-greeting">Say hello (typed simulation)</button></div><p><label><input type="checkbox" id="greeting-speech" checked> Play recorded “Hi, Mommy” greeting</label><br>Uses the selected generated placeholder voice, not browser text-to-speech. You can replace the greeting recording in the voice controls. Speaker output uses your browser’s actual audio device.</p><p id="affection-status" aria-live="polite">Waiting for a quiet moment. Use the preview button to skip the 90-minute wait.</p></section>
@@ -41,7 +44,8 @@
 <script src="buttons.js?v=voice-index-22"></script>
 <script src="animation.js?v=voice-index-22"></script>
 <script src="companion.js?v=voice-index-22"></script>
-<script src="bunny-face.js?v=orbit-26"></script>
+<script src="bunny-face.js?v=orbit-27"></script>
+<script src="living-face.js?v=orbit-27"></script>
 <script src="state-face.js?v=voice-index-22"></script>
 <script src="memory-scene.js?v=voice-index-22"></script>
 <script>
@@ -65,6 +69,7 @@ const moods=[
 {name:'Love',icon:'♥ ♥',h:29,w:27,slope:0,arch:0,curve:6,mw:12,mh:0,r:255,g:189,b:235,spark:0,love:1}
 ];
 let motion=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+const faceStudy=new FaceStudy(),liveFace=new FaceStudy();
 const animator=new FaceAnimation(createStateFaces(moods),{now:performance.now(),motion});
 let current=animator.current;
 const voiceLibrary=new MockVoiceLibrary();
@@ -90,11 +95,13 @@ function userActivity(){affection.activity(performance.now());cancelGreetingSpee
 // Local greeting recording; microphone recognition is an explicit separate input adapter.
 document.querySelector('#greeting-speech').onchange=e=>{companion.dispatch('SETTING_CHANGED',performance.now(),{key:'speech',value:e.target.checked});if(!e.target.checked)cancelGreetingSpeech();};
 document.querySelector('#preview-ignored').onclick=()=>{
+ stopFaceStudy();
  companion.dispatch('HOME_REQUESTED',performance.now());cancelGreetingSpeech();affection.previewIgnored(performance.now());syncState();
  document.querySelector('#affection-status').textContent='A little withdrawn… try a familiar hello.';
 };
 document.querySelector('#reset-affection').onclick=()=>{userActivity();dispatch('HOME_REQUESTED');document.querySelector('#affection-status').textContent='Back to the main face.';};
 function acceptGreeting(text,fromMicrophone=false){
+ if(faceStudy.active)stopFaceStudy();
  const now=performance.now();affection.update(now);
  if(companion.state!==STATES.IDLE){document.querySelector('#mic-status').textContent='Busy. Return Home, then start listening again.';return;}
  if(affection.wake(text,now)){
@@ -113,12 +120,13 @@ const wakeMic=new WakeMicrophone({
  onFailure:code=>listeningSession.failed(code)
 });
 const listeningSession=new ListeningSession(wakeMic,{
- canListen:()=>!document.hidden&&companion.state===STATES.IDLE&&!realAudio.session&&!greetingAudio.player.session&&(affection.mode!=='greeting'||affection.spoken),
+ canListen:()=>!faceStudy.active&&!document.hidden&&companion.state===STATES.IDLE&&!realAudio.session&&!greetingAudio.player.session&&(affection.mode!=='greeting'||affection.spoken),
  onStatus:text=>{document.querySelector('#mic-status').textContent=text;}
 });
 // Half duplex: pause capture during output without discarding the user's listening intent.
 for(const player of [realAudio,greetingAudio.player]){const start=player.start.bind(player);player.start=(...args)=>{listeningSession.pause();return start(...args);};}
 document.querySelector('#start-mic').onclick=()=>{
+ stopFaceStudy();
  unlockSound().then(()=>realAudio.prepare(voiceLibrary.greetingId())).catch(()=>{});
  document.querySelector('#mic-transcript').textContent='';
  listeningSession.start({allowOnline:document.querySelector('#allow-online-recognition').checked});
@@ -133,7 +141,7 @@ document.querySelector('#check-mic').onclick=async()=>{
 document.querySelector('#stop-mic').onclick=()=>listeningSession.stop();
 document.querySelector('#allow-online-recognition').onchange=()=>listeningSession.stop();
 document.querySelector('#test-speaker').onclick=async()=>{
- listeningSession.pause();
+ stopFaceStudy();listeningSession.pause();
  if(companion.state!==STATES.IDLE)return;
  try{await unlockSound();await realAudio.prepare(voiceLibrary.greetingId());const result=greetingAudio.start(performance.now());document.querySelector('#mic-status').textContent=result.ok?'Playing the recorded greeting through your selected browser output. Confirm audibility yourself.':result.message;}
  catch(error){document.querySelector('#mic-status').textContent='Speaker test failed: '+error.message;}
@@ -145,7 +153,16 @@ for(const event of ['pointerdown','keydown'])document.addEventListener(event,e=>
  if(!e.target?.closest?.('#affection-controls'))userActivity();
 },{passive:true});
 let memoryImage=null,seenRevision=-1,savedFace=null;
+function stopFaceStudy(){
+ const wasActive=faceStudy.active;faceStudy.stop();
+ if(wasActive&&companion.state===STATES.IDLE)companion.entered=performance.now();
+ if(wasActive)status();
+ document.querySelector('#preview-mode').textContent='LIVE COMPANION';
+ document.querySelector('#tour-faces').setAttribute('aria-pressed','false');
+ document.querySelector('#face-description').textContent='The companion is responding to your real actions. Expression previews never activate a microphone or pretend to play audio.';
+}
 function dispatch(event,payload){
+ if(faceStudy.active&&!['SETTING_CHANGED','VOICE_FILE_STATUS_CHANGED','GALLERY_UPDATED','MEMORY_LOADED','ONLINE','NETWORK_CHANGED'].includes(event))stopFaceStudy();
  if(['HOME','HOME_REQUESTED','CANCEL_REQUESTED'].includes(event))listeningSession.pause();
  const now=performance.now();
  if(!savedFace&&['PHOTO','PHOTO_SELECTED','GALLERY_REQUESTED'].includes(event)&&companion.state!==STATES.SHOWING_PHOTO)savedFace=animator.snapshot(now);
@@ -359,7 +376,7 @@ function syncState(){
  for(const selector of ['#photo-next','#photo-previous'])document.querySelector(selector).disabled=state!==STATES.SHOWING_PHOTO||!memories.items.length;
  document.querySelector('#photo-random').disabled=!memories.items.length;
  document.querySelectorAll('[data-action]').forEach(button=>{const a=button.dataset.action;button.disabled=['PHOTO','VOICE','LISTEN','GALLERY_REQUESTED','SETTINGS_REQUESTED'].includes(a)?(busy||(a==='VOICE'&&!document.querySelector('#voice-id').value)):a==='RETRY'?state!==STATES.ERROR:a==='RETRY_REQUESTED'?!companion.errorInfo?.retryable:false;});
- document.querySelectorAll('.expression').forEach(button=>button.disabled=busy);
+ document.querySelectorAll('.expression').forEach(button=>button.disabled=false);
  document.querySelector('#auto').disabled=busy;
  document.querySelector('#question-panel').hidden=state!==STATES.LISTENING;
  document.querySelector('#voice-progress').hidden=state!==STATES.PLAYING_VOICE;
@@ -370,16 +387,34 @@ function syncState(){
  canvas.setAttribute('aria-label',state==='EXPRESSING'?'Animated '+moods[companion.expression].name+' face':state.replaceAll('_',' ').toLowerCase()+' facial expression');
 }
 const motionInput=document.querySelector('#motion');motionInput.checked=motion;
+function setStudioText(selector,text){const element=document.querySelector(selector);if(element.textContent!==text)element.textContent=text;}
 function status(){
- const index=animator.selected;
- document.querySelectorAll('.expression').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
- canvas.setAttribute('aria-label','Animated '+animator.moods[index].name.toLowerCase()+' face');
- document.querySelector('#status').textContent=animator.moods[index].name+' · '+((companion.automaticCycle??true)?'Idle expression cycling enabled':'Selected by you');
+ const label=faceStudy.active?REFERENCE_FACES.find(d=>d.id===faceStudy.id).label:animator.moods[animator.selected].name;
+ document.querySelectorAll('.expression').forEach(button=>button.setAttribute('aria-pressed',String(faceStudy.active&&button.dataset.faceId===faceStudy.id)));
+ canvas.setAttribute('aria-label',faceStudy.active?label+' visual animation preview':'Live '+label.toLowerCase()+' companion');
+ setStudioText('#status',faceStudy.active?'Visual preview only · no real device operation':label+' · live companion');
 }
-moods.forEach((mood,i)=>{const b=document.createElement('button');b.className='expression';b.innerHTML='<span class="icon" aria-hidden="true"></span><span>'+mood.name+'</span>';
- if(b.querySelector){const thumb=document.createElement('canvas');thumb.width=thumb.height=32;const t=thumb.getContext('2d');t.translate(1,4);t.scale(.23,.23);drawBunnyEye(t,39,48,true,1,mood);drawBunnyEye(t,89,48,false,1,mood);drawBunnyAccents(t,{motion:false,love:mood.love,spark:mood.spark});b.querySelector('.icon').append(thumb);}
- b.onclick=()=>{if(dispatch('EXPRESS',i)){animator.select(i,performance.now());status();}};document.querySelector('#expressions').append(b);});
-document.querySelector('#auto').onclick=function(){companion.automaticCycle=!(companion.automaticCycle??true);this.setAttribute('aria-pressed',String(companion.automaticCycle));this.textContent=companion.automaticCycle?'On':'Off';companion.entered=performance.now();};
+function chooseFace(id){
+ dispatch('HOME_REQUESTED');
+ faceStudy.select(id,performance.now());listeningSession.pause();
+ const design=REFERENCE_FACES.find(d=>d.id===id);
+ setStudioText('#face-description',design.description);
+ document.querySelector('#preview-mode').textContent='EXPRESSION STUDY · VISUAL ONLY';
+ document.querySelector('#stage-presence').textContent=design.label+' · '+(design.duration/1000).toFixed(1)+'s living loop';
+ status();
+}
+REFERENCE_FACES.forEach(design=>{
+ const b=document.createElement('button');b.className='expression';b.dataset.faceId=design.id;b.setAttribute('title',design.description);b.setAttribute('aria-pressed','false');
+ b.innerHTML='<span class="icon" aria-hidden="true"></span><span>'+design.label+'</span>';
+ if(b.querySelector){const thumb=document.createElement('canvas');thumb.width=thumb.height=36;const t=thumb.getContext('2d');t.scale(36/128,36/128);drawLivingFace(t,livingFaceFrame(design.id,design.duration*.45,false),{mouth:false});b.querySelector('.icon').append(thumb);}
+ b.onclick=()=>chooseFace(design.id);document.querySelector('#expressions').append(b);
+});
+document.querySelector('#return-live').onclick=()=>{stopFaceStudy();dispatch('HOME_REQUESTED');status();};
+document.querySelector('#tour-faces').onclick=()=>{
+ if(faceStudy.tour){faceStudy.tour=false;document.querySelector('#tour-faces').setAttribute('aria-pressed','false');return;}
+ chooseFace('idle');faceStudy.tour=true;document.querySelector('#tour-faces').setAttribute('aria-pressed','true');
+};
+document.querySelector('#auto').onclick=function(){stopFaceStudy();companion.automaticCycle=!(companion.automaticCycle??true);this.setAttribute('aria-pressed',String(companion.automaticCycle));this.textContent=companion.automaticCycle?'On':'Off';companion.entered=performance.now();};
 function applySettings(){
  motionInput.checked=companion.settings.motion;
  animator.setMotion(companion.settings.motion,performance.now());
@@ -423,8 +458,8 @@ function frame(now){
  }
  // State controller owns expression cycling; the animation engine only renders.
  animator.automatic=false;
- if(companion.automaticCycle===undefined)companion.automaticCycle=true;
- if(!social&&companion.view==='face'&&companion.automaticCycle&&companion.state===STATES.IDLE&&now-companion.entered>=idleWaitMs){
+ if(companion.automaticCycle===undefined)companion.automaticCycle=false;
+ if(!faceStudy.active&&!social&&companion.view==='face'&&companion.automaticCycle&&companion.state===STATES.IDLE&&now-companion.entered>=idleWaitMs){
   const reaction=personality.idle();idleWaitMs=reaction.waitMs;
   if(companion.dispatch('EXPRESSION_REQUESTED',now,{expression:reaction.expression,durationMs:reaction.durationMs})){
    animator.select(reaction.expression,now);syncState();
@@ -455,7 +490,23 @@ function frame(now){
  if(previous!==state.selected)status();
  const {gx,gy,openness:open,breath}=state;
  pen.fillStyle='#08060d';pen.fillRect(0,0,128,128);
+ if(faceStudy.active){
+  const f=faceStudy.update(now,animator.motion),design=REFERENCE_FACES.find(d=>d.id===f.id);
+  faceStudy.draw(pen,now,animator.motion,{mouth:document.querySelector('#tiny-mouth').checked});
+  setStudioText('#stage-presence',design.label+' · '+design.beats[f.beat]);
+  setStudioText('#face-description',design.description);
+  status();ctx.drawImage(high,0,0,128,128);return;
+ }
+ setStudioText('#stage-presence',affection.mode==='ignored'?'Waiting for a familiar hello.':wakeMic.active?'I’m here. I’m listening.':'A quiet little presence.');
  if(social)drawAffectionHearts(pen,social);
+ // Real states and the study buttons use the same complete face designs.
+ if(!social&&companion.view==='face'&&['IDLE','EXPRESSING','LISTENING','WAITING_FOR_AI','PLAYING_VOICE'].includes(companion.state)){
+  const id=greetingAudio.player.session?.status==='playing'?'speaking':companion.state==='EXPRESSING'?['idle','happy','sad','surprised','sleepy','angry','excited','love'][companion.expression]:({LISTENING:'listening',WAITING_FOR_AI:'thinking',PLAYING_VOICE:'speaking'})[companion.state]||(wakeMic.active?'listening':'idle');
+  if(liveFace.id!==id)liveFace.select(id,now);
+  liveFace.draw(pen,now,animator.motion,{mouth:document.querySelector('#tiny-mouth').checked});
+  if(companion.state===STATES.PLAYING_VOICE){const bar=document.querySelector('#voice-progress'),progress=realAudio.progress();bar.max=progress?.durationMs||1;bar.value=progress?.elapsedMs||0;}
+  renderScreen(pen,companion,memories.items,now);ctx.drawImage(high,0,0,128,128);return;
+ }
  const color=`rgb(${current.r},${current.g},${current.b})`;
  pen.fillStyle=pen.strokeStyle=color;pen.lineWidth=2.5;pen.lineJoin=pen.lineCap='round';
  const remembering=companion.state===STATES.SHOWING_PHOTO&&companion.view==='viewer';
@@ -485,7 +536,7 @@ function frame(now){
  pen.restore();
  pen.save();pen.translate(64+(social?.snuggle?.mouthX||0),89+follow.mouthY+(social?.snuggle?.mouthY||0));pen.scale(1,follow.mouthScaleY);pen.translate(-64,-89);
  pen.shadowColor='#db91f7';pen.shadowBlur=3;pen.fillStyle=pen.strokeStyle='#efd3ff';
- if(companion.state!=='PLAYING_VOICE')mouth();
+ if(companion.state!=='PLAYING_VOICE'&&document.querySelector('#tiny-mouth').checked)mouth();
  pen.shadowBlur=0;
  // Hollow the surprised mouth so it reads as an O, not a smile or dot.
  if(remembering){

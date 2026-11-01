@@ -19,3 +19,20 @@ Exactly eight primary application states. Excited and Love are additional expres
 ## Validation
 
 `npm test` includes eight-expression pose/controller coverage, distinct vector rasterization, eye visibility during memory animation, full-screen photo coverage, context restoration and reduced-motion tests. The standalone native app must be rebuilt to receive this skin; an already-installed DMG does not update automatically.
+
+## Complete living-face studio (v1.2 / studio 27)
+
+All 13 rows of the reference now have their own clickable control: Idle / Blink, Happy, Excited, Surprised, Sleepy, Sad, Angry, Love, Listening, Thinking, Speaking, Showing Photo and Error. `preview/living-face.js` defines eight named animation beats per design, with slow anticipation, follow-through, hold and recovery rather than a shared generic animation. Loop lengths are 4.8–7.6 seconds. Motion is a visual interpretation of the reference, not an extracted sprite sheet.
+
+The renderer now includes actual drooping sad silhouettes, filled sleepy lids, a curious surprised recoil, smaller listening pupils and travelling ripples, three alternating thinking dots, a smiling-eyes-to-central-voice-ribbon speaking sequence, the miniature framed-picture/heart design, and a bunny-to-warning-to-reassurance error sequence. Excitement has two small hops and sparkles. Love has a soft lean and independently drifting hearts. Blinking compresses the entire eye, including bunny pupils. A subtle breathing clock is independent of the eight-beat expression clock.
+
+### Interaction contract
+
+- Clicking any design opens an explicitly labeled **visual study**, with no microphone or speaker side effect. It cancels an old real action through Home first, then loops the selected design.
+- **Play all 13** tours the designs; **Return to live companion** exits immediately. Rapid changes crossfade over 440 ms without adding primary FSM states.
+- Listening intent is preserved but microphone capture pauses while studying designs; returning live permits automatic re-arming. Actual Start microphone, playback, Home and other product actions leave the visual study.
+- Real idle, emotion, listening, thinking and speaking states use the same complete face renderer. Native greeting playback also selects the speaking design. Existing snuggle and memory-cloud choreography retain their dedicated renderer; full-screen photos remain unobscured. Real error/reply text remains readable rather than being replaced with decorative icons.
+- **Tiny mouth** is optional; reduced motion freezes animation but keeps every design recognizable. State/beat captions and buttons remain outside the 128×128 device.
+- Ambient mood changes are now off by default: the creature breathes, blinks and looks around without randomly cycling moods. Users can explicitly enable mood changes. The aim is a calm, attentive presence—not a busy screensaver.
+
+Automated checks cover all 13 distinct designs, all eight key beats, loop/tour behavior, interruptions, reduced motion and actual page-button integration, in addition to retained product tests. Visual speech movement does not establish audio synchronization or physical audibility.

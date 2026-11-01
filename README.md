@@ -212,3 +212,7 @@ Native speech requires both macOS Microphone and Speech Recognition permissions.
 ## Little Orbit — Bunny edition
 
 The simulator now follows the supplied bunny-face reference: glowing lavender rabbit pupils, pink cheek strokes, happy/sleepy/sad/surprised/angry shapes, plus Excited star eyes and Love heart eyes. The dark lilac studio and champagne frame preserve the minimal 128×128 face. See [design notes](docs/bunny-design.md). Random photos, personal audio persistence and continuous microphone re-arming remain intact; the Mac app needs the new build to show this redesign.
+
+### Complete 13-design living-face studio
+
+Version 1.2 adds a clickable, eight-beat animation study for **every reference design**, including Listening, Thinking, Speaking, Showing Photo and Error—not only the eight emotions. The same renderer backs the real idle/listening/thinking/speaking states. Play all 13, return live, optional tiny mouth, quiet-by-default ambient behavior, reduced motion and safe interruption are supported. Visual studies never masquerade as actual recognition, playback or gallery operations; continuous-listening intent is retained while capture pauses. See [the interaction contract](docs/bunny-design.md).
