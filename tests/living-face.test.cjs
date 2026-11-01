@@ -83,12 +83,12 @@ test('speaking uses an animated mouth, with no waveform beneath the full face',(
  }
  assert.ok(mouths.size>=5,'mouth articulates, pauses and smiles rather than remaining static');
 });
-test('excited eyes are five-point stars, not four-arm plus signs',()=>{
+test('excited eyes are rounded four-point stars with broad inward corners, not plus signs',()=>{
  const {bunnyEyeContour}=require('../preview/bunny-face.js'),pose=livingFaceFrame('excited',0).pose;
  for(const left of [true,false]){
   const {points}=bunnyEyeContour(pose,left),r=points.map(([x,y])=>Math.hypot(x,y));let tips=0;
   for(let i=0;i<r.length;i++)if(r[i]>r[(i+r.length-1)%r.length]&&r[i]>r[(i+1)%r.length])tips++;
-  assert.equal(points.length,80);assert.equal(tips,5);assert.ok(Math.abs(Math.max(...r)-14)<1e-6);assert.ok(Math.abs(Math.min(...r)-6.3)<1e-6);
+  assert.equal(points.length,80);assert.equal(tips,4);assert.ok(Math.abs(Math.max(...r)-14)<1e-6);assert.ok(Math.abs(Math.min(...r)-7)<1e-6);
  }
  for(let i=0;i<=20;i++){const f=livingFaceFrame('idle',0);f.pose.spark=i/20;for(const [x,y] of bunnyEyeContour(f.pose,true).points)assert.ok(Number.isFinite(x)&&Number.isFinite(y));}
 });

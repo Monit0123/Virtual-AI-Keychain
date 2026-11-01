@@ -77,3 +77,8 @@ Speaking keeps a complete, centred bunny face and articulates its existing mouth
 ## Five-point excited eyes (v1.3.3)
 
 Excited eyes now morph to a true five-point star with alternating 14-unit tips and 6.3-unit inner corners, rather than the earlier four-arm sparkle/plus shape. Eighty matching contour vertices keep all ten star corners aligned and preserve continuous, fully opaque eye morphs. The face remains centred; decorative sparkles are unchanged. Tests count five radial tips on both eyes and verify finite, stable intermediate contours.
+
+
+## Rounded four-point excited eyes (v1.3.4 — supersedes five-point design)
+
+Per the revised shape direction, excited eyes have four points with rounded tips, smoothly concave sides and rounded inward corners. A smooth radial contour (radius 10.5 + 3.5 cos(4θ)) replaces the polygonal five-point star. Its broad 7-unit inner radius avoids the earlier narrow plus-sign arms; the 14-unit tips have finite curvature rather than cusps. The same 80-vertex contour still morphs continuously at constant outline opacity, with the face centred. Decorative sparkles remain unchanged.
