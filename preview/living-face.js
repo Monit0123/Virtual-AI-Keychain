@@ -14,7 +14,7 @@ const DEFINITIONS=[
  ['love','Love','Heart eyes lean closer while small, independently drifting hearts rise away.',6800,'Notice|Warm|Lean|Heart eyes|Nuzzle|Float|Glow|Settle'],
  ['listening','Listening','Smaller attentive bunny pupils lean toward you as gentle sound ripples travel outward.',6000,'Notice|Attend|Lean|Hear|Tilt|Attend|Hear|Settle'],
  ['thinking','Thinking','Three luminous dots take turns breathing. A small pause, not a frantic loading spinner.',4800,'Pause|Consider|Dot one|Dot two|Dot three|Reflect|Consider|Pause'],
- ['speaking','Speaking','Smiling eyes open into a restrained voice ribbon and return to a warm smile.',6000,'Smile|Begin|Voice|Phrase|Pause|Voice|Finish|Smile'],
+ ['speaking','Speaking','A complete centred face talks with gentle mouth shapes, little pauses and natural blinks.',6000,'Smile|Begin|Voice|Phrase|Pause|Voice|Finish|Smile'],
  ['photo','Showing Photo','Smiling eyes, a miniature picture frame and tiny hearts: a fond memory, not a system icon.',6400,'Remember|Smile|Picture|Warm|Little hearts|Hold|Smile|Settle'],
  ['error','Error','A gentle double-take gives way to a clear warning, then reassuring bunny eyes return.',6000,'Notice|Concern|Pause|Warning|Warning|Recover|Reassure|Settle']
 ];
@@ -27,7 +27,7 @@ function livingFaceFrame(id,elapsed=0,motion=true){
  const phase=motion?((Math.max(0,elapsed)%design.duration)/design.duration):.5;
  const t=motion?Math.max(0,elapsed):0;
  const pose={w:27,h:29,slope:0,arch:0,curve:2,mw:10,mh:0,spark:0,love:0};
- const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,wave:0,warning:0,photo:0,now:t,motion};
+ const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,now:t,motion};
  if(motion){f.y=Math.sin(t/1700)*.32;f.x=track([0,0,1.2,1.2,0,-1,-1,0],phase);}
  switch(design.id){
   case 'idle':
@@ -42,7 +42,12 @@ function livingFaceFrame(id,elapsed=0,motion=true){
   case 'love':pose.love=1;pose.curve=5;f.scale=motion?track([1,1,1.025,1.025,1.035,1.025,1,1],phase):1;f.tilt=motion?Math.sin(phase*Math.PI*2)*.035:0;f.blush=1.3;break;
   case 'listening':pose.h=27;pose.mw=7;f.eyeScale=.84;f.tilt=motion?track([0,0,-.035,-.035,0,.025,.025,0],phase):0;f.y-=.7;break;
   case 'thinking':f.x=0;f.pose.curve=0;break;
-  case 'speaking':pose.arch=1;pose.curve=5;f.wave=motion?ease((phase-.1)/.12)*(1-ease((phase-.8)/.13)):1;break;
+  case 'speaking':{
+   const syllable=motion?track([0,.55,.95,.2,.7,.15,0,0,.75,.25,.9,.1,.5,.15,0,0,0,.3,.8,.15,.6,.1,0,.7,.25,.95,.2,.5,.1,0,0,0],phase):.25;
+   pose.arch=.15;pose.mw=8+4*syllable;pose.mh=8*syllable;pose.curve=5-3*syllable;
+   if(motion){const d=Math.min(Math.abs(phase-.23),Math.abs(phase-.73));f.open=d<.018?ease(d/.018):1;}
+   break;
+  }
   case 'photo':pose.arch=1;pose.curve=4;f.photo=motion?ease(phase/.14)*(1-ease((phase-.87)/.13)):1;break;
   case 'error':pose.h=27;pose.curve=-2;f.warning=motion?ease((phase-.22)/.12)*(1-ease((phase-.65)/.15)):1;f.x=motion?track([0,-1,1,0,0,0,0,0],phase):0;break;
  }
@@ -79,7 +84,7 @@ function drawLivingFace(p,frame,{mouth=true,photoFrame=true}={}){
  p.save();p.strokeStyle='#ff9fdb';p.lineWidth=1.7;
  for(const cx of [31,97])for(let n=-1;n<=1;n++){p.beginPath();p.moveTo(cx+n*3.6-1,74);p.lineTo(cx+n*3.6+1,70);p.stroke();}p.restore();
  if(f.thinking>0){for(let n=0;n<3;n++){const pulse=f.motion?.8+.2*Math.sin(t/480-n*1.1):1;p.beginPath();p.arc(50+n*14,17,2.5*f.thinking*pulse,0,Math.PI*2);p.fill();}}
- if(f.wave>0){p.save();p.lineWidth=2.2*f.wave;for(let n=-5;n<=5;n++){const h=f.wave*(f.motion?1.3+(1-Math.abs(n)/7)*(3+8*Math.abs(Math.sin(t/230+n*.73))*Math.abs(Math.sin(t/1100))):3+6*(1-Math.abs(n)/5));p.beginPath();p.moveTo(64+n*4,105-h);p.lineTo(64+n*4,105+h);p.stroke();}p.restore();}
+
  if(f.warning>0){p.save();p.translate(64,15);p.scale(f.warning*.5,f.warning*.5);p.translate(-64,-49);p.strokeStyle='#ff8cbc';p.lineWidth=1.8;p.beginPath();p.moveTo(64,34);p.lineTo(78,59);p.quadraticCurveTo(79,62,76,62);p.lineTo(52,62);p.quadraticCurveTo(49,62,50,59);p.closePath();p.stroke();p.beginPath();p.moveTo(64,44);p.lineTo(64,52);p.stroke();p.fillStyle='#ff8cbc';p.beginPath();p.arc(64,57,1,0,Math.PI*2);p.fill();p.restore();}
  if(photoFrame&&f.photo>0)drawPhotoFrame(p,null,0,f.photo);
  if(mouth){p.save();p.lineWidth=1.4;

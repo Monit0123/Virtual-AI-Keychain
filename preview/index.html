@@ -20,7 +20,7 @@
 </style>
 </head>
 <body><main>
-<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 31</span></div>
+<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 32</span></div>
 <header><div class="eyebrow">LITTLE ORBIT / BUNNY EDITION</div><h1>A little orbit of your own.</h1><p>Soft eyes. Familiar voices. Your favourite little moments.<br>A small companion, with a world of feeling.</p></header>
 <section class="studio" aria-label="Interactive face studio">
 <div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><p id="stage-presence" class="presence">A quiet little presence.</p><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
@@ -45,8 +45,8 @@
 <script src="animation.js?v=voice-index-22"></script>
 <script src="companion.js?v=voice-index-22"></script>
 <script src="face-surface.js?v=aa-28"></script>
-<script src="bunny-face.js?v=contour-30"></script>
-<script src="living-face.js?v=photo-31"></script>
+<script src="bunny-face.js?v=mouth-32"></script>
+<script src="living-face.js?v=mouth-32"></script>
 <script src="state-face.js?v=voice-index-22"></script>
 <script src="memory-scene.js?v=photo-31"></script>
 <script>
@@ -543,7 +543,10 @@ function frame(now){
  pen.fillStyle=pen.strokeStyle=color;
  // Keep pose interpolation owned by the animator; speech is a render-only layer.
  const pose=current;
- current={...pose,mh:pose.mh+gesture.mouthOpen};
+ const greetingSession=greetingAudio.player.session;
+ const speaking=companion.state===STATES.PLAYING_VOICE||greetingSession?.status==='playing';
+ const speakingPose=speaking?livingFaceFrame('speaking',now-(greetingSession?.started??companion.entered),animator.motion).pose:null;
+ current={...pose,mh:pose.mh+gesture.mouthOpen,...(speakingPose?{mw:speakingPose.mw,mh:speakingPose.mh,curve:speakingPose.curve}:{})};
  pen.save();
  if(social)applySnuggleTransform(pen,social.snuggle);
  const lookX=social?gx*(1-social.weight)+social.gazeX*social.weight:gx;
@@ -557,7 +560,7 @@ function frame(now){
  pen.restore();
  pen.save();pen.translate(64+(social?.snuggle?.mouthX||0),89+follow.mouthY+(social?.snuggle?.mouthY||0));pen.scale(1,follow.mouthScaleY);pen.translate(-64,-89);
  pen.shadowColor='#db91f7';pen.shadowBlur=3;pen.fillStyle=pen.strokeStyle='#efd3ff';
- if(companion.state!=='PLAYING_VOICE'&&document.querySelector('#tiny-mouth').checked)mouth();
+ if(document.querySelector('#tiny-mouth').checked)mouth();
  pen.shadowBlur=0;
  pen.restore(); // Mouth follow-through.
  drawBunnyAccents(pen,{now,motion:animator.motion,love:current.love,spark:current.spark,listening:wakeMic.active||companion.state==='LISTENING',thinking:companion.state==='WAITING_FOR_AI',speaking:companion.state==='PLAYING_VOICE',sleepy:current.h<12,angry:current.slope>6,surprised:current.mh>8});

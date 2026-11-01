@@ -10,15 +10,15 @@ test('all 13 reference designs have distinct thumbnails and eight named beats',(
 });
 test('each design has eight safe key frames and a changing animation, not just a static icon',()=>{
  for(const d of REFERENCE_FACES){const variants=new Set();for(let n=0;n<8;n++){
-  const t=d.duration*n/8,f=livingFaceFrame(d.id,t);assert.equal(f.beat,n);assert.ok(f.open>=0&&f.open<=1);for(const v of [f.x,f.y,f.scale,f.tilt,f.wave,f.warning,f.photo])assert.ok(Number.isFinite(v));variants.add(image(d.id,t).toString('base64'));
+  const t=d.duration*n/8,f=livingFaceFrame(d.id,t);assert.equal(f.beat,n);assert.ok(f.open>=0&&f.open<=1);for(const v of [f.x,f.y,f.scale,f.tilt,f.warning,f.photo])assert.ok(Number.isFinite(v));variants.add(image(d.id,t).toString('base64'));
  }assert.ok(variants.size>=3,d.id+' should visibly animate');}
 });
 test('reduced motion freezes every design, including voice ribbon and particles',()=>{
  for(const d of REFERENCE_FACES)assert.deepEqual(image(d.id,0,false),image(d.id,9999,false));
 });
-test('idle really closes its eyelids and speaking alternates smiling eyes with the reference ribbon',()=>{
+test('idle really closes its eyelids and speaking uses a complete face with an articulating mouth',()=>{
  assert.equal(livingFaceFrame('idle',6400*.22).open,0);assert.equal(livingFaceFrame('idle',0).open,1);
- assert.equal(livingFaceFrame('speaking',0).wave,0);assert.equal(livingFaceFrame('speaking',3000).wave,1);assert.equal(livingFaceFrame('speaking',5999).wave,0);
+ assert.equal(livingFaceFrame('speaking',0).pose.mh,0);assert.ok(livingFaceFrame('speaking',400).pose.mh>4);assert.equal(livingFaceFrame('speaking',5999).pose.mh,0);
  assert.equal(livingFaceFrame('photo',3200).photo,1);assert.equal(livingFaceFrame('error',3000).warning,1);
 });
 test('all designs preserve canvas transforms, opacity, clipping and shadow ownership',()=>{
@@ -30,7 +30,7 @@ test('study can tour all designs, morph interruptions, reject unknown names and 
  const seen=new Set();let now=300;for(let i=0;i<13;i++){seen.add(s.id);now+=REFERENCE_FACES.find(d=>d.id===s.id).duration;s.update(now);}
  assert.equal(seen.size,13);s.stop();assert.equal(s.active,false);assert.equal(s.tour,false);assert.equal(s.update(999),null);
 });
-function comparable(f){return {pose:f.pose,features:f.features,x:f.x,y:f.y,tilt:f.tilt,scale:f.scale,open:f.open,eyeScale:f.eyeScale,blush:f.blush,wave:f.wave,warning:f.warning,photo:f.photo,thinking:f.thinking,gazeX:f.gazeX,gazeY:f.gazeY};}
+function comparable(f){return {pose:f.pose,features:f.features,x:f.x,y:f.y,tilt:f.tilt,scale:f.scale,open:f.open,eyeScale:f.eyeScale,blush:f.blush,warning:f.warning,photo:f.photo,thinking:f.thinking,gazeX:f.gazeX,gazeY:f.gazeY};}
 test('a new expression starts at the exact currently visible geometry, including rapid retargets',()=>{
  const s=new FaceStudy();s.select('love',0);const before=s.sample(1600);
  s.select('sad',1600);assert.deepEqual(comparable(s.sample(1600)),comparable(before));
@@ -72,4 +72,14 @@ test('anger symbol is red and reflected correctly across both axes',()=>{
  const {drawAngerMark}=require('../preview/bunny-face.js'),c=createCanvas(128,128),p=c.getContext('2d');drawAngerMark(p,64,64);const data=p.getImageData(0,0,128,128).data;let red=0,error=0;
  for(let y=55;y<73;y++)for(let x=55;x<73;x++){const i=(y*128+x)*4,j=(y*128+127-x)*4,k=((127-y)*128+x)*4;if(data[i]>200&&data[i+1]<100&&data[i+2]<100&&data[i+3]>100)red++;error+=Math.abs(data[i+3]-data[j+3])+Math.abs(data[i+3]-data[k+3]);}
  assert.ok(red>25);assert.ok(error<300,'four corners have horizontal and vertical symmetry');
+});
+test('speaking uses an animated mouth, with no waveform beneath the full face',()=>{
+ const c=createCanvas(128,128),p=c.getContext('2d'),mouths=new Set();
+ for(const t of [0,200,400,700,1500,2000,3000,5000]){
+  p.clearRect(0,0,128,128);drawLivingFace(p,livingFaceFrame('speaking',t));
+  const below=p.getImageData(34,102,60,18).data;assert.ok(below.every((v,i)=>i%4!==3||v<5),'no waveform pixels below the face');
+  mouths.add(Buffer.from(p.getImageData(54,80,20,17).data).toString('base64'));
+  for(const x of [24,74])assert.ok(p.getImageData(x,26,30,40).data.filter((v,i)=>i%4===3&&v>150).length>20);
+ }
+ assert.ok(mouths.size>=5,'mouth articulates, pauses and smiles rather than remaining static');
 });

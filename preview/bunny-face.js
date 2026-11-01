@@ -54,7 +54,7 @@ function accents(p,{now=0,motion=true,love=0,spark=0,listening=false,thinking=fa
  if(surprised){p.strokeStyle=PINK;p.lineWidth=1.5;for(const [x,y] of [[106,24],[111,28]]){p.beginPath();p.moveTo(x,y);p.lineTo(x+3,y-3);p.stroke();}}
  p.globalAlpha=1;
  if(thinking){p.fillStyle=LAVENDER;for(let n=0;n<3;n++){p.globalAlpha=motion?.4+.6*(.5+.5*Math.sin(now/400-n)):1;p.beginPath();p.arc(51+n*13,49,2.5,0,Math.PI*2);p.fill();}}
- if(speaking){p.strokeStyle=LAVENDER;p.lineWidth=2;for(let n=-2;n<=2;n++){const h=motion?2+5*Math.abs(Math.sin(now/170+n*.8)):3;p.beginPath();p.moveTo(64+n*4,84-h);p.lineTo(64+n*4,84+h);p.stroke();}}
+
  p.restore();
 }
 const api={drawBunnyEye:eye,drawBunnyAccents:accents,bunnyEyeContour:eyeContour,drawAngerMark:angerMark};if(typeof module!=='undefined'&&module.exports)module.exports=api;else Object.assign(root,api);
