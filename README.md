@@ -208,3 +208,7 @@ The native macOS simulator wraps the existing UI with AppKit/WebKit and replaces
 See `macos/INSTALL.txt` for installation and permissions. This development build is ad-hoc signed, not Apple-notarized. Imported personal recordings persist privately in `~/Library/Application Support/VirtualKeychain/recordings/`; `voice_004` supplies the short wake greeting. The originals remain generated placeholders until you import your own audio. No personal audio is committed to Git.
 
 Native speech requires both macOS Microphone and Speech Recognition permissions. On-device English recognition is required by default; Apple-service recognition is explicitly opt-in. Name accuracy, actual microphone pickup and speaker audibility must be tested on a real Mac. Native smoke tests validate UI loading, bundled WAV decoding, recording persistence and audio source lifecycle—not acoustic operation. This is not embedded ESP32-S3 firmware.
+
+## Little Orbit — Bunny edition
+
+The simulator now follows the supplied bunny-face reference: glowing lavender rabbit pupils, pink cheek strokes, happy/sleepy/sad/surprised/angry shapes, plus Excited star eyes and Love heart eyes. The dark lilac studio and champagne frame preserve the minimal 128×128 face. See [design notes](docs/bunny-design.md). Random photos, personal audio persistence and continuous microphone re-arming remain intact; the Mac app needs the new build to show this redesign.

@@ -6,8 +6,8 @@ const FaceAnimation=require('../preview/animation.js');
 const html=fs.readFileSync('preview/index.html','utf8');
 const moods=vm.runInNewContext(html.match(/const moods=(\[[\s\S]*?\]);/)[1]);
 function create(){let seed=42;return new FaceAnimation(moods,{random:()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;}});}
-test('six expressions settle to exact target geometry',()=>{
- for(let i=0;i<6;i++){const a=create();a.automatic=false;a.select(i,1000);a.update(1650);
+test('all eight expressions settle to exact target geometry',()=>{
+ for(let i=0;i<moods.length;i++){const a=create();a.automatic=false;a.select(i,1000);a.update(1650);
  for(const key of ['h','w','slope','arch','curve','mw','mh','r','g','b'])assert.ok(Math.abs(a.current[key]-moods[i][key])<1e-9);}
 });
 test('interrupted expression morph starts from current pose without snapping',()=>{

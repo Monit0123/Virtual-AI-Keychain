@@ -114,7 +114,7 @@ class Companion {
     else if(event==='EXPRESSION_REQUESTED'&&this.#view==='face'){
      const expression=typeof payload==='object'?payload?.expression:payload;
      const duration=typeof payload==='object'?payload?.durationMs:4500;
-     if(Number.isInteger(expression)&&expression>=0&&expression<6&&Number.isFinite(duration)&&duration>=1000&&duration<=10000){
+     if(Number.isInteger(expression)&&expression>=0&&expression<8&&Number.isFinite(duration)&&duration>=1000&&duration<=10000){
       this.expression=expression;this.expressionDuration=duration;this.#enter(STATES.EXPRESSING,now);accepted=true;
      }
     }

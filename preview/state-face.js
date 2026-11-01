@@ -11,8 +11,8 @@ function createStateFaces(base){
  return poses;
 }
 function stateFaceIndex(state,expression=0){
- return ({IDLE:0,EXPRESSING:expression,SHOWING_PHOTO:10,PLAYING_VOICE:8,
- LISTENING:6,WAITING_FOR_AI:7,SHOWING_RESPONSE:8,ERROR:9})[state]??0;
+ return ({IDLE:0,EXPRESSING:expression,SHOWING_PHOTO:12,PLAYING_VOICE:10,
+ LISTENING:8,WAITING_FOR_AI:9,SHOWING_RESPONSE:10,ERROR:11})[state]??0;
 }
 function stateFaceMotion(state,elapsed,motion=true){
  if(!motion)return {x:0,y:0,mouthOpen:0};
