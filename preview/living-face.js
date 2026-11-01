@@ -27,7 +27,7 @@ function livingFaceFrame(id,elapsed=0,motion=true){
  const phase=motion?((Math.max(0,elapsed)%design.duration)/design.duration):.5;
  const t=motion?Math.max(0,elapsed):0;
  const pose={w:27,h:29,slope:0,arch:0,curve:2,mw:10,mh:0,spark:0,love:0};
- const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,headBob:0,sleep:0,yawn:0,now:t,motion};
+ const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,headBob:0,headPitch:0,eyeLift:0,mouthDrop:0,sleep:0,yawn:0,now:t,motion};
  if(motion){f.y=Math.sin(t/1700)*.32;f.x=track([0,0,1.2,1.2,0,-1,-1,0],phase);}
  switch(design.id){
   case 'idle':
@@ -39,10 +39,14 @@ function livingFaceFrame(id,elapsed=0,motion=true){
   case 'sleepy':{
    const loop=phase*design.duration,yawn=motion?ease((loop-350)/650)*(1-ease((loop-2000)/900)):0;
    const doze=motion?ease((loop-2400)/700)*(1-ease((loop-6900)/700)):1;
-   f.yawn=yawn;f.sleep=doze;pose.h=24-6*yawn-16*doze;pose.mw=9+7*yawn;pose.mh=24*yawn;pose.curve=1-yawn;
-   f.open=1-.35*yawn-.85*doze;
-   f.headBob=motion?1.7*doze*(.5-.5*Math.cos((loop-3100)*Math.PI*2/2400)):0;
-   f.tilt=motion?.025*doze*Math.sin((loop-3100)*Math.PI*2/3200):0;
+   f.yawn=yawn;f.sleep=doze;pose.h=24-12*yawn-16*doze;pose.mw=9+7*yawn;pose.mh=24*yawn;pose.curve=1-yawn;
+   // The whole face strains into the yawn, then releases together on the exhale.
+   pose.arch=.45*yawn;f.open=1-.96*yawn-.85*doze;f.eyeLift=-1.7*yawn;f.mouthDrop=1.4*yawn;
+   // Sag forward slowly, catch the head, overshoot back, and settle. No yaw/roll.
+   const nod=motion?track([0,.04,.2,.65,1,.7,-.16,.06,0],(((loop-3100)%2400)+2400)%2400/2400):0;
+   f.headPitch=motion?.55*doze*nod-.18*yawn:0;
+   f.headBob=motion?3.6*doze*nod-.5*yawn:0;
+   f.tilt=0;
    break;
   }
   case 'sad':pose.slope=-8;pose.h=25;pose.curve=-4;f.x=motion?track([0,1,1,1,0,-.5,-.5,0],phase):0;f.y+=1.5;f.blush=.6;break;
@@ -94,19 +98,19 @@ function sleepParticles(elapsed,motion=true){
 }
 function drawLivingFace(p,frame,{mouth=true,photoFrame=true,sleepMarks=true}={}){
  const f=frame,pose=f.pose,t=f.now,feature=id=>f.features?.[id]??(f.id===id?1:0);
- p.save();p.translate(64,63+(f.headBob||0));p.rotate(f.tilt);p.scale(f.scale,f.scale);p.translate(-64,-63);
+ p.save();p.translate(64,63+(f.headBob||0));p.rotate(f.tilt);p.scale(f.scale*(1-.025*Math.abs(f.headPitch||0)),f.scale*Math.cos(f.headPitch||0));p.translate(-64,-63);
  p.lineCap='round';p.lineJoin='round';p.lineWidth=1.7;p.fillStyle=p.strokeStyle='#efd3ff';p.shadowColor='#d892f5';p.shadowBlur=2;
  // Eyes stay on the face in EVERY state; activity motifs live outside them.
- for(const [x,left] of [[39,true],[89,false]]){p.save();p.translate(x,48);p.scale(f.eyeScale,f.eyeScale);faceAPI.drawBunnyEye(p,0,0,left,f.open,{...pose,gazeX:f.gazeX||0,gazeY:f.gazeY||0});p.restore();}
+ for(const [x,left] of [[39,true],[89,false]]){p.save();p.translate(x,48+(f.eyeLift||0));p.scale(f.eyeScale,f.eyeScale);faceAPI.drawBunnyEye(p,0,0,left,f.open,{...pose,gazeX:f.gazeX||0,gazeY:f.gazeY||0});p.restore();}
  // Blush follows the face, not the eyes, so gaze and cheek motion have different weight.
  p.save();p.strokeStyle='#ff9fdb';p.lineWidth=1.7;
- for(const cx of [31,97])for(let n=-1;n<=1;n++){p.beginPath();p.moveTo(cx+n*3.6-1,74);p.lineTo(cx+n*3.6+1,70);p.stroke();}p.restore();
+ for(const cx of [31,97])for(let n=-1;n<=1;n++){p.beginPath();p.moveTo(cx+n*3.6-1,74+(f.eyeLift||0)*.7);p.lineTo(cx+n*3.6+1,70+(f.eyeLift||0)*.7);p.stroke();}p.restore();
  if(f.thinking>0){for(let n=0;n<3;n++){const pulse=f.motion?.8+.2*Math.sin(t/480-n*1.1):1;p.beginPath();p.arc(50+n*14,17,2.5*f.thinking*pulse,0,Math.PI*2);p.fill();}}
 
  if(f.warning>0){p.save();p.translate(64,15);p.scale(f.warning*.5,f.warning*.5);p.translate(-64,-49);p.strokeStyle='#ff8cbc';p.lineWidth=1.8;p.beginPath();p.moveTo(64,34);p.lineTo(78,59);p.quadraticCurveTo(79,62,76,62);p.lineTo(52,62);p.quadraticCurveTo(49,62,50,59);p.closePath();p.stroke();p.beginPath();p.moveTo(64,44);p.lineTo(64,52);p.stroke();p.fillStyle='#ff8cbc';p.beginPath();p.arc(64,57,1,0,Math.PI*2);p.fill();p.restore();}
  if(photoFrame&&f.photo>0)drawPhotoFrame(p,null,0,f.photo);
  if(mouth){p.save();p.lineWidth=1.4;
-  const w=pose.mw/2,h=pose.mh*2/3,cy=86;
+  const w=pose.mw/2,h=pose.mh*2/3,cy=86+(f.mouthDrop||0);
   p.beginPath();p.moveTo(64-w,cy);p.bezierCurveTo(64-w,cy+h+pose.curve,64+w,cy+h+pose.curve,64+w,cy);p.bezierCurveTo(64+w,cy-h+pose.curve,64-w,cy-h+pose.curve,64-w,cy);p.closePath();p.stroke();p.restore();
  }
  p.fillStyle=p.strokeStyle='#ffaddf';p.lineWidth=1.3;
@@ -156,8 +160,8 @@ class FaceStudy {
   if(blink){
    if(age<120)frame.open=from.open*(1-transitionEase(age/120));
    else if(age<180)frame.open=0;
-   else if(age<360)frame.open=transitionEase((age-180)/180);
-   else frame.open=1;
+   else if(age<360)frame.open=transitionEase((age-180)/180)*target.open;
+   else frame.open=target.open;
   }
   // Labels follow the selected design; geometry and effect ownership follow the visible frame.
   frame.beat=target.beat;frame.phase=from.phase+(target.phase-from.phase)*t;return frame;
