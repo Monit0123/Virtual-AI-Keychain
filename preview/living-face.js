@@ -8,7 +8,7 @@ const DEFINITIONS=[
  ['happy','Happy','A soft lift of the cheeks, smiling eyes, then a contented little bounce.',5600,'Notice|Warm|Smile|Lift|Glow|Sway|Smile|Settle'],
  ['excited','Excited','Star eyes brighten with a little anticipation, two light hops, then sparkle.',4800,'Anticipate|Brighten|Hop|Sparkle|Hop|Shimmer|Glow|Settle'],
  ['surprised','Surprised','A tiny recoil, wide bunny eyes, a curious tilt, then a slow recovery.',5200,'Notice|Recoil|Wide eyes|Hold|Tilt|Curious|Relax|Settle'],
- ['sleepy','Sleepy','One big yawn settles into sustained sleep, with gentle forward nods and continuously drifting Zs.',7600,'Yawn|Open wide|Exhale|Settle|Nod|Dream|Doze|Deep sleep'],
+ ['sleepy','Sleepy','A small yawn gives way to a much bigger full-face stretch, then sustained sleep with gentle nods and drifting Zs.',7600,'Small yawn|Catch breath|Big yawn|Stretch|Exhale|Settle|Nod|Deep sleep'],
  ['sad','Sad','Drooping eyes glance down, breathe, and quietly ask for a little comfort.',7200,'Withdraw|Lower gaze|Sigh|Hold|Look up|Soft blink|Breathe|Rest'],
  ['angry','Angry','A playful little huff: narrowed eyes and a brief frustration mark, never threatening.',5000,'Notice|Narrow|Huff|Tense|Huff|Soften|Blink|Settle'],
  ['love','Love','Heart eyes lean closer while small, independently drifting hearts rise away.',6800,'Notice|Warm|Lean|Heart eyes|Nuzzle|Float|Glow|Settle'],
@@ -37,15 +37,17 @@ function livingFaceFrame(id,elapsed=0,motion=true){
   case 'excited':pose.spark=1;pose.curve=7;f.scale=motion?track([1,.97,1.04,1,1.025,1,1,1],phase):1;f.y+=motion?track([0,1,-2,0,-1.4,0,0,0],phase):0;break;
   case 'surprised':pose.h=35;pose.mh=9;pose.mw=7;pose.curve=0;f.y+=motion?track([0,1,-2,-2,-1,0,0,0],phase):0;f.tilt=motion?track([0,0,-.035,-.035,.045,.045,0,0],phase):0;break;
   case 'sleepy':{
-   const loop=t,yawn=motion?ease((loop-350)/650)*(1-ease((loop-2000)/900)):0;
-   const doze=motion?ease((loop-2400)/700):1;
-   f.yawn=yawn;f.sleep=doze;pose.h=24-12*yawn-16*doze;pose.mw=9+7*yawn;pose.mh=24*yawn;pose.curve=1-yawn;
+   const loop=t;
+   const small=motion?.32*ease((loop-300)/350)*(1-ease((loop-950)/400)):0;
+   const big=motion?ease((loop-1600)/1100)*(1-ease((loop-3550)/1150)):0;
+   const yawn=small+big,doze=motion?ease((loop-4400)/800):1;
+   f.yawn=yawn;f.sleep=doze;pose.h=24-12*yawn-16*doze;pose.mw=9+12*yawn;pose.mh=34*yawn;pose.curve=1-yawn;
    // The whole face strains into the yawn, then releases together on the exhale.
-   pose.arch=.45*yawn;pose.squeeze=yawn;f.open=1-.96*yawn-.85*doze;f.eyeLift=-1.7*yawn;f.mouthDrop=1.4*yawn;
+   pose.arch=.45*yawn;pose.squeeze=yawn;f.open=1-.96*yawn-.85*doze;f.eyeLift=-2.2*yawn;f.mouthDrop=2.4*yawn;f.scale=1+.025*yawn;
    // Sag forward slowly, catch the head, overshoot back, and settle. No yaw/roll.
-   const nod=motion?track([0,.04,.2,.65,1,.7,-.16,.06,0],(((loop-3100)%2400)+2400)%2400/2400):0;
-   f.headPitch=motion?.55*doze*nod-.18*yawn:0;
-   f.headBob=motion?3.6*doze*nod-.5*yawn:0;
+   const nod=motion?track([0,.04,.2,.65,1,.7,-.16,.06,0],(Math.max(0,loop-5200)%2400)/2400):0;
+   f.headPitch=motion?.55*doze*nod-.24*yawn:0;
+   f.headBob=motion?3.6*doze*nod-.85*yawn:0;
    f.tilt=0;
    break;
   }
@@ -89,10 +91,10 @@ function drawPhotoFrame(p,image=null,expand=0,strength=1){
 // Staggered particles have bounded lifetimes; none teleports at the loop seam.
 function sleepParticles(elapsed,motion=true){
  if(!motion)return [{x:100,y:24,size:3,alpha:.7},{x:109,y:13,size:4,alpha:.4}];
- const t=Math.max(0,elapsed),newest=Math.floor((t-3000)/1200),particles=[];
+ const t=Math.max(0,elapsed),newest=Math.floor((t-5100)/1200),particles=[];
  // At most two live particles, however long the companion has been asleep.
  for(let i=Math.max(0,newest-1);i<=newest;i++){
-  const life=(t-(3000+i*1200))/2100;if(life<0||life>=1)continue;
+  const life=(t-(5100+i*1200))/2100;if(life<0||life>=1)continue;
   particles.push({x:99+12*life+Math.sin(life*Math.PI)*1.3,y:28-25*life,size:2.7+2.3*life+(i%3)*.2,alpha:ease(life/.12)*(1-ease((life-.25)/.75))});
  }
  return particles;

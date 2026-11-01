@@ -114,28 +114,28 @@ test('closed eyes remain solid eyelid strokes instead of becoming transparent',(
  for(const x of [24,74])assert.ok(p.getImageData(x,43,30,10).data.filter((v,i)=>i%4===3&&v>200).length>20);
 });
 test('sleep loop yawns widely first, closes the mouth, then gently bobs while dozing',()=>{
- const start=livingFaceFrame('sleepy',0),yawn=livingFaceFrame('sleepy',1500),asleep=livingFaceFrame('sleepy',4200);
- assert.equal(start.pose.mh,0);assert.equal(yawn.pose.mh,24);assert.equal(yawn.pose.mw,16);assert.equal(yawn.sleep,0);
+ const start=livingFaceFrame('sleepy',0),yawn=livingFaceFrame('sleepy',3000),asleep=livingFaceFrame('sleepy',6000);
+ assert.equal(start.pose.mh,0);assert.equal(yawn.pose.mh,34);assert.equal(yawn.pose.mw,21);assert.equal(yawn.sleep,0);
  assert.equal(asleep.pose.mh,0);assert.equal(asleep.sleep,1);assert.ok(asleep.open<.2);
- const bobs=new Set();for(const t of [3300,3700,4100,4500,4900,5300]){const f=livingFaceFrame('sleepy',t);bobs.add(f.headBob);assert.ok(f.headBob>=-.6&&f.headBob<=3.6);assert.equal(f.tilt,0);assert.ok(f.headPitch>=-.09&&f.headPitch<=.55);}assert.ok(bobs.size>=4);
+ const bobs=new Set();for(const t of [5400,5800,6200,6600,7000,7400]){const f=livingFaceFrame('sleepy',t);bobs.add(f.headBob);assert.ok(f.headBob>=-.6&&f.headBob<=3.6);assert.equal(f.tilt,0);assert.ok(f.headPitch>=-.09&&f.headPitch<=.55);}assert.ok(bobs.size>=4);
  assert.equal(livingFaceFrame('sleepy',7600).yawn,0);assert.equal(livingFaceFrame('sleepy',7600).sleep,1);
 });
 test('sleeping Zs emerge above the head, travel upward, grow and fade with bounded lifetimes',()=>{
  const {sleepParticles}=require('../preview/living-face.js');assert.deepEqual(sleepParticles(2000),[]);
- const a=sleepParticles(3600)[0],b=sleepParticles(4200)[0],c=sleepParticles(5000)[0];
+ const a=sleepParticles(5700)[0],b=sleepParticles(6300)[0],c=sleepParticles(7100)[0];
  assert.ok(a.y>b.y&&b.y>c.y);assert.ok(a.x<b.x&&b.x<c.x);assert.ok(a.alpha>b.alpha&&b.alpha>c.alpha);assert.ok(a.size<b.size&&b.size<c.size);
  for(let t=0;t<7600;t+=20)for(const z of sleepParticles(t)){assert.ok(z.alpha>=0&&z.alpha<=1);assert.ok(z.x>=99&&z.x+z.size<128);assert.ok(z.y>=0&&z.y+z.size<35);}
- assert.ok(sleepParticles(7600).length>0);assert.deepEqual(sleepParticles(9600),sleepParticles(6000));assert.deepEqual(sleepParticles(0,false),sleepParticles(99999,false));
+ assert.ok(sleepParticles(7600).length>0);assert.deepEqual(sleepParticles(12600),sleepParticles(9000));assert.deepEqual(sleepParticles(0,false),sleepParticles(99999,false));
 });
 test('yawn tightens the eyes with the jaw, then relaxes both during the exhale',()=>{
- const a=livingFaceFrame('sleepy',400),b=livingFaceFrame('sleepy',700),peak=livingFaceFrame('sleepy',1500),release=livingFaceFrame('sleepy',2500);
+ const a=livingFaceFrame('sleepy',1700),b=livingFaceFrame('sleepy',2100),peak=livingFaceFrame('sleepy',3000),release=livingFaceFrame('sleepy',4200);
  assert.ok(a.pose.mh<b.pose.mh&&b.pose.mh<peak.pose.mh);
  assert.ok(a.open>b.open&&b.open>peak.open);assert.ok(peak.open<.05);assert.equal(peak.pose.squeeze,1);assert.ok(release.pose.squeeze<peak.pose.squeeze);
  assert.ok(peak.eyeLift<0&&peak.mouthDrop>0&&peak.pose.arch>0);
  assert.ok(release.open>peak.open&&release.pose.mh<peak.pose.mh);assert.ok(release.eyeLift>peak.eyeLift&&release.mouthDrop<peak.mouthDrop);
 });
 test('sleep nod pitches forward, catches itself and recovers backward without sideways roll',()=>{
- const forward=livingFaceFrame('sleepy',4300),recover=livingFaceFrame('sleepy',4900),settle=livingFaceFrame('sleepy',5500);
+ const forward=livingFaceFrame('sleepy',6400),recover=livingFaceFrame('sleepy',7000),settle=livingFaceFrame('sleepy',7600);
  assert.ok(forward.headPitch>.5&&forward.headBob>3);
  assert.ok(recover.headPitch<0&&recover.headBob<0);
  assert.ok(Math.abs(settle.headPitch)<.001&&Math.abs(settle.headBob)<.001);
@@ -144,7 +144,7 @@ test('sleep nod pitches forward, catches itself and recovers backward without si
 });
 test('transition blink hands off smoothly to the yawning eye squeeze',()=>{
  const s=new FaceStudy();s.select('idle',0);s.select('sleepy',1000);
- const a=s.sample(1849),b=s.sample(1850);assert.ok(a.open<.3);assert.ok(Math.abs(a.open-b.open)<.01);
+ const a=s.sample(1849),b=s.sample(1850);assert.ok(a.open<.8);assert.ok(Math.abs(a.open-b.open)<.01);
 });
 test('sleep has one entry yawn and remains asleep indefinitely without resetting',()=>{
  const {sleepParticles}=require('../preview/living-face.js');
@@ -153,5 +153,14 @@ test('sleep has one entry yawn and remains asleep indefinitely without resetting
   assert.ok(sleepParticles(t).length>0&&sleepParticles(t).length<=2);
  }
  const s=new FaceStudy();s.select('sleepy',0);s.select('sleepy',12000);assert.equal(s.since,0);assert.equal(s.sample(12000).sleep,1);
- s.select('happy',12000);s.select('sleepy',14000);assert.equal(s.since,14000);assert.equal(s.sample(15500).yawn,1,'a genuinely new sleep entry can yawn again');
+ s.select('happy',12000);s.select('sleepy',14000);assert.equal(s.since,14000);assert.equal(s.sample(17000).yawn,1,'a genuinely new sleep entry can yawn again');
+});
+test('sleep entry has a small yawn, a breath, then a much bigger held stretch only once',()=>{
+ const small=livingFaceFrame('sleepy',800),breath=livingFaceFrame('sleepy',1450),big=livingFaceFrame('sleepy',3000),held=livingFaceFrame('sleepy',3450),sleep=livingFaceFrame('sleepy',6000);
+ assert.ok(small.pose.mh>8&&small.pose.mh<12);assert.equal(breath.pose.mh,0);
+ assert.ok(big.pose.mh>small.pose.mh*3&&big.pose.mw>small.pose.mw*1.5);
+ assert.ok(big.open<small.open&&big.pose.squeeze>small.pose.squeeze);assert.ok(big.mouthDrop>small.mouthDrop&&big.headPitch<small.headPitch);
+ assert.equal(held.pose.mh,big.pose.mh);assert.equal(sleep.pose.mh,0);assert.equal(sleep.sleep,1);
+ let peaks=0,open=false;for(let t=0;t<=60000;t+=10){const next=livingFaceFrame('sleepy',t).pose.mh>1;if(next&&!open)peaks++;open=next;}assert.equal(peaks,2,'only the two entry yawns, never another cycle');
+ const {sleepParticles}=require('../preview/living-face.js');assert.deepEqual(sleepParticles(4500),[]);
 });
