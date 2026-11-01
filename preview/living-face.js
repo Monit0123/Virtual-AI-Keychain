@@ -8,7 +8,7 @@ const DEFINITIONS=[
  ['happy','Happy','A soft lift of the cheeks, smiling eyes, then a contented little bounce.',5600,'Notice|Warm|Smile|Lift|Glow|Sway|Smile|Settle'],
  ['excited','Excited','Star eyes brighten with a little anticipation, two light hops, then sparkle.',4800,'Anticipate|Brighten|Hop|Sparkle|Hop|Shimmer|Glow|Settle'],
  ['surprised','Surprised','A tiny recoil, wide bunny eyes, a curious tilt, then a slow recovery.',5200,'Notice|Recoil|Wide eyes|Hold|Tilt|Curious|Relax|Settle'],
- ['sleepy','Sleepy','A big opening yawn settles into soft head bobs, with rising, fading Zs before the loop repeats.',7600,'Yawn|Open wide|Exhale|Settle|Nod|Dream|Doze|Stir'],
+ ['sleepy','Sleepy','One big yawn settles into sustained sleep, with gentle forward nods and continuously drifting Zs.',7600,'Yawn|Open wide|Exhale|Settle|Nod|Dream|Doze|Deep sleep'],
  ['sad','Sad','Drooping eyes glance down, breathe, and quietly ask for a little comfort.',7200,'Withdraw|Lower gaze|Sigh|Hold|Look up|Soft blink|Breathe|Rest'],
  ['angry','Angry','A playful little huff: narrowed eyes and a brief frustration mark, never threatening.',5000,'Notice|Narrow|Huff|Tense|Huff|Soften|Blink|Settle'],
  ['love','Love','Heart eyes lean closer while small, independently drifting hearts rise away.',6800,'Notice|Warm|Lean|Heart eyes|Nuzzle|Float|Glow|Settle'],
@@ -24,7 +24,7 @@ const ease=x=>{x=clamp(x);return x*x*(3-2*x);};
 function track(values,phase){const t=phase*(values.length-1),i=Math.min(values.length-2,Math.floor(t));return values[i]+(values[i+1]-values[i])*ease(t-i);}
 function livingFaceFrame(id,elapsed=0,motion=true){
  const design=REFERENCE_FACES.find(d=>d.id===id)||REFERENCE_FACES[0];
- const phase=motion?((Math.max(0,elapsed)%design.duration)/design.duration):.5;
+ const phase=motion?(design.id==='sleepy'?Math.min(Math.max(0,elapsed)/design.duration,1-Number.EPSILON):(Math.max(0,elapsed)%design.duration)/design.duration):.5;
  const t=motion?Math.max(0,elapsed):0;
  const pose={w:27,h:29,slope:0,arch:0,curve:2,mw:10,mh:0,spark:0,love:0,squeeze:0};
  const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,headBob:0,headPitch:0,eyeLift:0,mouthDrop:0,sleep:0,yawn:0,now:t,motion};
@@ -37,8 +37,8 @@ function livingFaceFrame(id,elapsed=0,motion=true){
   case 'excited':pose.spark=1;pose.curve=7;f.scale=motion?track([1,.97,1.04,1,1.025,1,1,1],phase):1;f.y+=motion?track([0,1,-2,0,-1.4,0,0,0],phase):0;break;
   case 'surprised':pose.h=35;pose.mh=9;pose.mw=7;pose.curve=0;f.y+=motion?track([0,1,-2,-2,-1,0,0,0],phase):0;f.tilt=motion?track([0,0,-.035,-.035,.045,.045,0,0],phase):0;break;
   case 'sleepy':{
-   const loop=phase*design.duration,yawn=motion?ease((loop-350)/650)*(1-ease((loop-2000)/900)):0;
-   const doze=motion?ease((loop-2400)/700)*(1-ease((loop-6900)/700)):1;
+   const loop=t,yawn=motion?ease((loop-350)/650)*(1-ease((loop-2000)/900)):0;
+   const doze=motion?ease((loop-2400)/700):1;
    f.yawn=yawn;f.sleep=doze;pose.h=24-12*yawn-16*doze;pose.mw=9+7*yawn;pose.mh=24*yawn;pose.curve=1-yawn;
    // The whole face strains into the yawn, then releases together on the exhale.
    pose.arch=.45*yawn;pose.squeeze=yawn;f.open=1-.96*yawn-.85*doze;f.eyeLift=-1.7*yawn;f.mouthDrop=1.4*yawn;
@@ -89,10 +89,11 @@ function drawPhotoFrame(p,image=null,expand=0,strength=1){
 // Staggered particles have bounded lifetimes; none teleports at the loop seam.
 function sleepParticles(elapsed,motion=true){
  if(!motion)return [{x:100,y:24,size:3,alpha:.7},{x:109,y:13,size:4,alpha:.4}];
- const loop=((Math.max(0,elapsed)%7600)+7600)%7600,particles=[];
- for(const [i,start] of [3000,4200,5400].entries()){
-  const life=(loop-start)/2100;if(life<0||life>=1)continue;
-  particles.push({x:99+12*life+Math.sin(life*Math.PI)*1.3,y:28-25*life,size:2.7+2.3*life+i*.2,alpha:ease(life/.12)*(1-ease((life-.25)/.75))});
+ const t=Math.max(0,elapsed),newest=Math.floor((t-3000)/1200),particles=[];
+ // At most two live particles, however long the companion has been asleep.
+ for(let i=Math.max(0,newest-1);i<=newest;i++){
+  const life=(t-(3000+i*1200))/2100;if(life<0||life>=1)continue;
+  particles.push({x:99+12*life+Math.sin(life*Math.PI)*1.3,y:28-25*life,size:2.7+2.3*life+(i%3)*.2,alpha:ease(life/.12)*(1-ease((life-.25)/.75))});
  }
  return particles;
 }
@@ -138,6 +139,7 @@ class FaceStudy {
  constructor(){this.id=null;this.since=0;this.previous=null;this.tour=false;this.transitionMs=850;}
  select(id,now,source=null){
   if(!REFERENCE_FACES.some(d=>d.id===id))return false;
+  if(id==='sleepy'&&this.id===id)return true;
   const visible=source||this.sample(now,true),oldId=this.id,elapsed=Math.max(0,now-this.since);
   this.previous=visible?{id:oldId||visible.id,elapsed,blink:visible.id!==id,frame:copyFrame(visible)}:null;
   this.id=id;this.since=now;return true;

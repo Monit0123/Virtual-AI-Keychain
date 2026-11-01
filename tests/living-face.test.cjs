@@ -118,14 +118,14 @@ test('sleep loop yawns widely first, closes the mouth, then gently bobs while do
  assert.equal(start.pose.mh,0);assert.equal(yawn.pose.mh,24);assert.equal(yawn.pose.mw,16);assert.equal(yawn.sleep,0);
  assert.equal(asleep.pose.mh,0);assert.equal(asleep.sleep,1);assert.ok(asleep.open<.2);
  const bobs=new Set();for(const t of [3300,3700,4100,4500,4900,5300]){const f=livingFaceFrame('sleepy',t);bobs.add(f.headBob);assert.ok(f.headBob>=-.6&&f.headBob<=3.6);assert.equal(f.tilt,0);assert.ok(f.headPitch>=-.09&&f.headPitch<=.55);}assert.ok(bobs.size>=4);
- assert.deepEqual(livingFaceFrame('sleepy',7600).pose,start.pose);assert.equal(livingFaceFrame('sleepy',7600).headBob,0);
+ assert.equal(livingFaceFrame('sleepy',7600).yawn,0);assert.equal(livingFaceFrame('sleepy',7600).sleep,1);
 });
 test('sleeping Zs emerge above the head, travel upward, grow and fade with bounded lifetimes',()=>{
  const {sleepParticles}=require('../preview/living-face.js');assert.deepEqual(sleepParticles(2000),[]);
  const a=sleepParticles(3600)[0],b=sleepParticles(4200)[0],c=sleepParticles(5000)[0];
  assert.ok(a.y>b.y&&b.y>c.y);assert.ok(a.x<b.x&&b.x<c.x);assert.ok(a.alpha>b.alpha&&b.alpha>c.alpha);assert.ok(a.size<b.size&&b.size<c.size);
  for(let t=0;t<7600;t+=20)for(const z of sleepParticles(t)){assert.ok(z.alpha>=0&&z.alpha<=1);assert.ok(z.x>=99&&z.x+z.size<128);assert.ok(z.y>=0&&z.y+z.size<35);}
- assert.deepEqual(sleepParticles(7600),[]);assert.deepEqual(sleepParticles(11400),sleepParticles(3800));assert.deepEqual(sleepParticles(0,false),sleepParticles(99999,false));
+ assert.ok(sleepParticles(7600).length>0);assert.deepEqual(sleepParticles(9600),sleepParticles(6000));assert.deepEqual(sleepParticles(0,false),sleepParticles(99999,false));
 });
 test('yawn tightens the eyes with the jaw, then relaxes both during the exhale',()=>{
  const a=livingFaceFrame('sleepy',400),b=livingFaceFrame('sleepy',700),peak=livingFaceFrame('sleepy',1500),release=livingFaceFrame('sleepy',2500);
@@ -145,4 +145,13 @@ test('sleep nod pitches forward, catches itself and recovers backward without si
 test('transition blink hands off smoothly to the yawning eye squeeze',()=>{
  const s=new FaceStudy();s.select('idle',0);s.select('sleepy',1000);
  const a=s.sample(1849),b=s.sample(1850);assert.ok(a.open<.3);assert.ok(Math.abs(a.open-b.open)<.01);
+});
+test('sleep has one entry yawn and remains asleep indefinitely without resetting',()=>{
+ const {sleepParticles}=require('../preview/living-face.js');
+ for(const t of [7600,8100,15200,22800,60000,3600000,86400000]){
+  const f=livingFaceFrame('sleepy',t);assert.equal(f.yawn,0);assert.equal(f.sleep,1);assert.equal(f.pose.mh,0);assert.ok(f.open<.2);assert.equal(f.tilt,0);assert.equal(f.beat,7);
+  assert.ok(sleepParticles(t).length>0&&sleepParticles(t).length<=2);
+ }
+ const s=new FaceStudy();s.select('sleepy',0);s.select('sleepy',12000);assert.equal(s.since,0);assert.equal(s.sample(12000).sleep,1);
+ s.select('happy',12000);s.select('sleepy',14000);assert.equal(s.since,14000);assert.equal(s.sample(15500).yawn,1,'a genuinely new sleep entry can yawn again');
 });

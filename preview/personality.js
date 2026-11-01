@@ -20,7 +20,7 @@ class Personality {
   const id=this.bag.shift();this.last=id;
   if(id==='happy')return {id,event:'EXPRESSION_REQUESTED',payload:{expression:1,durationMs:3000},label:'Happy to see you'};
   if(id==='playful')return {id,event:'EXPRESSION_REQUESTED',payload:{expression:3,durationMs:2600},label:'Oh! A little surprise'};
-  if(id==='sleepy')return {id,event:'EXPRESSION_REQUESTED',payload:{expression:4,durationMs:1800},label:'Just a tiny yawn'};
+  if(id==='sleepy')return {id,event:'EXPRESSION_REQUESTED',payload:{expression:4,durationMs:1800},label:'A yawn, then a quiet sleep'};
   if(id==='photo')return {id,event:'PHOTO_SELECTED',label:'Let’s remember a little moment'};
   if(id==='ai')return {id,event:'LISTENING_REQUESTED',label:'Want to ask something? Type to submit · mock AI'};
   if(id==='voice'){

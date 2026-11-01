@@ -87,3 +87,9 @@ test('invalid response fails recoverably; bounded logs do not accumulate indefin
  for(let i=0;i<10000;i++)c.dispatch('HOME',201+i);
  assert.equal(c.log.length,100);assert.equal(c.state,STATES.IDLE);
 });
+test('sleeping expressions do not time out, but explicit Home wakes and other expressions still expire',()=>{
+ const c=new Companion();c.dispatch('EXPRESSION_REQUESTED',0,{expression:4,durationMs:1800});
+ for(const t of [1800,7600,60000,3600000]){c.tick(t);assert.equal(c.state,STATES.EXPRESSING);assert.equal(c.expression,4);}
+ assert.equal(c.dispatch('HOME_REQUESTED',3600001),true);assert.equal(c.state,STATES.IDLE);
+ c.dispatch('EXPRESSION_REQUESTED',3600002,{expression:1,durationMs:1800});c.tick(3601802);assert.equal(c.state,STATES.IDLE);
+});

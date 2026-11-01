@@ -171,7 +171,7 @@ class Companion {
   const elapsed=now-this.entered,owner=this.requestId;
   if(this.state===STATES.PLAYING_VOICE){const progress=this.audio.progress?.();if(progress)this.voiceMessage={...this.voiceMessage,durationMs:progress.durationMs};const result=this.audio.update(now);if(result)this.dispatch(result.event,now,result.payload);return;}
   let event,payload={owner};
-  if(this.state===STATES.EXPRESSING&&elapsed>=this.expressionDuration)event=EVENTS.EXPRESSION_FINISHED;
+  if(this.state===STATES.EXPRESSING&&this.expression!==4&&elapsed>=this.expressionDuration)event=EVENTS.EXPRESSION_FINISHED;
   else if(this.state===STATES.LISTENING&&elapsed>=this.config.recordingMs)event=EVENTS.RECORDING_TIMEOUT;
   else if(this.state===STATES.WAITING_FOR_AI){
    if(!this.online){this.dispatch(EVENTS.NETWORK_CHANGED,now,false);return;}

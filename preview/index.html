@@ -20,7 +20,7 @@
 </style>
 </head>
 <body><main>
-<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 38</span></div>
+<div class="top"><div class="brand"><span class="mark"></span>Little Orbit</div><span class="tag">Living studio · 40</span></div>
 <header><div class="eyebrow">LITTLE ORBIT / BUNNY EDITION</div><h1>A little orbit of your own.</h1><p>Soft eyes. Familiar voices. Your favourite little moments.<br>A small companion, with a world of feeling.</p></header>
 <section class="studio" aria-label="Interactive face studio">
 <div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><p id="stage-presence" class="presence">A quiet little presence.</p><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
@@ -40,13 +40,13 @@
 <script src="photos.js?v=voice-index-22"></script>
 <script src="screens.js?v=voice-index-22"></script>
 <script src="affection.js?v=voice-index-22"></script>
-<script src="personality.js?v=voice-index-22"></script>
+<script src="personality.js?v=sleep-stay-40"></script>
 <script src="buttons.js?v=voice-index-22"></script>
 <script src="animation.js?v=voice-index-22"></script>
-<script src="companion.js?v=voice-index-22"></script>
+<script src="companion.js?v=sleep-stay-40"></script>
 <script src="face-surface.js?v=aa-28"></script>
 <script src="bunny-face.js?v=yawn-39"></script>
-<script src="living-face.js?v=yawn-39"></script>
+<script src="living-face.js?v=sleep-stay-40"></script>
 <script src="state-face.js?v=voice-index-22"></script>
 <script src="memory-scene.js?v=photo-31"></script>
 <script>
@@ -394,7 +394,7 @@ function syncState(){
  document.querySelector('#voice-progress').hidden=state!==STATES.PLAYING_VOICE;
  document.querySelector('#random-voice').disabled=busy||!voiceLibrary.list(document.querySelector('#voice-category').value||null).length;
  document.querySelector('#cancel-voice').disabled=state!==STATES.PLAYING_VOICE;
- const details={IDLE:'Resting, blinking and looking around. Local features work offline.',EXPRESSING:moods[companion.expression]?.name+' — returning to idle in a moment.',SHOWING_PHOTO:'A random photo in its little frame, slowly growing to fill the display. Home cancels.',PLAYING_VOICE:(companion.voiceMessage?.title||'Personal message')+' · '+(companion.voiceMessage?.file||'')+' · real audio playback.',LISTENING:'Mock listening. Type a question within 20 seconds.',WAITING_FOR_AI:'Waiting for a simulated AI reply…',SHOWING_RESPONSE:companion.response,ERROR:companion.error};
+ const details={IDLE:'Resting, blinking and looking around. Local features work offline.',EXPRESSING:companion.expression===4?'Asleep. Gentle nods and Zs continue until you choose another action.':moods[companion.expression]?.name+' — returning to idle in a moment.',SHOWING_PHOTO:'A random photo in its little frame, slowly growing to fill the display. Home cancels.',PLAYING_VOICE:(companion.voiceMessage?.title||'Personal message')+' · '+(companion.voiceMessage?.file||'')+' · real audio playback.',LISTENING:'Mock listening. Type a question within 20 seconds.',WAITING_FOR_AI:'Waiting for a simulated AI reply…',SHOWING_RESPONSE:companion.response,ERROR:companion.error};
  document.querySelector('#detail').textContent=details[state];
  canvas.setAttribute('aria-label',state==='EXPRESSING'?'Animated '+moods[companion.expression].name+' face':state.replaceAll('_',' ').toLowerCase()+' facial expression');
 }
@@ -408,6 +408,7 @@ function status(){
  setStudioText('#status',memoryActive?'Random local memory · framed photo to full display':faceStudy.active?'Visual preview only · no real device operation':label+' · live companion');
 }
 function chooseFace(id,{studyOnly=false}={}){
+ if(id==='sleepy'&&faceStudy.id===id&&!faceStudy.tour)return true;
  if(!REFERENCE_FACES.some(d=>d.id===id))return false;
  const now=performance.now(),visible=faceStudy.sample(now,animator.motion)||liveFace.sample(now,animator.motion)||livingFaceFrame('idle',0,animator.motion);
  dispatch('HOME_REQUESTED');
@@ -416,7 +417,7 @@ function chooseFace(id,{studyOnly=false}={}){
  const design=REFERENCE_FACES.find(d=>d.id===id);
  setStudioText('#face-description',design.description);
  document.querySelector('#preview-mode').textContent='EXPRESSION STUDY · VISUAL ONLY';
- document.querySelector('#stage-presence').textContent=design.label+' · '+(design.duration/1000).toFixed(1)+'s living loop';
+ document.querySelector('#stage-presence').textContent=design.id==='sleepy'?'Sleepy · yawn once, then stay asleep':design.label+' · '+(design.duration/1000).toFixed(1)+'s living loop';
  status();
 }
 REFERENCE_FACES.forEach(design=>{
@@ -466,7 +467,7 @@ function frame(now){
   button.style.setProperty('--hold',feedback.progress);
  }
  let social=affection.update(now,animator.motion);
- if(social&&companion.state===STATES.EXPRESSING)companion.dispatch('HOME_REQUESTED',now);
+ if(social&&companion.state===STATES.EXPRESSING&&companion.expression!==4)companion.dispatch('HOME_REQUESTED',now);
  companion.tick(now);
  if(companion.revision!==seenRevision){
   seenRevision=companion.revision;

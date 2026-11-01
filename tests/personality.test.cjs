@@ -35,7 +35,7 @@ test('every personality plan goes through state-manager admission; AI never subm
   c.dispatch('HOME_REQUESTED',i*100);
   const r=p.next({online:true,photos:1});assert.equal(c.dispatch(r.event,i*100+1,r.payload),true);assert.equal(c.state,expected[r.id]);
   if(r.id==='ai'){assert.equal(c.question,'');assert.equal(c.resources.ai,false);}
-  if(r.id==='sleepy'){c.tick(i*100+1801);assert.equal(c.state,STATES.IDLE);}
+  if(r.id==='sleepy'){c.tick(i*100+1801);assert.equal(c.state,STATES.EXPRESSING);assert.equal(c.expression,4);}
  }
 });
 test('memory collection handles empty, single, multiple and unlimited count without repeat',()=>{
