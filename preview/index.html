@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Little companion — Face studio</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202125;background:#f6f5f2;font-synthesis:none}*{box-sizing:border-box}body{margin:0}main{max-width:1080px;margin:auto;padding:52px 36px 24px}.brand{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;letter-spacing:-.2px}.mark{width:18px;height:18px;background:#26282c;border-radius:6px;display:inline-block}.top{display:flex;justify-content:space-between;align-items:center}.tag{font-size:11px;color:#757570;border:1px solid #deddd7;border-radius:20px;padding:7px 11px}header{text-align:center;margin:56px 0 30px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:10px;color:#81817b;font-weight:600}h1{font-size:clamp(32px,5vw,48px);letter-spacing:-2px;font-weight:600;margin:12px 0}header p{font-size:15px;color:#777872;line-height:1.7;margin:0}.studio{display:grid;grid-template-columns:1fr 300px;gap:50px;align-items:center;max-width:830px;margin:0 auto}.stage{display:flex;flex-direction:column;align-items:center;padding:40px 0 24px}.device{padding:12px;border-radius:40px;background:linear-gradient(140deg,#53565a,#25272b 45%,#45474b);box-shadow:0 30px 45px -22px #17192388,0 2px 3px #fff inset;border:1px solid #68696b;position:relative}.device:before{content:"";position:absolute;width:42px;height:15px;border:6px solid #7c7e81;border-radius:10px;top:-18px;left:calc(50% - 27px);z-index:-1}canvas{display:block;width:256px;height:256px;border-radius:29px;background:#030506;image-rendering:auto}.spec{font-size:10px;letter-spacing:1.2px;color:#94948d;margin-top:24px;text-transform:uppercase}.panel h2{font-size:19px;font-weight:550;letter-spacing:-.5px;margin:0 0 8px}.panel>p{font-size:13px;line-height:1.7;color:#81817b;margin:0 0 21px}.expressions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible{outline:3px solid #65aaa8;outline-offset:3px}.expression{border:1px solid #e1e0db;background:#fcfcfa;border-radius:12px;padding:13px 12px;display:flex;gap:10px;align-items:center;font-size:12px;color:#696b66;text-align:left;transition:background .2s,border-color .2s,transform .2s}.expression:hover{transform:translateY(-2px);border-color:#aaa}.expression[aria-pressed=true]{background:#e8eeea;border-color:#b4c8bc;color:#233d31}.icon{font-size:18px;width:22px;text-align:center}.controls{margin-top:20px;padding-top:18px;border-top:1px solid #e0dfd9;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#757771}.switch{border:0;border-radius:20px;background:#353d38;color:#fff;font-size:11px;padding:8px 12px;min-width:66px}.switch[aria-pressed=false]{background:#e1e2dc;color:#555}.status{font-size:11px;color:#8b8d86;margin-top:13px;min-height:18px}.notes{display:flex;justify-content:center;gap:32px;margin:38px auto 36px;padding-top:24px;border-top:1px solid #e2e1dc;max-width:780px;font-size:11px;color:#858780}.dot{display:inline-block;background:#8aa493;border-radius:50%;width:5px;height:5px;margin-right:7px}footer{text-align:center;color:#999b94;font-size:10px;line-height:1.8;max-width:620px;margin:auto}label{cursor:pointer}@media(max-width:700px){main{padding:26px 22px}.studio{grid-template-columns:1fr;gap:8px;max-width:330px}header{margin:40px 0 0}.stage{padding:40px 0 28px}.notes{gap:14px;flex-wrap:wrap}canvas{width:240px;height:240px}.tag{font-size:10px}h1{letter-spacing:-1.5px}}
+
+.workflow{max-width:830px;margin:22px auto;padding:24px;border:1px solid #deddd7;background:#ffffff88;border-radius:20px}.workflow h2{font-size:18px;margin:0 0 12px}.actions{display:flex;flex-wrap:wrap;gap:8px}.actions button,.upload{padding:10px 14px;border:1px solid #d3d8d0;border-radius:9px;background:#fafbf8;font-size:12px;color:#34483c}.actions button:disabled{opacity:.4;cursor:not-allowed}.workflow p{font-size:12px;color:#747a71;line-height:1.7}.workflow input[type=text]{width:100%;padding:12px;border:1px solid #d3d8d0;border-radius:9px;margin:10px 0;font:inherit;font-size:13px}#device-state{font:11px ui-monospace,monospace;background:#e6ede7;padding:6px 10px;border-radius:6px;display:inline-block;margin-bottom:16px}#detail{white-space:pre-wrap}#question-panel[hidden]{display:none}.upload input{display:block;max-width:100%;margin-top:8px}#memory-name{font-size:12px}progress{width:100%;accent-color:#526c5c}
+
+.hardware-controls{display:flex;gap:16px;justify-content:center;margin-top:24px}.hardware-button{width:64px;height:52px;border:1px solid #cccfc7;border-radius:18px;background:#f9faf6;box-shadow:0 4px 0 #c5c8c0;color:#303d34;font-size:18px;font-weight:600;position:relative;touch-action:none;user-select:none;transition:transform .1s,box-shadow .1s,background .1s}.hardware-button[data-pressed=true]{transform:translateY(3px);box-shadow:0 1px 0 #b6beb1;background:#d5e6d9}.hardware-button:after{content:'';position:absolute;bottom:5px;left:8px;height:3px;width:calc((100% - 16px)*var(--hold,0));background:#567863;border-radius:3px}.button-hint{font-size:11px;text-align:center;color:#7a8076;line-height:1.8;margin-top:15px}#control-feedback{min-height:18px}
+.voice-settings{display:grid;gap:8px;max-width:440px;margin:20px 0}.voice-settings label{font-size:12px;color:#657469}.voice-settings select,.voice-settings input{font:inherit;font-size:12px;padding:10px;border:1px solid #d3d8d0;border-radius:8px;background:#fafbf8;color:#34483c}
+</style>
+</head>
+<body><main>
+<div class="top"><div class="brand"><span class="mark"></span>little companion</div><span class="tag">Face studio · 24</span></div>
+<header><div class="eyebrow">A little presence. A lot of personality.</div><h1>Small face. Big feelings.</h1><p>One small companion. A face first.<br>Only what you need, when you need it.</p></header>
+<section class="studio" aria-label="Interactive face studio">
+<div class="stage"><div class="device"><canvas id="face" width="128" height="128" aria-label="Animated neutral face"></canvas></div><div class="spec">RGB OLED · 128 × 128 · 1.5″ target</div><div class="hardware-controls" aria-label="Simulated device buttons"><button class="hardware-button" id="button-a" aria-label="Button A: tap to cycle expression, hold for home">A</button><button class="hardware-button" id="button-b" aria-label="Button B: tap for random interaction, hold for memory">B</button></div><div class="button-hint">A: expression · hold: home<br>B: surprise · hold: gallery<br>Hold threshold 0.7s · A + B: home<br>Gallery: A next · B previous<br>Viewer: A next · B previous<br>Reply: A next · B previous<br>Mouse, touch, or keyboard A / B</div><div class="button-hint">B reactions: happy · playful · sleepy · voice message · status<br>+ random photo when loaded · + mock AI when online<br>No immediate repeats. Long-press shortcuts stay fixed.</div><div id="control-feedback" class="button-hint" role="status">Ready</div></div>
+<div class="panel"><h2>A mood for every moment.</h2><p>Choose an expression, or let your companion<br>show you around.</p><div class="expressions" id="expressions"></div><div class="controls"><span>Cycle expressions</span><button id="auto" class="switch" aria-pressed="true">On</button></div><div class="controls"><label for="motion">Gentle motion</label><input id="motion" type="checkbox" checked></div><div class="status" id="status" aria-live="polite"></div></div>
+</section>
+<section class="workflow" aria-label="Companion state controls"><h2>Simulator controls</h2><p>These controls are outside the device. The keychain itself uses only the small display and A/B buttons.</p><span id="device-state" role="status">IDLE</span><div class="actions"><button data-action="HOME">Home / cancel</button><button data-action="GALLERY_REQUESTED">Photo gallery</button><button data-action="PHOTO">Show memory</button><button id="photo-previous">Previous photo</button><button id="photo-next">Next photo</button><button id="photo-random">Random photo</button><button data-action="SETTINGS_REQUESTED">Settings</button><button data-action="VOICE">Play selected voice</button><button id="random-voice">Random voice</button><button id="cancel-voice">Cancel voice</button><button data-action="LISTEN">Ask AI (mock)</button><button data-action="RETRY">Dismiss error</button><button data-action="RETRY_REQUESTED">Retry once</button><button data-action="FAIL">Test error</button></div><div class="voice-settings"><label for="voice-category">Category</label><select id="voice-category"></select><label for="voice-id">Recording identifier</label><select id="voice-id"></select><label for="voice-health">Fault injection (optional test)</label><select id="voice-health"><option value="ready">Normal — actual file</option><option value="missing">Missing recording — test</option><option value="corrupt">Corrupted recording — test</option></select><label for="voice-duration">Duration comes from the actual recording</label><input id="voice-duration" type="hidden" value=""><div class="actions"><button id="enable-audio">Enable sound / load recordings</button></div><p id="audio-status" role="status">Real audio is available. Enable sound once for A/B interactions.</p><label for="voice-replacement">Replace selected message with your own local recording</label><input id="voice-replacement" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg"><p id="voice-file-info">Four generated placeholder recordings are bundled. They are not your actual voice.</p><p>Replacements stay in this page session, are not uploaded, and play through your browser. AI questions remain simulated. The separate wake microphone requires explicit permission.</p></div><p><label><input type="checkbox" id="online" checked> Simulated internet available</label></p><label class="upload">Select multiple photos — no image-count cap<input id="memory-file" type="file" multiple accept="image/jpeg,image/png,image/webp"></label><label class="upload">Or select a whole folder (including subfolders)<input id="memory-folder" type="file" webkitdirectory directory multiple></label><p>Files stay in this browser session. Folder support depends on your browser; use multi-select if unavailable. There is no image-count cap, but available browser memory still applies. JPEG, PNG and WebP; up to 8 MiB per file.</p><progress id="import-progress" value="0" max="1" hidden></progress><div class="actions"><button id="cancel-import" disabled>Cancel import</button></div><p id="import-status" role="status">Ready to add photos.</p><p id="memory-name">Loading three bundled sample photos… Your own photos stay local and clear on reload.</p><div id="question-panel" hidden><label for="question">Simulated listening — type instead of speaking</label><input id="question" type="text" maxlength="200" placeholder="Ask a question…"><div class="actions"><button id="send-question">Finish listening</button></div></div><p id="detail" aria-live="polite"></p><progress id="voice-progress" max="5000" value="0" hidden></progress><p>Voice playback is real, using generated placeholder recordings or your local replacements. AI-question listening remains typed; the separate wake microphone is real and permission-controlled. AI replies are prewritten mocks, with no API or network requests.</p></section>
+<section class="workflow" id="affection-controls" aria-label="Affection behaviour preview"><h2>A quiet hello.</h2><p>After 90 minutes without interaction, the home face looks away sadly. A familiar greeting gently brings it back. Use real microphone recognition below, or the separate typed test. Browser recognition is not an ESP32-S3 wake-word engine.</p><div class="actions"><button id="preview-ignored">Preview left-alone mood</button><button id="reset-affection">Reset mood</button></div><h3>Real microphone wake phrases</h3><p>Start explicitly to grant microphone permission. Default: on-device recognition only, when supported and its English model is installed. This is full speech recognition with phrase matching, not an always-on low-power wake-word detector.</p><label><input id="allow-online-recognition" type="checkbox"> Allow browser speech service (may send microphone audio to its provider; internet may be required)</label><div class="actions"><button id="check-mic">Check microphone access</button><button id="start-mic">Start microphone</button><button id="stop-mic">Stop microphone</button><button id="test-speaker">Test speaker — “Hi, Mommy”</button></div><p>If permission is allowed but recognition fails, <a id="open-mic-preview" target="_blank" rel="noopener noreferrer">open this preview directly in a new tab</a>. Embedded previews can restrict speech/microphone access independently of site permission.</p><p id="mic-check-status" role="status"></p><p id="mic-status" role="status">Microphone off. No listening starts automatically.</p><p id="mic-transcript" aria-live="polite"></p><p>Use headphones to reduce feedback. Listening stops after a recognized wake phrase or before speaker playback; press Start again to re-arm. Keep this page open and visible. Recognition support varies by browser.</p><label for="wake-phrase">Try “Hi, Moni”, “Hi, Daddy”, or “Moni”</label><input id="wake-phrase" type="text" maxlength="80" placeholder="Hi, Moni"><div class="actions"><button id="submit-greeting">Say hello (typed simulation)</button></div><p><label><input type="checkbox" id="greeting-speech" checked> Play recorded “Hi, Mommy” greeting</label><br>Uses the selected generated placeholder voice, not browser text-to-speech. You can replace the greeting recording in the voice controls. Speaker output uses your browser’s actual audio device.</p><p id="affection-status" aria-live="polite">Waiting for a quiet moment. Use the preview button to skip the 90-minute wait.</p></section>
+<div class="notes"><span><i class="dot"></i>Soft, anti-aliased edges</span><span><i class="dot"></i>Fluid expression transitions</span><span><i class="dot"></i>Works offline</span></div>
+<footer>Graphics study, not an electronics simulation. The square face is rendered at 128 × 128 pixels with supersampled anti-aliasing and enlarged for viewing. Physical size depends on your screen.<br>Wokwi and Arduino firmware are separate; this preview does not validate OLED hardware.</footer>
+</main>
+<script src="wake-mic.js?v=mic-24"></script>
+<script src="voice/index.js?v=voice-index-22"></script>
+<script src="audio-player.js?v=voice-index-22"></script>
+<script src="voices.js?v=voice-index-22"></script>
+<script src="photos.js?v=voice-index-22"></script>
+<script src="screens.js?v=voice-index-22"></script>
+<script src="affection.js?v=voice-index-22"></script>
+<script src="personality.js?v=voice-index-22"></script>
+<script src="buttons.js?v=voice-index-22"></script>
+<script src="animation.js?v=voice-index-22"></script>
+<script src="companion.js?v=voice-index-22"></script>
+<script src="state-face.js?v=voice-index-22"></script>
+<script src="memory-scene.js?v=voice-index-22"></script>
+<script>
+'use strict';
+const canvas=document.querySelector('#face'),ctx=canvas.getContext('2d');
+// Render paths at 4x, then filter down to the actual 128x128 OLED resolution.
+const high=document.createElement('canvas');high.width=high.height=512;
+const pen=high.getContext('2d');pen.scale(4,4);
+ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+// Each expression is the same continuous geometry, not a swapped bitmap.
+// h: eye height, slope: inward lid angle, arch: happy crescent strength,
+// curve: smile/frown, mw/mh: mouth dimensions, rgb: restrained OLED tint.
+const moods=[
+{name:'Neutral',icon:'•ᴗ•',h:26,w:27,slope:0,arch:0,curve:1,mw:18,mh:0,r:186,g:240,b:230},
+{name:'Happy',icon:'⌒ᴗ⌒',h:22,w:29,slope:0,arch:1,curve:12,mw:28,mh:0,r:204,g:245,b:224},
+{name:'Sad',icon:'•︵•',h:24,w:27,slope:-8,arch:0,curve:-10,mw:23,mh:0,r:173,g:209,b:238},
+{name:'Surprised',icon:'•o•',h:35,w:25,slope:0,arch:0,curve:0,mw:13,mh:18,r:222,g:242,b:240},
+{name:'Sleepy',icon:'–ᴗ–',h:8,w:28,slope:0,arch:0,curve:0,mw:10,mh:5,r:199,g:199,b:231},
+{name:'Angry',icon:'›⌢‹',h:24,w:28,slope:10,arch:0,curve:-6,mw:24,mh:0,r:241,g:186,b:169}
+];
+let motion=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+const animator=new FaceAnimation(createStateFaces(moods),{now:performance.now(),motion});
+let current=animator.current;
+const voiceLibrary=new MockVoiceLibrary();
+const realAudio=new BrowserAudioPlayer(voiceLibrary);
+const greetingAudio=new GreetingAudio(realAudio);
+const companion=new Companion(performance.now(),{voiceLibrary,audioPlayer:realAudio});
+companion.dispatch('SETTING_CHANGED',performance.now(),{key:'speech',value:true});
+const affection=new Affection(performance.now());
+let spokenGreeting=false,lastAffectionPhase='';
+function cancelGreetingSpeech(){greetingAudio.stop();spokenGreeting=false;}
+function userActivity(){affection.activity(performance.now());cancelGreetingSpeech();}
+// Local greeting recording; microphone recognition is an explicit separate input adapter.
+document.querySelector('#greeting-speech').onchange=e=>{companion.dispatch('SETTING_CHANGED',performance.now(),{key:'speech',value:e.target.checked});if(!e.target.checked)cancelGreetingSpeech();};
+document.querySelector('#preview-ignored').onclick=()=>{
+ companion.dispatch('HOME_REQUESTED',performance.now());cancelGreetingSpeech();affection.previewIgnored(performance.now());syncState();
+ document.querySelector('#affection-status').textContent='A little withdrawn… try a familiar hello.';
+};
+document.querySelector('#reset-affection').onclick=()=>{userActivity();dispatch('HOME_REQUESTED');document.querySelector('#affection-status').textContent='Back to the main face.';};
+function acceptGreeting(text,fromMicrophone=false){
+ const now=performance.now();affection.update(now);
+ if(companion.state!==STATES.IDLE){document.querySelector('#mic-status').textContent='Busy. Return Home, then start listening again.';return;}
+ if(affection.wake(text,now)){
+  if(document.querySelector('#greeting-speech').checked)unlockSound().then(()=>realAudio.prepare(voiceLibrary.greetingId())).catch(()=>{});
+  companion.dispatch('HOME_REQUESTED',now);syncState();document.querySelector('#affection-status').textContent='A familiar voice… looking up.';
+ }else if(fromMicrophone){
+  document.querySelector('#mic-status').textContent='Wake phrase recognized. Listening stopped to prevent speaker feedback.';
+  if(document.querySelector('#greeting-speech').checked){const result=greetingAudio.start(now);if(!result.ok)document.querySelector('#mic-status').textContent=result.message;}
+ }else document.querySelector('#affection-status').textContent='Use the left-alone preview, then try “Hi, Moni”, “Hi, Daddy”, or “Moni”.';
+}
+const wakeMic=new WakeMicrophone({
+ onPhrase:text=>acceptGreeting(text,true),
+ onStatus:text=>{document.querySelector('#mic-status').textContent=text;},
+ onTranscript:text=>{document.querySelector('#mic-transcript').textContent='Heard: '+text;}
+});
+// Half duplex: stop capture before either audio owner starts an output source.
+for(const player of [realAudio,greetingAudio.player]){const start=player.start.bind(player);player.start=(...args)=>{wakeMic.stop();return start(...args);};}
+document.querySelector('#start-mic').onclick=()=>{
+ if(companion.state!==STATES.IDLE||greetingAudio.player.session||affection.mode==='greeting'){document.querySelector('#mic-status').textContent='Wait for playback/greeting to finish, then start listening.';return;}
+ unlockSound().then(()=>realAudio.prepare(voiceLibrary.greetingId())).catch(()=>{});
+ document.querySelector('#mic-transcript').textContent='';
+ wakeMic.start({allowOnline:document.querySelector('#allow-online-recognition').checked});
+};
+document.querySelector('#open-mic-preview').href=globalThis.location?.href||'#';
+document.querySelector('#check-mic').onclick=async()=>{
+ const button=document.querySelector('#check-mic');button.disabled=true;wakeMic.stop();
+ document.querySelector('#mic-check-status').textContent='Checking actual microphone capture permission…';
+ try{document.querySelector('#mic-check-status').textContent=await checkMicrophoneAccess();}
+ finally{button.disabled=false;}
+};
+document.querySelector('#stop-mic').onclick=()=>wakeMic.stop();
+document.querySelector('#allow-online-recognition').onchange=()=>wakeMic.stop();
+document.querySelector('#test-speaker').onclick=async()=>{
+ wakeMic.stop();
+ if(companion.state!==STATES.IDLE)return;
+ try{await unlockSound();await realAudio.prepare(voiceLibrary.greetingId());const result=greetingAudio.start(performance.now());document.querySelector('#mic-status').textContent=result.ok?'Playing the recorded greeting through your selected browser output. Confirm audibility yourself.':result.message;}
+ catch(error){document.querySelector('#mic-status').textContent='Speaker test failed: '+error.message;}
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)wakeMic.stop();});
+document.querySelector('#submit-greeting').onclick=()=>acceptGreeting(document.querySelector('#wake-phrase').value);
+document.querySelector('#wake-phrase').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();document.querySelector('#submit-greeting').click();}};
+for(const event of ['pointerdown','keydown'])document.addEventListener(event,e=>{
+ if(!e.target?.closest?.('#affection-controls'))userActivity();
+},{passive:true});
+let memoryImage=null,seenRevision=-1,savedFace=null;
+function dispatch(event,payload){
+ if(['HOME','HOME_REQUESTED','CANCEL_REQUESTED'].includes(event))wakeMic.stop();
+ const now=performance.now();
+ if(!savedFace&&['PHOTO','PHOTO_SELECTED','GALLERY_REQUESTED'].includes(event)&&companion.state!==STATES.SHOWING_PHOTO)savedFace=animator.snapshot(now);
+ userActivity();const accepted=companion.dispatch(event,now,payload);
+ if(savedFace&&companion.state===STATES.IDLE&&['HOME','HOME_REQUESTED','CANCEL_REQUESTED','DISMISS_ERROR','RETRY'].includes(event)){
+  animator.resume(savedFace,now);
+  if(animator.motion!==companion.settings.motion)animator.setMotion(companion.settings.motion,now);
+  savedFace=null;seenRevision=companion.revision;
+ }
+ syncState();return accepted;
+}
+let expressionCursor=0;
+const personality=new Personality(),memories=new MemoryCollection();
+let idleWaitMs=8000;
+function selectMemory(random=false){
+ const item=random?memories.randomMemory():memories.selected();
+ if(item){memoryImage=item.image;dispatch('MEMORY_LOADED',{name:item.name,index:memories.current});}
+ return item;
+}
+function handleGesture(gesture){
+ const now=performance.now();
+ const feedback=document.querySelector('#control-feedback');
+ if(gesture==='A_LONG'||gesture==='BOTH_HOME'){
+  dispatch('HOME_REQUESTED');feedback.textContent=gesture==='BOTH_HOME'?'Both buttons → Home':'A held → Home';return;
+ }
+ if(gesture==='B_LONG'){
+  dispatch('HOME_REQUESTED');dispatch('GALLERY_REQUESTED');feedback.textContent='B held → Photo gallery';return;
+ }
+ if(companion.state===STATES.SHOWING_PHOTO){
+  if(companion.view==='gallery'){
+   navigatePhoto(gesture==='A_SHORT'?'NEXT_PHOTO':'PREVIOUS_PHOTO');
+   feedback.textContent='Memory '+(companion.galleryIndex+1);
+  }else if(['A_SHORT','B_SHORT'].includes(gesture)&&memories.items.length){
+   dispatch(gesture==='A_SHORT'?'NEXT_PHOTO':'PREVIOUS_PHOTO');memories.current=companion.galleryIndex;selectMemory();dispatch('PHOTO_SELECTED',{animate:false});
+  }
+  return;
+ }
+ if(companion.state===STATES.SHOWING_RESPONSE){dispatch(gesture==='A_SHORT'?'NEXT_PAGE':'PREVIOUS_PAGE');return;}
+ if(companion.state===STATES.ERROR){if(gesture==='B_SHORT')dispatch('DISMISS_ERROR');return;}
+ if(companion.view==='settings'){
+  dispatch(gesture==='A_SHORT'?'NEXT_SETTING':'TOGGLE_SETTING');applySettings();return;
+ }
+ // Short presses deliberately interrupt the old action via its cleanup path.
+ dispatch('HOME_REQUESTED');
+ if(gesture==='A_SHORT'){
+  expressionCursor=(expressionCursor+1)%moods.length;
+  dispatch('EXPRESSION_REQUESTED',expressionCursor);
+  feedback.textContent='A tap → '+moods[expressionCursor].name;
+ }else if(gesture==='B_SHORT'){
+  const reaction=personality.next({online:companion.online,photos:memories.items.length});
+  if(reaction.id==='photo')selectMemory(true);
+  dispatch(reaction.event,reaction.payload);
+  feedback.textContent='B surprise → '+reaction.label;
+
+ }
+}
+const buttonControls=new ButtonControls(handleGesture);
+for(const [id,selector] of [['A','#button-a'],['B','#button-b']]){
+ const button=document.querySelector(selector);
+ button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);buttonControls.setPressed(id,true);};
+ button.onpointerup=e=>{e.preventDefault();buttonControls.setPressed(id,false);};
+ button.onpointercancel=()=>buttonControls.cancel();
+ button.oncontextmenu=e=>e.preventDefault();
+ button.onlostpointercapture=()=>buttonControls.setPressed(id,false);
+ // Assistive technologies may activate a button without pointer/key events.
+ button.onclick=e=>{if(e.detail===0)handleGesture(id+'_SHORT');};
+ button.onkeydown=e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();buttonControls.setPressed(id,true);}};
+ button.onkeyup=e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();buttonControls.setPressed(id,false);}};
+}
+document.addEventListener('keydown',e=>{
+ if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;
+ const key=e.key.toUpperCase();if(['A','B'].includes(key)){e.preventDefault();buttonControls.setPressed(key,true);}
+});
+document.addEventListener('keyup',e=>{const key=e.key.toUpperCase();if(['A','B'].includes(key))buttonControls.setPressed(key,false);});
+// Focus loss discards a partial press rather than accidentally firing a tap.
+globalThis.addEventListener?.('blur',()=>buttonControls.cancel());
+document.querySelectorAll('[data-action]').forEach(button=>button.onclick=()=>{
+ if(button.dataset.action==='VOICE'){playVoice(false);return;}
+ dispatch(button.dataset.action,button.dataset.action==='FAIL'?'Simulated error. Return home to continue.':undefined);
+});
+let replacementVersion=0;
+function updateVoiceInfo(){
+ const id=document.querySelector('#voice-id').value;
+ const entry=voiceLibrary.records.find(m=>m.id===id),buffer=realAudio.buffers.get(id);
+ document.querySelector('[data-action="VOICE"]').disabled=!entry||companion.state!==STATES.IDLE;
+ document.querySelector('#voice-replacement').disabled=!entry;document.querySelector('#voice-health').disabled=!entry;
+ if(!entry){document.querySelector('#voice-file-info').textContent='No recordings indexed in this category yet. Add one to voice/index.js, or choose another category.';return;}
+ document.querySelector('#voice-file-info').textContent=(realAudio.personalIds?.has(id)||entry?.generated===false?'Your local recording':entry?.generated?'Generated placeholder voice':'Local recording')+' · '+(entry?.file||'unavailable')+' · '+(entry?.category||'uncategorized')+' · '+(buffer?buffer.duration.toFixed(1):(entry?.durationMs/1000).toFixed(1))+'s';
+ document.querySelector('#voice-health').value=companion.voiceLibrary.health.get(id)||'missing';
+}
+function unlockSound(){
+ const promise=realAudio.unlock();
+ promise.catch(()=>{document.querySelector('#audio-status').textContent='Audio could not be enabled. Try your browser sound permissions, then tap Enable sound.';});
+ return promise;
+}
+function playVoice(random){
+ if(companion.state!==STATES.IDLE||(!random&&!document.querySelector('#voice-id').value))return;
+ // Start resume inside this explicit click gesture, before any await.
+ unlockSound();
+ if(random)dispatch('VOICE_RANDOM_REQUESTED',{category:document.querySelector('#voice-category').value||null});
+ else dispatch('VOICE_MESSAGE_SELECTED',{id:document.querySelector('#voice-id').value});
+}
+document.querySelector('#enable-audio').onclick=async()=>{
+ try{
+  await unlockSound();document.querySelector('#audio-status').textContent='Loading local recordings…';
+  const results=await realAudio.preload();
+  document.querySelector('#audio-status').textContent=results.every(r=>r.ok)?'Sound enabled. All '+results.length+' indexed recordings are decoded locally; they can play without further downloads.':'Sound enabled. Some recordings could not load; select another message or add your own.';
+  updateVoiceInfo();
+ }catch{}
+};
+document.querySelector('#voice-replacement').onchange=async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ const id=document.querySelector('#voice-id').value,version=++replacementVersion;
+ try{
+  if(file.size>40*1024*1024)throw new Error('Choose a recording under 40 MiB.');
+  await unlockSound();
+  // Explicitly end any owned playback before changing the source.
+  if(companion.state===STATES.PLAYING_VOICE)dispatch('CANCEL_REQUESTED');
+  const bytes=await file.arrayBuffer();if(version!==replacementVersion)return;
+  const duration=await realAudio.replace(id,bytes);
+  if(version!==replacementVersion)return;
+  document.querySelector('#audio-status').textContent='Local replacement for '+id+': '+file.name+' · '+duration.toFixed(1)+'s. Nothing uploaded.';
+  updateVoiceInfo();
+ }catch(error){document.querySelector('#audio-status').textContent='Recording not replaced: '+(error.message||'Unsupported or corrupt audio.');}
+ finally{e.target.value='';}
+};
+function populateVoiceChoices(){
+ const select=document.querySelector('#voice-id'),old=select.value;
+ select.textContent='';
+ const category=document.querySelector('#voice-category').value||null;
+ const records=voiceLibrary.list(category,{includeGreeting:true});
+ for(const item of records){const option=document.createElement('option');option.value=item.id;option.textContent=item.id+' — '+item.title;select.append(option);}
+ select.value=records.some(m=>m.id===old)?old:(records[0]?.id||'');
+ updateVoiceInfo();syncState();
+}
+const categorySelect=document.querySelector('#voice-category');
+for(const category of ['',...voiceLibrary.categories]){
+ const option=document.createElement('option');option.value=category;option.textContent=category?category.replaceAll('_',' '):'All categories';categorySelect.append(option);
+}
+categorySelect.value='';categorySelect.onchange=populateVoiceChoices;
+populateVoiceChoices();
+document.querySelector('#voice-id').onchange=updateVoiceInfo;
+document.querySelector('#voice-health').onchange=e=>{dispatch('VOICE_FILE_STATUS_CHANGED',{id:document.querySelector('#voice-id').value,status:e.target.value});};
+document.querySelector('#random-voice').onclick=()=>playVoice(true);
+document.querySelector('#cancel-voice').onclick=()=>dispatch('CANCEL_REQUESTED');
+updateVoiceInfo();
+document.querySelector('#online').onchange=e=>dispatch('ONLINE',e.target.checked);
+document.querySelector('#send-question').onclick=()=>dispatch('FINISH_LISTENING',document.querySelector('#question').value);
+document.querySelector('#question').onkeydown=e=>{if(e.key==='Enter')document.querySelector('#send-question').click();};
+// Same-origin, bundled assets. No external image host or API is used at runtime.
+const samplesReady=loadSamplePhotos().then(results=>{
+ let count=0;
+ for(const result of results)if(result.ok&&memories.add(result.name,result.image))count++;
+ companion.dispatch('GALLERY_UPDATED',performance.now(),memories.items.length);
+ if(companion.state!==STATES.SHOWING_PHOTO){
+  const item=memories.selected();if(item){memoryImage=item.image;companion.dispatch('MEMORY_LOADED',performance.now(),{name:item.name,index:memories.current});}
+ }
+ document.querySelector('#memory-name').textContent=memories.items.length+' photos ready locally · '+count+' bundled samples (not personal memories). Add your own below.'+(count<3?' Some samples were unavailable.':'');
+ syncState();
+});
+function publishPhotos(){
+ companion.dispatch('GALLERY_UPDATED',performance.now(),memories.items.length);
+ if(companion.state!==STATES.SHOWING_PHOTO){
+  const item=memories.selected();if(item){memoryImage=item.image;companion.dispatch('MEMORY_LOADED',performance.now(),{name:item.name,index:memories.current});}
+ }
+ syncState();
+}
+const photoImporter=new PhotoImporter({
+ onItem:item=>memories.add(item.name,item.image),
+ onProgress:progress=>{
+  const busy=photoImporter.running;
+  for(const selector of ['#memory-file','#memory-folder'])document.querySelector(selector).disabled=busy;
+  document.querySelector('#cancel-import').disabled=!busy;
+  const bar=document.querySelector('#import-progress');bar.hidden=!busy;bar.max=Math.max(1,progress.total);bar.value=progress.processed;
+  document.querySelector('#import-status').textContent=(busy?'Importing':progress.cancelled?'Import cancelled':'Import complete')+' · '+progress.processed+'/'+progress.total+' checked · '+progress.added+' added · '+progress.skipped+' skipped'+(progress.firstError?' · '+progress.firstError:'');
+  document.querySelector('#memory-name').textContent=memories.items.length+' photos available locally. Reload clears personal imports.';
+  if(progress.processed%8===0||!busy)publishPhotos();
+ }
+});
+async function importSelection(e){
+ const files=e.target.files;if(!files?.length)return;
+ userActivity();
+ await photoImporter.import(files);
+ e.target.value=''; // Permit selecting the same files/folder again.
+}
+document.querySelector('#memory-file').onchange=importSelection;
+document.querySelector('#memory-folder').onchange=importSelection;
+document.querySelector('#cancel-import').onclick=()=>photoImporter.cancel();
+function navigatePhoto(event){
+ if(companion.state!==STATES.SHOWING_PHOTO)return false;
+ const viewer=companion.view==='viewer';
+ if(!dispatch(event))return false;
+ memories.current=companion.galleryIndex;selectMemory();
+ if(viewer)dispatch('PHOTO_SELECTED',{animate:false});
+ return true;
+}
+document.querySelector('#photo-next').onclick=()=>navigatePhoto('NEXT_PHOTO');
+document.querySelector('#photo-previous').onclick=()=>navigatePhoto('PREVIOUS_PHOTO');
+document.querySelector('#photo-random').onclick=()=>{
+ const viewer=companion.state===STATES.SHOWING_PHOTO&&companion.view==='viewer';
+ if(companion.state!==STATES.SHOWING_PHOTO){dispatch('HOME_REQUESTED');dispatch('GALLERY_REQUESTED');}
+ selectMemory(true);
+ if(viewer)dispatch('PHOTO_SELECTED',{animate:false});
+};
+
+function syncState(){
+ const state=companion.state,busy=state!==STATES.IDLE;
+ document.querySelector('#device-state').textContent=state;
+ for(const selector of ['#photo-next','#photo-previous'])document.querySelector(selector).disabled=state!==STATES.SHOWING_PHOTO||!memories.items.length;
+ document.querySelector('#photo-random').disabled=!memories.items.length;
+ document.querySelectorAll('[data-action]').forEach(button=>{const a=button.dataset.action;button.disabled=['PHOTO','VOICE','LISTEN','GALLERY_REQUESTED','SETTINGS_REQUESTED'].includes(a)?(busy||(a==='VOICE'&&!document.querySelector('#voice-id').value)):a==='RETRY'?state!==STATES.ERROR:a==='RETRY_REQUESTED'?!companion.errorInfo?.retryable:false;});
+ document.querySelectorAll('.expression').forEach(button=>button.disabled=busy);
+ document.querySelector('#auto').disabled=busy;
+ document.querySelector('#question-panel').hidden=state!==STATES.LISTENING;
+ document.querySelector('#voice-progress').hidden=state!==STATES.PLAYING_VOICE;
+ document.querySelector('#random-voice').disabled=busy||!voiceLibrary.list(document.querySelector('#voice-category').value||null).length;
+ document.querySelector('#cancel-voice').disabled=state!==STATES.PLAYING_VOICE;
+ const details={IDLE:'Resting, blinking and looking around. Local features work offline.',EXPRESSING:moods[companion.expression]?.name+' — returning to idle in a moment.',SHOWING_PHOTO:'Remembering… One blink, glance up-right, thought cloud, then a full-screen memory. Home cancels.',PLAYING_VOICE:(companion.voiceMessage?.title||'Personal message')+' · '+(companion.voiceMessage?.file||'')+' · real audio playback.',LISTENING:'Mock listening. Type a question within 20 seconds.',WAITING_FOR_AI:'Waiting for a simulated AI reply…',SHOWING_RESPONSE:companion.response,ERROR:companion.error};
+ document.querySelector('#detail').textContent=details[state];
+ canvas.setAttribute('aria-label',state==='EXPRESSING'?'Animated '+moods[companion.expression].name+' face':state.replaceAll('_',' ').toLowerCase()+' facial expression');
+}
+const motionInput=document.querySelector('#motion');motionInput.checked=motion;
+function status(){
+ const index=animator.selected;
+ document.querySelectorAll('.expression').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
+ canvas.setAttribute('aria-label','Animated '+animator.moods[index].name.toLowerCase()+' face');
+ document.querySelector('#status').textContent=animator.moods[index].name+' · '+((companion.automaticCycle??true)?'Idle expression cycling enabled':'Selected by you');
+}
+moods.forEach((mood,i)=>{const b=document.createElement('button');b.className='expression';b.innerHTML='<span class="icon" aria-hidden="true">'+mood.icon+'</span>'+mood.name;b.onclick=()=>{if(dispatch('EXPRESS',i)){animator.select(i,performance.now());status();}};document.querySelector('#expressions').append(b);});
+document.querySelector('#auto').onclick=function(){companion.automaticCycle=!(companion.automaticCycle??true);this.setAttribute('aria-pressed',String(companion.automaticCycle));this.textContent=companion.automaticCycle?'On':'Off';companion.entered=performance.now();};
+function applySettings(){
+ motionInput.checked=companion.settings.motion;
+ animator.setMotion(companion.settings.motion,performance.now());
+ document.querySelector('#greeting-speech').checked=companion.settings.speech;
+ if(!companion.settings.speech)cancelGreetingSpeech();
+}
+motionInput.onchange=()=>{dispatch('SETTING_CHANGED',{key:'motion',value:motionInput.checked});applySettings();};
+companion.dispatch('SETTING_CHANGED',performance.now(),{key:'motion',value:motionInput.checked});
+status();
+function eye(cx,cy,left,openness){
+ const w=current.w,h=Math.max(2,current.h*openness),x=cx-w/2,y=cy-h/2;
+ // Clip the softly rounded outer eye with continuous slanted/crescent lids.
+ pen.save();pen.beginPath();pen.roundRect(x,y,w,h,Math.min(8,h/2));pen.clip();pen.fillRect(x,y,w,h);
+ pen.fillStyle='#030606';const slope=current.slope*(left?1:-1)*openness;
+ pen.beginPath();pen.moveTo(x-2,y-12);pen.lineTo(x+w+2,y-12);
+ pen.lineTo(x+w+2,y+Math.max(0,slope));pen.lineTo(x-2,y+Math.max(0,-slope));pen.closePath();pen.fill();
+ if(current.arch>.001){const inset=(1-current.arch)*h+5;pen.beginPath();pen.moveTo(x-2,y+h+2);pen.lineTo(x-2,y+inset+7);pen.quadraticCurveTo(cx,y+inset-8,x+w+2,y+inset+7);pen.lineTo(x+w+2,y+h+2);pen.closePath();pen.fill();}
+ pen.restore();
+}
+function mouth(){
+ const width=current.mw,height=current.mh,cy=89;
+ // One closed path morphs continuously from a smile line to an open O.
+ pen.beginPath();pen.moveTo(64-width/2,cy);
+ pen.bezierCurveTo(64-width/2,cy+height/2+current.curve,64+width/2,cy+height/2+current.curve,64+width/2,cy);
+ pen.bezierCurveTo(64+width/2,cy-height/2+current.curve,64-width/2,cy-height/2+current.curve,64-width/2,cy);
+ pen.closePath();pen.fill();pen.stroke();
+}
+function frame(now){
+ requestAnimationFrame(frame);
+ const greetingResult=greetingAudio.update(now);
+ if(greetingResult){
+  spokenGreeting=false;
+  if(greetingResult.event==='AUDIO_FAILURE')document.querySelector('#affection-status').textContent='Hi, Mommy ♥ — '+greetingResult.payload.message;
+ }
+ buttonControls.update(now);
+ for(const [id,selector] of [['A','#button-a'],['B','#button-b']]){
+  const feedback=buttonControls.feedback(id,now),button=document.querySelector(selector);
+  button.setAttribute('data-pressed',String(feedback.pressed));
+  button.setAttribute('aria-pressed',String(feedback.pressed));
+  button.style.setProperty('--hold',feedback.progress);
+ }
+ let social=affection.update(now,animator.motion);
+ if(social&&companion.state===STATES.EXPRESSING)companion.dispatch('HOME_REQUESTED',now);
+ companion.tick(now);
+ if(companion.revision!==seenRevision){
+  seenRevision=companion.revision;
+  animator.select(stateFaceIndex(companion.state,companion.expression),now);
+  syncState();
+ }
+ // State controller owns expression cycling; the animation engine only renders.
+ animator.automatic=false;
+ if(companion.automaticCycle===undefined)companion.automaticCycle=true;
+ if(!social&&companion.view==='face'&&companion.automaticCycle&&companion.state===STATES.IDLE&&now-companion.entered>=idleWaitMs){
+  const reaction=personality.idle();idleWaitMs=reaction.waitMs;
+  if(companion.dispatch('EXPRESSION_REQUESTED',now,{expression:reaction.expression,durationMs:reaction.durationMs})){
+   animator.select(reaction.expression,now);syncState();
+  }
+ }
+ const previous=animator.selected;
+ const state=animator.update(now);
+ current=state.current;
+ if(companion.state!==STATES.IDLE||companion.view!=='face')social=null;
+ if(social){
+  const base=current;
+  current={...base};
+  for(const [key,value] of Object.entries(social.pose))current[key]=base[key]+(value-base[key])*social.weight;
+  if(lastAffectionPhase!==social.phase){
+   lastAffectionPhase=social.phase;
+   const descriptions={ignored:'Looking away, a little withdrawn. A familiar hello can bring a smile.', 'looking-up':'A familiar hello… slowly looking up.', shy:'Getting shy… rosy cheeks are warming up.', snuggling:'A gentle little snuggle… ♥', happy:'Hi, Mommy ♥'};
+   document.querySelector('#affection-status').textContent=descriptions[social.phase];
+  }
+  if(social.speak){
+   document.querySelector('#affection-status').textContent='Hi, Mommy ♥';
+   if(document.querySelector('#greeting-speech').checked){
+    const result=greetingAudio.start(now);spokenGreeting=result.ok;
+    if(!result.ok)document.querySelector('#affection-status').textContent='Hi, Mommy ♥ — '+result.message;
+   }
+  }
+ }else lastAffectionPhase='';
+ if(previous!==state.selected)status();
+ const {gx,gy,openness:open,breath}=state;
+ pen.fillStyle='#030606';pen.fillRect(0,0,128,128);
+ if(social)drawAffectionHearts(pen,social);
+ const color=`rgb(${current.r},${current.g},${current.b})`;
+ pen.fillStyle=pen.strokeStyle=color;pen.lineWidth=2.5;pen.lineJoin=pen.lineCap='round';
+ const remembering=companion.state===STATES.SHOWING_PHOTO&&companion.view==='viewer';
+ const memory=remembering?memoryScene((companion.photoReveal?now-companion.entered:8000),animator.motion):null;
+
+ const gesture=stateFaceMotion(companion.state,now-companion.entered,animator.motion);
+ pen.fillStyle=pen.strokeStyle=color;
+ // Keep pose interpolation owned by the animator; speech is a render-only layer.
+ const pose=current;
+ current={...pose,mh:pose.mh+gesture.mouthOpen};
+ pen.save();
+ if(social)applySnuggleTransform(pen,social.snuggle);
+ // Settle the face beneath its thought cloud without interrupting blinking.
+ if(remembering){
+  const bounce=memory.settle;
+  const scale=1-.28*bounce;
+  pen.translate(64*(1-scale)-14*bounce,54*bounce);pen.scale(scale,scale);
+ }
+ const lookX=remembering?6*memory.look:social?gx*(1-social.weight)+social.gazeX*social.weight:gx;
+ const lookY=remembering?-7*memory.look:social?gy*(1-social.weight)+social.gazeY*social.weight:gy;
+ const eyeOpen=remembering?memory.openness:open;
+ if(social)drawAffectionCheeks(pen,social);
+ const follow=faceFollowThrough(remembering?now-companion.entered:now-animator.transition,animator.motion);
+ pen.save();pen.translate(64+(social?.snuggle?.eyeX||0),48+follow.eyeY+(social?.snuggle?.eyeY||0));pen.scale(1,follow.eyeScaleY);pen.translate(-64,-48);
+ eye(39+lookX+gesture.x,48+lookY+(remembering?0:breath)+gesture.y,true,eyeOpen);
+ eye(89+lookX+gesture.x,48+lookY+(remembering?0:breath)+gesture.y,false,eyeOpen);
+ pen.restore();
+ pen.save();pen.translate(64+(social?.snuggle?.mouthX||0),89+follow.mouthY+(social?.snuggle?.mouthY||0));pen.scale(1,follow.mouthScaleY);pen.translate(-64,-89);
+ mouth();
+ // Hollow the surprised mouth so it reads as an O, not a smile or dot.
+ if(remembering){
+  pen.fillStyle='#030606';pen.beginPath();
+  pen.ellipse(64,89,Math.max(1,current.mw/2-2),Math.max(1,current.mh*.375-1),0,0,Math.PI*2);pen.fill();
+ }
+ pen.restore(); // Mouth follow-through.
+ if(social)drawIgnoredTear(pen,social,animator.motion);
+ pen.restore();current=pose;
+ // Draw the cloud last so its expansion naturally covers the face.
+ if(remembering){
+  try{drawMemoryCloud(pen,memoryImage,memory);}
+  catch{companion.dispatch('FAILURE',now,'This photo could not be displayed. Return home and choose another image.');syncState();}
+ }
+ if(companion.state===STATES.PLAYING_VOICE)
+ {const bar=document.querySelector('#voice-progress'),progress=realAudio.progress();bar.max=progress?.durationMs||1;bar.value=progress?.elapsedMs||0;}
+ renderScreen(pen,companion,memories.items,now);
+ ctx.drawImage(high,0,0,128,128);
+}
+document.addEventListener('visibilitychange',()=>{animator.last=performance.now();if(document.hidden)buttonControls.cancel();});
+requestAnimationFrame(frame);
+</script></body></html>

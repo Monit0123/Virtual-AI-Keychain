@@ -1,0 +1,12 @@
+{
+  "name": "virtual-keychain-prototype",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "voices:check": "node scripts/voice-index.cjs",
+    "voices:index": "node scripts/voice-index.cjs --json"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^0.1.100"
+  }
+}
