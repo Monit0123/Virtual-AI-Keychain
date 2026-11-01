@@ -69,9 +69,9 @@ test('body stays anchored in the centre even when legacy poses request translati
  drawLivingFace(a.getContext('2d'),f);drawLivingFace(b.getContext('2d'),{...f,x:40,y:-30});assert.deepEqual(a.toBuffer('image/png'),b.toBuffer('image/png'));
 });
 test('anger symbol is red and reflected correctly across both axes',()=>{
- const {drawAngerMark}=require('../preview/bunny-face.js'),c=createCanvas(128,128),p=c.getContext('2d');drawAngerMark(p,64,64);const data=p.getImageData(0,0,128,128).data;let red=0,error=0;
- for(let y=55;y<73;y++)for(let x=55;x<73;x++){const i=(y*128+x)*4,j=(y*128+127-x)*4,k=((127-y)*128+x)*4;if(data[i]>200&&data[i+1]<100&&data[i+2]<100&&data[i+3]>100)red++;error+=Math.abs(data[i+3]-data[j+3])+Math.abs(data[i+3]-data[k+3]);}
- assert.ok(red>25);assert.ok(error<300,'four corners have horizontal and vertical symmetry');
+ const {drawAngerMark}=require('../preview/bunny-face.js'),c=createCanvas(128,128),p=c.getContext('2d');drawAngerMark(p,64,64);const data=p.getImageData(0,0,128,128).data;let red=0,error=0,totalAlpha=0;
+ for(let y=55;y<73;y++)for(let x=55;x<73;x++){const i=(y*128+x)*4,j=(y*128+127-x)*4,k=((127-y)*128+x)*4;if(data[i]>200&&data[i+1]<100&&data[i+2]<100&&data[i+3]>100)red++;totalAlpha+=data[i+3];error+=Math.abs(data[i+3]-data[j+3])+Math.abs(data[i+3]-data[k+3]);}
+ assert.ok(red>25);assert.ok(error<totalAlpha*.02,'four corners are symmetric within curved-path raster antialiasing tolerance');
 });
 test('speaking uses an animated mouth, with no waveform beneath the full face',()=>{
  const c=createCanvas(128,128),p=c.getContext('2d'),mouths=new Set();
@@ -163,4 +163,11 @@ test('sleep entry has a small yawn, a breath, then a much bigger held stretch on
  assert.equal(held.pose.mh,big.pose.mh);assert.equal(sleep.pose.mh,0);assert.equal(sleep.sleep,1);
  let peaks=0,open=false;for(let t=0;t<=60000;t+=10){const next=livingFaceFrame('sleepy',t).pose.mh>1;if(next&&!open)peaks++;open=next;}assert.equal(peaks,2,'only the two entry yawns, never another cycle');
  const {sleepParticles}=require('../preview/living-face.js');assert.deepEqual(sleepParticles(4500),[]);
+});
+test('anger mark uses four curved bends instead of sharp right-angle path corners',()=>{
+ const {drawAngerMark}=require('../preview/bunny-face.js');const curves=[],lines=[];
+ const p=new Proxy({save(){},restore(){},translate(){},scale(){},beginPath(){},moveTo(){},stroke(){},quadraticCurveTo(...args){curves.push(args);},lineTo(...args){lines.push(args);}},{set(o,k,v){o[k]=v;return true;}});
+ drawAngerMark(p);assert.equal(curves.length,4);assert.equal(lines.length,8);assert.equal(new Set(curves.map(([x,y])=>Math.sign(x)+','+Math.sign(y))).size,4);
+ for(const [cx,cy,x,y] of curves){assert.equal(Math.abs(cx),1.5);assert.equal(Math.abs(cy),1.5);assert.equal(Math.abs(x),4);assert.equal(Math.abs(y),1.5);}
+ assert.equal(p.lineCap,'round');assert.equal(p.lineJoin,'round');assert.equal(p.strokeStyle,'#ff3b45');
 });

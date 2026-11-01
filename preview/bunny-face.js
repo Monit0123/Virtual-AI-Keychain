@@ -46,7 +46,7 @@ function eye(p,cx,cy,left,open,pose){
 function angerMark(p,x=108,y=23,strength=1){
  if(strength<=0)return;p.save();p.translate(x,y);p.scale(strength,strength);p.lineCap='round';p.lineJoin='round';p.lineWidth=1.8;p.strokeStyle='#ff3b45';p.shadowColor='#ff2638';p.shadowBlur=2;
  // Four inward-facing corners of a vein-pop symbol, mirrored on BOTH axes.
- for(const sx of [-1,1])for(const sy of [-1,1]){p.beginPath();p.moveTo(sx*1.5,sy*6);p.lineTo(sx*1.5,sy*1.5);p.lineTo(sx*6,sy*1.5);p.stroke();}p.restore();
+ for(const sx of [-1,1])for(const sy of [-1,1]){p.beginPath();p.moveTo(sx*1.5,sy*6);p.lineTo(sx*1.5,sy*4);p.quadraticCurveTo(sx*1.5,sy*1.5,sx*4,sy*1.5);p.lineTo(sx*6,sy*1.5);p.stroke();}p.restore();
 }
 function accents(p,{now=0,motion=true,love=0,spark=0,listening=false,thinking=false,speaking=false,sleepy=false,angry=false,surprised=false}={}){
  p.save();p.lineCap='round';p.strokeStyle=PINK;p.fillStyle=PINK;p.lineWidth=1.8;p.shadowColor='#f08cdd';p.shadowBlur=3;
