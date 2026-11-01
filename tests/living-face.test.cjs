@@ -130,7 +130,7 @@ test('sleeping Zs emerge above the head, travel upward, grow and fade with bound
 test('yawn tightens the eyes with the jaw, then relaxes both during the exhale',()=>{
  const a=livingFaceFrame('sleepy',400),b=livingFaceFrame('sleepy',700),peak=livingFaceFrame('sleepy',1500),release=livingFaceFrame('sleepy',2500);
  assert.ok(a.pose.mh<b.pose.mh&&b.pose.mh<peak.pose.mh);
- assert.ok(a.open>b.open&&b.open>peak.open);assert.ok(peak.open<.05);
+ assert.ok(a.open>b.open&&b.open>peak.open);assert.ok(peak.open<.05);assert.equal(peak.pose.squeeze,1);assert.ok(release.pose.squeeze<peak.pose.squeeze);
  assert.ok(peak.eyeLift<0&&peak.mouthDrop>0&&peak.pose.arch>0);
  assert.ok(release.open>peak.open&&release.pose.mh<peak.pose.mh);assert.ok(release.eyeLift>peak.eyeLift&&release.mouthDrop<peak.mouthDrop);
 });

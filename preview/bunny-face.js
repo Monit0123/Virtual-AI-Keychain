@@ -31,7 +31,7 @@ function contourPath(p,points){
  points.forEach((v,i)=>{const next=points[(i+1)%points.length];p.quadraticCurveTo(v[0],v[1],(v[0]+next[0])/2,(v[1]+next[1])/2);});p.closePath();
 }
 function eye(p,cx,cy,left,open,pose){
- const contour=eyeContour(pose,left),bunny=contour.bunny,lid=Math.max(.025,Math.min(1,open)),points=contour.points.map(([x,y])=>[x,y*lid]),w=Math.max(10,pose.w),h=Math.max(3,pose.h*1.2);
+ const contour=eyeContour(pose,left),bunny=contour.bunny,lid=Math.max(.025,Math.min(1,open)),w=Math.max(10,pose.w),h=Math.max(3,pose.h*1.2),points=contour.points.map(([x,y])=>[x,y*lid-2.8*(pose.squeeze||0)*Math.max(0,1-(x/(w*.44))**2)]);
  p.save();p.translate(cx,cy);p.lineWidth=2.2;p.lineJoin='round';p.strokeStyle=LAVENDER;p.shadowColor='#d992ff';p.shadowBlur=3;
  // Solid materials, not opacity blending. The outline remains fully present.
  const base=[48,32,57],lit=[239,211,255];p.fillStyle=`rgb(${base.map((v,i)=>Math.round(v+(lit[i]-v)*(1-bunny))).join(',')})`;

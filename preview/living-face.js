@@ -26,7 +26,7 @@ function livingFaceFrame(id,elapsed=0,motion=true){
  const design=REFERENCE_FACES.find(d=>d.id===id)||REFERENCE_FACES[0];
  const phase=motion?((Math.max(0,elapsed)%design.duration)/design.duration):.5;
  const t=motion?Math.max(0,elapsed):0;
- const pose={w:27,h:29,slope:0,arch:0,curve:2,mw:10,mh:0,spark:0,love:0};
+ const pose={w:27,h:29,slope:0,arch:0,curve:2,mw:10,mh:0,spark:0,love:0,squeeze:0};
  const f={id:design.id,phase,beat:Math.min(7,Math.floor(phase*8)),pose,x:0,y:0,tilt:0,scale:1,open:1,eyeScale:1,blush:1,warning:0,photo:0,headBob:0,headPitch:0,eyeLift:0,mouthDrop:0,sleep:0,yawn:0,now:t,motion};
  if(motion){f.y=Math.sin(t/1700)*.32;f.x=track([0,0,1.2,1.2,0,-1,-1,0],phase);}
  switch(design.id){
@@ -41,7 +41,7 @@ function livingFaceFrame(id,elapsed=0,motion=true){
    const doze=motion?ease((loop-2400)/700)*(1-ease((loop-6900)/700)):1;
    f.yawn=yawn;f.sleep=doze;pose.h=24-12*yawn-16*doze;pose.mw=9+7*yawn;pose.mh=24*yawn;pose.curve=1-yawn;
    // The whole face strains into the yawn, then releases together on the exhale.
-   pose.arch=.45*yawn;f.open=1-.96*yawn-.85*doze;f.eyeLift=-1.7*yawn;f.mouthDrop=1.4*yawn;
+   pose.arch=.45*yawn;pose.squeeze=yawn;f.open=1-.96*yawn-.85*doze;f.eyeLift=-1.7*yawn;f.mouthDrop=1.4*yawn;
    // Sag forward slowly, catch the head, overshoot back, and settle. No yaw/roll.
    const nod=motion?track([0,.04,.2,.65,1,.7,-.16,.06,0],(((loop-3100)%2400)+2400)%2400/2400):0;
    f.headPitch=motion?.55*doze*nod-.18*yawn:0;
