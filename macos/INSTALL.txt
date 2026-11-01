@@ -11,8 +11,9 @@ KEYCHAIN SIMULATOR — macOS 13 or newer, Apple Silicon and Intel
    provide it, the app reports that limitation. The opt-in speech-service
    checkbox permits Apple's recognition service, which may use internet/audio
    processing by Apple. There is no silent online fallback.
-5. Test speaker, then say Moni / Hi Moni / Hi Daddy. Capture stops on wake or
-   speaker playback; Start microphone re-arms it. Apple may misrecognize names.
+5. Test speaker, then say Moni / Hi Moni / Hi Daddy. Enable the microphone once. Capture pauses during a response or speaker
+   playback, then automatically resumes after a short cooldown. Stop microphone
+   disables it. Permission/provider errors stop retries until you press Start. Apple may misrecognize names.
 6. To hear YOUR voice: choose a recording ID and use Replace selected message
    with your own local recording. Choose a WAV (recommended), M4A or supported
    audio file, maximum 40 MiB. voice_004 is the short Hi, Mommy wake greeting.

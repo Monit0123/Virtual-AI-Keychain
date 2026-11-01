@@ -32,8 +32,8 @@ function recognitionErrorMessage(code){
  return prefix+'Check input device, permissions, network (if using a browser service), and language support, then press Start again. No automatic cloud fallback.';
 }
 class WakeMicrophone {
- constructor({Recognition=root.SpeechRecognition||root.webkitSpeechRecognition,onPhrase=()=>{},onStatus=()=>{},onTranscript=()=>{}}={}){
-  this.Recognition=Recognition;this.onPhrase=onPhrase;this.onStatus=onStatus;this.onTranscript=onTranscript;this.recognition=null;this.active=false;
+ constructor({Recognition=root.SpeechRecognition||root.webkitSpeechRecognition,onPhrase=()=>{},onStatus=()=>{},onTranscript=()=>{},onEnded=()=>{},onFailure=()=>{}}={}){
+  this.Recognition=Recognition;this.onPhrase=onPhrase;this.onStatus=onStatus;this.onTranscript=onTranscript;this.onEnded=onEnded;this.onFailure=onFailure;this.recognition=null;this.active=false;
  }
  start({allowOnline=false}={}){
   this.stop();
@@ -56,8 +56,8 @@ class WakeMicrophone {
      if(isWakePhrase(text)){this.stop();this.onPhrase(text);break;}
     }
    };
-   r.onerror=e=>{if(!current())return;const code=e.error||'unknown';this.stop();this.onStatus(recognitionErrorMessage(code));};
-   r.onend=()=>{if(!current())return;this.recognition=null;this.active=false;this.onStatus('Listening ended. Press Start microphone to listen again.');};
+   r.onerror=e=>{if(!current())return;const code=e.error||'unknown';this.stop();this.onFailure(code);this.onStatus(recognitionErrorMessage(code));};
+   r.onend=()=>{if(!current())return;this.recognition=null;this.active=false;this.onStatus('Recognition session ended.');this.onEnded();};
    this.onStatus('Requesting microphone / speech recognition permission…');r.start();return true;
   }catch(error){this.stop();this.onStatus('Could not start microphone: '+error.message);return false;}
  }

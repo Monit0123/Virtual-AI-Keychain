@@ -136,7 +136,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKURLS
                     self.event(session, "result", text, final: result.isFinal || wake)
                     if result.isFinal { self.stopSpeech(); self.event(session, "end") }
                 } else if let error = error {
-                    self.stopSpeech(); self.event(session, "error", error.localizedDescription)
+                    self.stopSpeech(); self.event(session, "error", (error as NSError).code == 1110 ? "no-speech" : error.localizedDescription)
                 }
             }
         }

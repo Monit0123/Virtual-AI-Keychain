@@ -43,3 +43,9 @@ Microphone capture permission and permission/availability of a speech recognitio
 5. If it still fails, report your browser/version, OS, whether the preview is a separate tab, whether online speech service is selected, and the capture-check result. Do not repeatedly reset microphone permission without identifying which path is failing.
 
 There is no automatic online fallback and no bypass of browser/OS permissions. Automated tests cover these diagnostics and stream cleanup; they cannot reproduce every user's browser policy or verify a physical microphone.
+
+## Continuous listening update
+
+The one-shot/manual-rearm behavior above is superseded. Press **Start microphone** once to enable a listening session. Capture pauses during responses, audio playback, busy product states and while the page is hidden. When ready it automatically re-arms after a 900 ms quiet interval. Natural recognition-session endings reconnect automatically with the same online/local consent. Returning Home does not disable the user's listening intent.
+
+**Stop microphone** turns continuous listening off. Changing speech-service consent or explicitly running the permission diagnostic also disables it. Permission, network and provider errors stop retries; no-speech permits a controlled retry. Five short recognition endings within 30 seconds stop the session with an explanatory message instead of looping forever. Listening still starts only after an explicit user click. This is half duplex with automatic resumption, not simultaneous echo-cancelled speaker/microphone operation or guaranteed background/OS-sleep listening.

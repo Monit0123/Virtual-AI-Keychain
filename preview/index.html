@@ -20,12 +20,13 @@
 <div class="panel"><h2>A mood for every moment.</h2><p>Choose an expression, or let your companion<br>show you around.</p><div class="expressions" id="expressions"></div><div class="controls"><span>Cycle expressions</span><button id="auto" class="switch" aria-pressed="true">On</button></div><div class="controls"><label for="motion">Gentle motion</label><input id="motion" type="checkbox" checked></div><div class="status" id="status" aria-live="polite"></div></div>
 </section>
 <section class="workflow" aria-label="Companion state controls"><h2>Simulator controls</h2><p>These controls are outside the device. The keychain itself uses only the small display and A/B buttons.</p><span id="device-state" role="status">IDLE</span><div class="actions"><button data-action="HOME">Home / cancel</button><button data-action="GALLERY_REQUESTED">Photo gallery</button><button data-action="PHOTO">Show random memory</button><button id="photo-previous">Previous photo</button><button id="photo-next">Next photo</button><button id="photo-random">Random photo</button><button data-action="SETTINGS_REQUESTED">Settings</button><button data-action="VOICE">Play selected voice</button><button id="random-voice">Random voice</button><button id="cancel-voice">Cancel voice</button><button data-action="LISTEN">Ask AI (mock)</button><button data-action="RETRY">Dismiss error</button><button data-action="RETRY_REQUESTED">Retry once</button><button data-action="FAIL">Test error</button></div><div class="voice-settings"><label for="voice-category">Category</label><select id="voice-category"></select><label for="voice-id">Recording identifier</label><select id="voice-id"></select><label for="voice-health">Fault injection (optional test)</label><select id="voice-health"><option value="ready">Normal — actual file</option><option value="missing">Missing recording — test</option><option value="corrupt">Corrupted recording — test</option></select><label for="voice-duration">Duration comes from the actual recording</label><input id="voice-duration" type="hidden" value=""><div class="actions"><button id="enable-audio">Enable sound / load recordings</button></div><p id="audio-status" role="status">Real audio is available. Enable sound once for A/B interactions.</p><label for="voice-replacement">Replace selected message with your own local recording</label><input id="voice-replacement" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg"><p id="voice-file-info">Four generated placeholder recordings are bundled. They are not your actual voice.</p><p>In the macOS app, replacements are saved locally across restarts; in a browser they last for this page session. No upload by the app. AI questions remain simulated. The separate wake microphone requires explicit permission.</p></div><p><label><input type="checkbox" id="online" checked> Simulated internet available</label></p><label class="upload">Select multiple photos — no image-count cap<input id="memory-file" type="file" multiple accept="image/jpeg,image/png,image/webp"></label><label class="upload">Or select a whole folder (including subfolders)<input id="memory-folder" type="file" webkitdirectory directory multiple></label><p>Files stay in this browser session. Folder support depends on your browser; use multi-select if unavailable. There is no image-count cap, but available browser memory still applies. JPEG, PNG and WebP; up to 8 MiB per file.</p><progress id="import-progress" value="0" max="1" hidden></progress><div class="actions"><button id="cancel-import" disabled>Cancel import</button></div><p id="import-status" role="status">Ready to add photos.</p><p id="memory-name">Loading three bundled sample photos… Your own photos stay local and clear on reload.</p><div id="question-panel" hidden><label for="question">Simulated listening — type instead of speaking</label><input id="question" type="text" maxlength="200" placeholder="Ask a question…"><div class="actions"><button id="send-question">Finish listening</button></div></div><p id="detail" aria-live="polite"></p><progress id="voice-progress" max="5000" value="0" hidden></progress><p>Voice playback is real, using generated placeholder recordings or your local replacements. AI-question listening remains typed; the separate wake microphone is real and permission-controlled. AI replies are prewritten mocks, with no API or network requests.</p></section>
-<section class="workflow" id="affection-controls" aria-label="Affection behaviour preview"><h2>A quiet hello.</h2><p>After 90 minutes without interaction, the home face looks away sadly. A familiar greeting gently brings it back. Use real microphone recognition below, or the separate typed test. Browser recognition is not an ESP32-S3 wake-word engine.</p><div class="actions"><button id="preview-ignored">Preview left-alone mood</button><button id="reset-affection">Reset mood</button></div><h3>Real microphone wake phrases</h3><p>Start explicitly to grant microphone permission. Default: on-device recognition only, when supported and its English model is installed. This is full speech recognition with phrase matching, not an always-on low-power wake-word detector.</p><label><input id="allow-online-recognition" type="checkbox"> <span id="recognition-provider">Allow browser speech service (may send microphone audio to its provider; internet may be required)</span></label><div class="actions"><button id="check-mic">Check microphone access</button><button id="start-mic">Start microphone</button><button id="stop-mic">Stop microphone</button><button id="test-speaker">Test speaker — “Hi, Mommy”</button></div><p>If permission is allowed but recognition fails, <a id="open-mic-preview" target="_blank" rel="noopener noreferrer">open this preview directly in a new tab</a>. Embedded previews can restrict speech/microphone access independently of site permission.</p><p id="mic-check-status" role="status"></p><p id="mic-status" role="status">Microphone off. No listening starts automatically.</p><p id="mic-transcript" aria-live="polite"></p><p>Use headphones to reduce feedback. Listening stops after a recognized wake phrase or before speaker playback; press Start again to re-arm. Keep this page open and visible. Recognition support varies by browser.</p><label for="wake-phrase">Try “Hi, Moni”, “Hi, Daddy”, or “Moni”</label><input id="wake-phrase" type="text" maxlength="80" placeholder="Hi, Moni"><div class="actions"><button id="submit-greeting">Say hello (typed simulation)</button></div><p><label><input type="checkbox" id="greeting-speech" checked> Play recorded “Hi, Mommy” greeting</label><br>Uses the selected generated placeholder voice, not browser text-to-speech. You can replace the greeting recording in the voice controls. Speaker output uses your browser’s actual audio device.</p><p id="affection-status" aria-live="polite">Waiting for a quiet moment. Use the preview button to skip the 90-minute wait.</p></section>
+<section class="workflow" id="affection-controls" aria-label="Affection behaviour preview"><h2>A quiet hello.</h2><p>After 90 minutes without interaction, the home face looks away sadly. A familiar greeting gently brings it back. Use real microphone recognition below, or the separate typed test. Browser recognition is not an ESP32-S3 wake-word engine.</p><div class="actions"><button id="preview-ignored">Preview left-alone mood</button><button id="reset-affection">Reset mood</button></div><h3>Real microphone wake phrases</h3><p>Start explicitly to grant microphone permission. Default: on-device recognition only, when supported and its English model is installed. This is full speech recognition with phrase matching, not an always-on low-power wake-word detector.</p><label><input id="allow-online-recognition" type="checkbox"> <span id="recognition-provider">Allow browser speech service (may send microphone audio to its provider; internet may be required)</span></label><div class="actions"><button id="check-mic">Check microphone access</button><button id="start-mic">Start microphone</button><button id="stop-mic">Stop microphone</button><button id="test-speaker">Test speaker — “Hi, Mommy”</button></div><p>If permission is allowed but recognition fails, <a id="open-mic-preview" target="_blank" rel="noopener noreferrer">open this preview directly in a new tab</a>. Embedded previews can restrict speech/microphone access independently of site permission.</p><p id="mic-check-status" role="status"></p><p id="mic-status" role="status">Microphone off. No listening starts automatically.</p><p id="mic-transcript" aria-live="polite"></p><p>Use headphones to reduce feedback. Enable listening once. It pauses during a response and automatically resumes afterward. Stop microphone turns it off. Keep this page open and visible. Recognition support varies by browser.</p><label for="wake-phrase">Try “Hi, Moni”, “Hi, Daddy”, or “Moni”</label><input id="wake-phrase" type="text" maxlength="80" placeholder="Hi, Moni"><div class="actions"><button id="submit-greeting">Say hello (typed simulation)</button></div><p><label><input type="checkbox" id="greeting-speech" checked> Play recorded “Hi, Mommy” greeting</label><br>Uses the selected generated placeholder voice, not browser text-to-speech. You can replace the greeting recording in the voice controls. Speaker output uses your browser’s actual audio device.</p><p id="affection-status" aria-live="polite">Waiting for a quiet moment. Use the preview button to skip the 90-minute wait.</p></section>
 <div class="notes"><span><i class="dot"></i>Soft, anti-aliased edges</span><span><i class="dot"></i>Fluid expression transitions</span><span><i class="dot"></i>Works offline</span></div>
 <footer>Graphics study, not an electronics simulation. The square face is rendered at 128 × 128 pixels with supersampled anti-aliasing and enlarged for viewing. Physical size depends on your screen.<br>Wokwi and Arduino firmware are separate; this preview does not validate OLED hardware.</footer>
 </main>
 <script src="desktop-bridge.js?v=desktop-1"></script>
-<script src="wake-mic.js?v=mic-24"></script>
+<script src="wake-mic.js?v=continuous-25"></script>
+<script src="listening-session.js?v=continuous-25"></script>
 <script src="voice/index.js?v=voice-index-22"></script>
 <script src="audio-player.js?v=voice-index-22"></script>
 <script src="voices.js?v=voice-index-22"></script>
@@ -93,39 +94,44 @@ function acceptGreeting(text,fromMicrophone=false){
   if(document.querySelector('#greeting-speech').checked)unlockSound().then(()=>realAudio.prepare(voiceLibrary.greetingId())).catch(()=>{});
   companion.dispatch('HOME_REQUESTED',now);syncState();document.querySelector('#affection-status').textContent='A familiar voice… looking up.';
  }else if(fromMicrophone){
-  document.querySelector('#mic-status').textContent='Wake phrase recognized. Listening stopped to prevent speaker feedback.';
+  document.querySelector('#mic-status').textContent='Wake phrase recognized. Listening pauses for the response, then resumes automatically.';
   if(document.querySelector('#greeting-speech').checked){const result=greetingAudio.start(now);if(!result.ok)document.querySelector('#mic-status').textContent=result.message;}
  }else document.querySelector('#affection-status').textContent='Use the left-alone preview, then try “Hi, Moni”, “Hi, Daddy”, or “Moni”.';
 }
 const wakeMic=new WakeMicrophone({
- onPhrase:text=>acceptGreeting(text,true),
+ onPhrase:text=>{listeningSession.heard();listeningSession.pause();acceptGreeting(text,true);},
  onStatus:text=>{document.querySelector('#mic-status').textContent=text;},
- onTranscript:text=>{document.querySelector('#mic-transcript').textContent='Heard: '+text;}
+ onTranscript:text=>{listeningSession.heard();document.querySelector('#mic-transcript').textContent='Heard: '+text;},
+ onEnded:()=>listeningSession.ended(),
+ onFailure:code=>listeningSession.failed(code)
 });
-// Half duplex: stop capture before either audio owner starts an output source.
-for(const player of [realAudio,greetingAudio.player]){const start=player.start.bind(player);player.start=(...args)=>{wakeMic.stop();return start(...args);};}
+const listeningSession=new ListeningSession(wakeMic,{
+ canListen:()=>!document.hidden&&companion.state===STATES.IDLE&&!realAudio.session&&!greetingAudio.player.session&&(affection.mode!=='greeting'||affection.spoken),
+ onStatus:text=>{document.querySelector('#mic-status').textContent=text;}
+});
+// Half duplex: pause capture during output without discarding the user's listening intent.
+for(const player of [realAudio,greetingAudio.player]){const start=player.start.bind(player);player.start=(...args)=>{listeningSession.pause();return start(...args);};}
 document.querySelector('#start-mic').onclick=()=>{
- if(companion.state!==STATES.IDLE||greetingAudio.player.session||affection.mode==='greeting'){document.querySelector('#mic-status').textContent='Wait for playback/greeting to finish, then start listening.';return;}
  unlockSound().then(()=>realAudio.prepare(voiceLibrary.greetingId())).catch(()=>{});
  document.querySelector('#mic-transcript').textContent='';
- wakeMic.start({allowOnline:document.querySelector('#allow-online-recognition').checked});
+ listeningSession.start({allowOnline:document.querySelector('#allow-online-recognition').checked});
 };
 document.querySelector('#open-mic-preview').href=globalThis.location?.href||'#';
 document.querySelector('#check-mic').onclick=async()=>{
- const button=document.querySelector('#check-mic');button.disabled=true;wakeMic.stop();
+ const button=document.querySelector('#check-mic');button.disabled=true;listeningSession.stop();
  document.querySelector('#mic-check-status').textContent='Checking actual microphone capture permission…';
  try{document.querySelector('#mic-check-status').textContent=await checkMicrophoneAccess();}
  finally{button.disabled=false;}
 };
-document.querySelector('#stop-mic').onclick=()=>wakeMic.stop();
-document.querySelector('#allow-online-recognition').onchange=()=>wakeMic.stop();
+document.querySelector('#stop-mic').onclick=()=>listeningSession.stop();
+document.querySelector('#allow-online-recognition').onchange=()=>listeningSession.stop();
 document.querySelector('#test-speaker').onclick=async()=>{
- wakeMic.stop();
+ listeningSession.pause();
  if(companion.state!==STATES.IDLE)return;
  try{await unlockSound();await realAudio.prepare(voiceLibrary.greetingId());const result=greetingAudio.start(performance.now());document.querySelector('#mic-status').textContent=result.ok?'Playing the recorded greeting through your selected browser output. Confirm audibility yourself.':result.message;}
  catch(error){document.querySelector('#mic-status').textContent='Speaker test failed: '+error.message;}
 };
-document.addEventListener('visibilitychange',()=>{if(document.hidden)wakeMic.stop();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)listeningSession.pause();});
 document.querySelector('#submit-greeting').onclick=()=>acceptGreeting(document.querySelector('#wake-phrase').value);
 document.querySelector('#wake-phrase').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();document.querySelector('#submit-greeting').click();}};
 for(const event of ['pointerdown','keydown'])document.addEventListener(event,e=>{
@@ -133,7 +139,7 @@ for(const event of ['pointerdown','keydown'])document.addEventListener(event,e=>
 },{passive:true});
 let memoryImage=null,seenRevision=-1,savedFace=null;
 function dispatch(event,payload){
- if(['HOME','HOME_REQUESTED','CANCEL_REQUESTED'].includes(event))wakeMic.stop();
+ if(['HOME','HOME_REQUESTED','CANCEL_REQUESTED'].includes(event))listeningSession.pause();
  const now=performance.now();
  if(!savedFace&&['PHOTO','PHOTO_SELECTED','GALLERY_REQUESTED'].includes(event)&&companion.state!==STATES.SHOWING_PHOTO)savedFace=animator.snapshot(now);
  // Randomize a fresh memory reveal, not explicit gallery navigation or busy requests.
@@ -444,6 +450,7 @@ function frame(now){
    }
   }
  }else lastAffectionPhase='';
+ listeningSession.tick();
  if(previous!==state.selected)status();
  const {gx,gy,openness:open,breath}=state;
  pen.fillStyle='#030606';pen.fillRect(0,0,128,128);

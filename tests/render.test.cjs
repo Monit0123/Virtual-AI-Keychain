@@ -10,7 +10,7 @@ const canvas=createCanvas(128,128);canvas.setAttribute=()=>{};
 elements.set('#face',canvas);
 const sandbox={console,performance:{now:()=>clock},matchMedia:()=>({matches:false}),requestAnimationFrame:fn=>frame=fn,document:{querySelector:s=>{if(!elements.has(s))elements.set(s,element());return elements.get(s);},querySelectorAll:s=>s==='.expression'?buttons:[],createElement:t=>t==='canvas'?createCanvas(512,512):element(),addEventListener(){}},URL,Image:function(){}};
 const ctx=vm.createContext(sandbox);
-for(const file of ['desktop-bridge.js','wake-mic.js','voice/index.js','audio-player.js','voices.js','photos.js','screens.js','affection.js','personality.js','buttons.js','animation.js','companion.js','state-face.js','memory-scene.js'])vm.runInContext(fs.readFileSync(root+file,'utf8'),ctx);
+for(const file of ['desktop-bridge.js','wake-mic.js','listening-session.js','voice/index.js','audio-player.js','voices.js','photos.js','screens.js','affection.js','personality.js','buttons.js','animation.js','companion.js','state-face.js','memory-scene.js'])vm.runInContext(fs.readFileSync(root+file,'utf8'),ctx);
 vm.runInContext(fs.readFileSync(root+'index.html','utf8').match(/<script>([\s\S]*?)<\/script>/)[1],ctx);
 // Local high-contrast test photo: image data is independent of any private memory.
 sandbox.testPhoto=createCanvas(160,100);let p=sandbox.testPhoto.getContext('2d');p.fillStyle='#ff3355';p.fillRect(0,0,160,100);

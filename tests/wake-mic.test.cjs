@@ -37,7 +37,7 @@ test('permission/network/language errors stop safely without retry loops or fall
  }
 });
 test('natural recognition end, unavailable API and thrown start errors are recoverable',()=>{
- const f=fixture();f.mic.start();f.instances[0].onend();assert.equal(f.mic.active,false);assert.match(f.statuses.at(-1),/Press Start/);
+ const f=fixture();f.mic.start();f.instances[0].onend();assert.equal(f.mic.active,false);assert.match(f.statuses.at(-1),/session ended/);
  let status='';const absent=new WakeMicrophone({Recognition:null,onStatus:s=>status=s});assert.equal(absent.start(),false);assert.match(status,/unavailable/);
  class Broken{constructor(){this.processLocally=true;}start(){throw new Error('denied');}abort(){}}
  const broken=new WakeMicrophone({Recognition:Broken,onStatus:s=>status=s});assert.equal(broken.start(),false);assert.equal(broken.active,false);assert.match(status,/denied/);
